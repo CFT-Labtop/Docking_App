@@ -33,7 +33,7 @@ class RouterPage extends StatelessWidget {
               primaryColor: Util.mainColor,
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            home: VerificationPage(),
+            home: LoginPage(),
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
