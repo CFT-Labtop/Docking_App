@@ -1,7 +1,11 @@
+import 'package:docking_project/Util/FlutterRouter.dart';
+import 'package:docking_project/Widgets/IntroductionSwiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
+import 'package:flutter_basecomponent/Widgets/StandardOutlinedButton.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget header() {
     return FractionallySizedBox(
       widthFactor: 1,
-      heightFactor: 0.2,
+      heightFactor: 1,
       child: Container(
         color: Colors.white,
         child: Center(
@@ -35,38 +39,78 @@ class _LoginPageState extends State<LoginPage> {
           color: UtilExtendsion.mainColor,
           width: double.infinity,
           child: SafeArea(
+            bottom: false,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              Flexible(child: header()),
-              // Spacer(),
-              // Container(
-              //   color: Colors.red,
-              //   height: 20,
-              //   width: 20
-              // )
-              // Expanded(
-              //     child: Container(
-              //     color: Colors.red,
-              //     width: double.infinity,
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.end,
-              //       children: [
-              //         RaisedButton(
-              //           padding: EdgeInsets.all(16.0),
-              //           color: Colors.white,
-              //           onPressed: () {},
-              //           child: Text(
-              //             "New Driver Register",
-              //             style: TextStyle(
-              //                 fontSize: Util.responsiveSize(context, 28)),
-              //           ).tr(),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-            ]),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(child: header()),
+                  SizedBox(
+                    height: 34,
+                  ),
+                  Text(
+                    "Ready to get stuff done?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ).tr(),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      child: IntroductionSwiper(listComponents: [
+                        SwiperComponent(
+                            "Introduction Script".tr(), Icons.aod_outlined),
+                        SwiperComponent("Introduction Script".tr(),
+                            Icons.account_circle_outlined),
+                        SwiperComponent("Introduction Script".tr(),
+                            Icons.add_comment_outlined)
+                      ]),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Util.responsiveSize(context, 48.0)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        StandardOutlinedButton(
+                          text: "Sign Up".tr(),
+                          onPress: (){
+                            FlutterRouter().goToPage(context, Pages("PhoneSignUpPage"));
+                          },
+                        ),
+                        StandardOutlinedButton(
+                          text: "Sign In".tr(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: Util.responsiveSize(context, 24.0)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Util.responsiveSize(context, 48.0)),
+                    child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "By signing up, you agree to our".tr()),
+                          TextSpan(text: " "),
+                          TextSpan(
+                            text: "Terms of Service".tr(),
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          TextSpan(text: " "),
+                          TextSpan(text: "and".tr()),
+                          TextSpan(text: " "),
+                          TextSpan(
+                              text: "Privacy Policy".tr(),
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                              )),
+                        ])),
+                  ),
+                  SizedBox(height: Util.responsiveSize(context, 48.0))
+                ]),
           )),
     );
   }
