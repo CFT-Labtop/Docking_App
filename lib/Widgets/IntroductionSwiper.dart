@@ -15,19 +15,19 @@ class IntroductionSwiper extends StatelessWidget {
     return new Swiper(
       itemBuilder: (BuildContext context, int index) {
         return Padding(
-          padding: const EdgeInsets.all(48),
+          padding: EdgeInsets.all(Util.responsiveSize(context, 42)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 listComponents[index].icon,
                 color: Colors.white,
-                size: Util.responsiveSize(context, 120),
+                size: Util.responsiveSize(context, 100),
               ),
               SizedBox(
                 height: Util.responsiveSize(context, 48),
               ),
-              Text(listComponents[index].text.tr(), style: TextStyle(color: Colors.white, fontSize: 20), textAlign: TextAlign.center,).tr()
+              Text(listComponents[index].text.tr(), style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context, 20)), textAlign: TextAlign.center,).tr()
             ],
           ),
         );

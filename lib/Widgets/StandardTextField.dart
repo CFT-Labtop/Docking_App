@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_basecomponent/Util.dart';
 
 class StandardTextField extends StatefulWidget {
   const StandardTextField({
@@ -33,9 +34,9 @@ class _StandardTextFieldState extends State<StandardTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 16)),
       child: TextField(
-        style: TextStyle(fontSize: widget.fontSize ?? 14.0),
+        style: TextStyle(fontSize: widget.fontSize ?? Util.responsiveSize(context, 14)),
         controller: widget._textController,
         focusNode: _focusNode,
         keyboardType: widget.textInputType ?? TextInputType.text,
@@ -51,11 +52,11 @@ class _StandardTextFieldState extends State<StandardTextField> {
           hintText: widget.hintText ?? "",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
           contentPadding:
-              EdgeInsets.only(left: 12.0, top: 8.0, bottom: 8.0, right: 12.0),
+              EdgeInsets.only(left: Util.responsiveSize(context, 12), top: Util.responsiveSize(context, 8), bottom: Util.responsiveSize(context, 8), right: Util.responsiveSize(context, 12)),
           suffixIcon: (_focusNode.hasFocus)
               ? IconButton(
                   icon: Icon(Icons.cancel),
-                  iconSize: 18.0,
+                  iconSize: Util.responsiveSize(context, 18),
                   padding: EdgeInsets.all(0.0),
                   color: Colors.grey,
                   onPressed: () {

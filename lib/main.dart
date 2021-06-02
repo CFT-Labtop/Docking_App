@@ -1,4 +1,5 @@
-import 'package:docking_project/pages/LoginPage.dart';
+import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:docking_project/pages/FirstPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -30,10 +31,10 @@ class RouterPage extends StatelessWidget {
         return MaterialApp(
             title: 'Docking',
             theme: ThemeData(
-              primaryColor: Util.mainColor,
+              primaryColor: UtilExtendsion.mainColor,
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            home: LoginPage(),
+            home: FirstPage(),
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,

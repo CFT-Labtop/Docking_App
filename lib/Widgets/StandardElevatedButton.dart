@@ -8,7 +8,7 @@ class StandardElevatedButton extends StatelessWidget {
   const StandardElevatedButton({
     Key key,
     @required this.backgroundColor,
-    this.text,
+    @required this.text,
     this.onPress
   }) : super(key: key);
 
@@ -23,7 +23,7 @@ class StandardElevatedButton extends StatelessWidget {
           primary: backgroundColor),
       child: Text(
         this.text,
-        style: TextStyle(fontSize: 20),
+        style: TextStyle(fontSize: Util.responsiveSize(context, 20)),
       ),
     );
   }
