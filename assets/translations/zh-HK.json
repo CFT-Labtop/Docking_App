@@ -29,5 +29,10 @@
     "second": "秒",
     "Can't receive the SMS?": "接收不到驗證碼?",
     "Click here to resend SMS": "按這裏以重新發送",
-    "Account Created Successfully": "成功創建用戶"
+    "Account Created Successfully": "成功創建用戶",
+    "Booking Detail": "Booking Detail",
+    "Car Number": "車牌",
+    "Reference Number": "參考編號",
+    "Arrive": "已到",
+    "Delete": "刪除"
 }

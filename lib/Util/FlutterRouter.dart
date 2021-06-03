@@ -4,13 +4,14 @@ import 'package:docking_project/pages/LoginPage.dart';
 import 'package:docking_project/pages/MainPage.dart';
 import 'package:docking_project/pages/PhoneSignUpPage.dart';
 import 'package:docking_project/pages/VerificationPage.dart';
+import 'package:docking_project/pages/BookingDetailPage.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 
-class FlutterRouter extends BaseRouter{
+class FlutterRouter extends BaseRouter {
   static final FlutterRouter _router = FlutterRouter._internal();
   FlutterRouter._internal();
-  factory FlutterRouter.initialize(){
+  factory FlutterRouter.initialize() {
     return _router.init(_router) as FlutterRouter;
   }
 
@@ -27,10 +28,14 @@ class FlutterRouter extends BaseRouter{
     this.fluroRouter.define("/" + Pages("PhoneSignUpPage").getName(),
         handler: Handler(handlerFunc: (context, params) => PhoneSignUpPage()));
     this.fluroRouter.define("/" + Pages("CreateAccountSuccessPage").getName(),
-      handler: Handler(handlerFunc: (context, params) => CreateAccountSuccessPage()));
+        handler: Handler(
+            handlerFunc: (context, params) => CreateAccountSuccessPage()));
     this.fluroRouter.define("/" + Pages("MainPage").getName(),
-      handler: Handler(handlerFunc: (context, params) => MainPage()));
+        handler: Handler(handlerFunc: (context, params) => MainPage()));
     this.fluroRouter.define("/" + Pages("LoginPage").getName(),
-      handler: Handler(handlerFunc: (context, params) => LoginPage()));
-    }
+        handler: Handler(handlerFunc: (context, params) => LoginPage()));
+    this.fluroRouter.define("/" + Pages("BookingDetailPage").getName(),
+        handler:
+            Handler(handlerFunc: (context, params) => BookingDetailPage()));
+  }
 }
