@@ -37,5 +37,10 @@
     "New Booking": "新預約",
     "Current Bookings": "現時預約",
     "Settings": "設定",
-    "Please Select Date": "請選擇時間"
+    "Please Select Date": "請選擇時間",
+    "Booking Detail": "Booking Detail",
+    "Car Number": "車牌",
+    "Reference Number": "參考編號",
+    "Arrive": "已到",
+    "Delete": "刪除"
 }
