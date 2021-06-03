@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class BookingDetailPage extends StatefulWidget {
   @override
@@ -67,11 +68,16 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                         SizedBox(
                           height: Util.responsiveSize(context, 10),
                         ),
-                        Text("Reference Number".tr(),
-                            style: TextStyle(fontSize: 18.0)),
+                        QrImage(
+                          data: "DummyData",
+                          version: QrVersions.auto,
+                          size: 200.0,
+                        ),
                         SizedBox(
                           height: Util.responsiveSize(context, 10),
                         ),
+                        Text("Reference Number".tr(),
+                            style: TextStyle(fontSize: 18.0)),
                         Text("202105101023".tr(),
                             style: TextStyle(fontSize: 18.0)),
                         SizedBox(

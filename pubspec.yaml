@@ -43,19 +43,19 @@ dependencies:
   introduction_screen: ^2.1.0
   flutter_swiper: ^1.1.6
   flutter_picker: ^2.0.1
+  qr_flutter: ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_basecomponent:
-    path: /Users/wailimcheng/workspace/flutter_basecomponent
+    path: /Users/hkjcuser/FlutterProject/Flutter_BaseComponent
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
