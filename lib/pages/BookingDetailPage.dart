@@ -31,7 +31,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                       Util.responsiveSize(context, Dimensions.pagePadding)),
                   child: Column(children: [
                     Text(
-                      '2021 年 五月 十一日',
+                      '2021 年 五月 十一日', // TODO: get value from server
                       style: TextStyle(
                           fontSize: Util.responsiveSize(context, Fonts.medium)),
                     ),
@@ -40,7 +40,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                           Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     Text(
-                      '12:00',
+                      '12:00', // TODO: get value from server
                       style: TextStyle(
                           fontSize:
                               Util.responsiveSize(context, Fonts.x_large)),
@@ -56,7 +56,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                             style: TextStyle(
                                 fontSize: Util.responsiveSize(
                                     context, Fonts.medium))),
-                        Text('HD1234',
+                        Text('HD1234', // TODO: get value from server
                             style: TextStyle(
                                 fontSize:
                                     Util.responsiveSize(context, Fonts.medium)))
@@ -73,7 +73,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                             style: TextStyle(
                                 fontSize: Util.responsiveSize(
                                     context, Fonts.medium))),
-                        Text('40\'',
+                        Text('40\'', // TODO: get value from server
                             style: TextStyle(
                                 fontSize:
                                     Util.responsiveSize(context, Fonts.medium)))
@@ -84,7 +84,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                           Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     QrImage(
-                      data: "DummyData",
+                      data: "DummyData", // TODO: get value from server
                       version: QrVersions.auto,
                       size: Dimensions.qrCodeSize,
                     ),
@@ -96,7 +96,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                         style: TextStyle(
                             fontSize:
                                 Util.responsiveSize(context, Fonts.medium))),
-                    Text("202105101023".tr(),
+                    Text("202105101023".tr(), // TODO: get value from server
                         style: TextStyle(
                             fontSize:
                                 Util.responsiveSize(context, Fonts.medium))),
@@ -107,7 +107,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                     StandardElevatedButton(
                       backgroundColor: UtilExtendsion.mainColor,
                       text: "Arrive".tr(),
-                      onPress: () {},
+                      onPress: () {}, // TODO: onPress handling
                     ),
                     SizedBox(
                       height:
@@ -116,7 +116,7 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                     StandardElevatedButton(
                       backgroundColor: Colors.red,
                       text: "Delete".tr(),
-                      onPress: () {},
+                      onPress: () {}, // TODO: onPress handling
                     )
                   ]))
             ]))));
