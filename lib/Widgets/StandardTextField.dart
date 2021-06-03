@@ -10,14 +10,18 @@ class StandardTextField extends StatefulWidget {
     this.prefixOnPress,
     this.textInputType,
     this.fontSize,
+    this.fontColor, this.focusNode, this.enable,
   })  : _textController = textController,
         super(key: key);
 
   final TextEditingController _textController;
   final String hintText;
   final double fontSize;
+  final Color fontColor;
   final Widget prefixWidget;
   final TextInputType textInputType;
+  final FocusNode focusNode;
+  final bool enable;
   final void Function() prefixOnPress;
 
   @override
@@ -36,9 +40,10 @@ class _StandardTextFieldState extends State<StandardTextField> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 16)),
       child: TextField(
-        style: TextStyle(fontSize: widget.fontSize ?? Util.responsiveSize(context, 14)),
+        style: TextStyle(fontSize: widget.fontSize ?? Util.responsiveSize(context, 14), color: widget.fontColor ?? Colors.black),
         controller: widget._textController,
-        focusNode: _focusNode,
+        focusNode: widget.focusNode ?? _focusNode,
+        enabled: widget.enable ?? true,
         keyboardType: widget.textInputType ?? TextInputType.text,
         decoration: InputDecoration(
           fillColor: Color(0xffEEEEEE),

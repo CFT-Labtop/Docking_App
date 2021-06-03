@@ -1,5 +1,6 @@
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
+import 'package:docking_project/pages/BookingListFragment.dart';
 import 'package:docking_project/pages/NewBookingFragment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -14,6 +15,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
+  PageController _pageViewcontroller = new PageController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,18 +37,21 @@ class _MainPageState extends State<MainPage> {
         itemChanged: (index) => setState(
           () {
             _currentIndex = index;
+            _pageViewcontroller.jumpToPage(index);
           },
         ),
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.book_online_outlined)),
-          BottomNavigationBarItem(icon: Icon(Icons.schedule)),
-          BottomNavigationBarItem(icon: Icon(Icons.settings)),
+          BottomNavigationBarItem(icon: Icon(Icons.book_online_outlined), title: Text("New Booking".tr())),
+          BottomNavigationBarItem(icon: Icon(Icons.schedule), title: Text("Current Bookings".tr())),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings".tr())),
         ],
       ),
       body: SafeArea(
         child: PageView(
+          controller: _pageViewcontroller,
           children: [
-            NewBookingFragment()
+            NewBookingFragment(),
+            BookingListFragment()
           ],
         )
       ),

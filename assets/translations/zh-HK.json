@@ -29,5 +29,13 @@
     "second": "秒",
     "Can't receive the SMS?": "接收不到驗證碼?",
     "Click here to resend SMS": "按這裏以重新發送",
-    "Account Created Successfully": "成功創建用戶"
+    "Account Created Successfully": "成功創建用戶",
+    "Create New Booking": "創建新預約",
+    "Please Select Booking Date Time": "請選擇預約日期時間",
+    "Available Time Slots": "可供選擇時間",
+    "Submit": "提交",
+    "New Booking": "新預約",
+    "Current Bookings": "現時預約",
+    "Settings": "設定",
+    "Please Select Date": "請選擇時間"
 }

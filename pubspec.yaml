@@ -45,6 +45,9 @@ dependencies:
   flutter_picker: ^2.0.1
   flutter_verification_code: ^1.0.3
   quiver: ^3.0.1
+  syncfusion_flutter_calendar: ^19.1.66
+  syncfusion_flutter_datepicker: ^19.1.66-beta
+  flutter_staggered_animations: ^1.0.0
 
 dev_dependencies:
   flutter_test:

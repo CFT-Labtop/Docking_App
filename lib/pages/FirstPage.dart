@@ -100,6 +100,7 @@ class _FirstPageState extends State<FirstPage> {
                             text: "Terms of Service".tr(),
                             style: TextStyle(
                               decoration: TextDecoration.underline,
+                              fontSize: Util.responsiveSize(context, 18)
                             ),
                           ),
                           TextSpan(text: " "),
@@ -109,6 +110,7 @@ class _FirstPageState extends State<FirstPage> {
                               text: "Privacy Policy".tr(),
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
+                                fontSize: Util.responsiveSize(context, 18)
                               )),
                         ])),
                   ),

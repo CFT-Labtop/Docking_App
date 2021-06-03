@@ -46,7 +46,6 @@ class _VerficiationPageState extends State<VerficiationPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     sub?.cancel();
     super.dispose();
   }
@@ -58,11 +57,11 @@ class _VerficiationPageState extends State<VerficiationPage> {
       appBar: StandardAppBar( text: "Verification".tr(),backgroundColor: UtilExtendsion.mainColor, fontColor: Colors.white,),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: SingleChildScrollView(
-          child: Container(
-            width: double.infinity,
-            // height: double.infinity,
-            color: Colors.white,
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          color: Colors.white,
+          child: SingleChildScrollView(
             child: SafeArea(
                 child: Column(
               children: [
