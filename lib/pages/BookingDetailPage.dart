@@ -5,6 +5,7 @@ import 'package:flutter_basecomponent/Util.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
+import 'package:docking_project/Util/Constants.dart';
 
 class BookingDetailPage extends StatefulWidget {
   @override
@@ -26,68 +27,82 @@ class _BookingDetailPage extends State<BookingDetailPage> {
             child: SafeArea(
                 child: Column(children: [
               Padding(
-                  padding: EdgeInsets.all(Util.responsiveSize(context, 16.0)),
+                  padding: EdgeInsets.all(
+                      Util.responsiveSize(context, Dimensions.pagePadding)),
                   child: Column(children: [
                     Text(
                       '2021 年 五月 十一日',
                       style: TextStyle(
-                          fontSize: Util.responsiveSize(context, 18.0)),
+                          fontSize: Util.responsiveSize(context, Fonts.medium)),
                     ),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     Text(
                       '12:00',
                       style: TextStyle(
-                          fontSize: Util.responsiveSize(context, 24.0)),
+                          fontSize:
+                              Util.responsiveSize(context, Fonts.x_large)),
                     ),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text("Car Number".tr(),
                             style: TextStyle(
-                                fontSize: Util.responsiveSize(context, 18.0))),
+                                fontSize: Util.responsiveSize(
+                                    context, Fonts.medium))),
                         Text('HD1234',
                             style: TextStyle(
-                                fontSize: Util.responsiveSize(context, 18.0)))
+                                fontSize:
+                                    Util.responsiveSize(context, Fonts.medium)))
                       ],
                     ),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text("Car Type".tr(),
                             style: TextStyle(
-                                fontSize: Util.responsiveSize(context, 18.0))),
+                                fontSize: Util.responsiveSize(
+                                    context, Fonts.medium))),
                         Text('40\'',
                             style: TextStyle(
-                                fontSize: Util.responsiveSize(context, 18.0)))
+                                fontSize:
+                                    Util.responsiveSize(context, Fonts.medium)))
                       ],
                     ),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     QrImage(
                       data: "DummyData",
                       version: QrVersions.auto,
-                      size: 200.0,
+                      size: Dimensions.qrCodeSize,
                     ),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     Text("Reference Number".tr(),
                         style: TextStyle(
-                            fontSize: Util.responsiveSize(context, 18.0))),
+                            fontSize:
+                                Util.responsiveSize(context, Fonts.medium))),
                     Text("202105101023".tr(),
                         style: TextStyle(
-                            fontSize: Util.responsiveSize(context, 18.0))),
+                            fontSize:
+                                Util.responsiveSize(context, Fonts.medium))),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     StandardElevatedButton(
                       backgroundColor: UtilExtendsion.mainColor,
@@ -95,7 +110,8 @@ class _BookingDetailPage extends State<BookingDetailPage> {
                       onPress: () {},
                     ),
                     SizedBox(
-                      height: Util.responsiveSize(context, 10),
+                      height:
+                          Util.responsiveSize(context, Dimensions.itemPadding),
                     ),
                     StandardElevatedButton(
                       backgroundColor: Colors.red,
