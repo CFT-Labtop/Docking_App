@@ -1,10 +1,14 @@
+import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/pages/BookingListFragment.dart';
-import 'package:docking_project/pages/NewBookingFragment.dart';
+import 'package:docking_project/pages/NewBookingPage.dart';
+import 'package:docking_project/pages/SettingFragment.dart';
+import 'package:docking_project/pages/ShipmentFragment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key key}) : super(key: key);
@@ -25,6 +29,7 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: UtilExtendsion.mainColor,
         trailingActions: [
           PlatformIconButton(
+            onPressed: () => FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true),
             icon: Icon(
               Icons.logout_outlined,
               color: Colors.white,
@@ -48,10 +53,17 @@ class _MainPageState extends State<MainPage> {
       ),
       body: SafeArea(
         child: PageView(
+          onPageChanged: (index){
+            setState(() {
+              _currentIndex = index;
+            });
+          },
           controller: _pageViewcontroller,
           children: [
-            NewBookingFragment(),
-            BookingListFragment()
+            // NewBookingFragment(),
+            ShipmentFragment(),
+            BookingListFragment(),
+            SettingFragment()
           ],
         )
       ),

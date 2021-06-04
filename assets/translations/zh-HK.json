@@ -42,5 +42,21 @@
     "Car Number": "車牌",
     "Reference Number": "參考編號",
     "Arrive": "已到",
-    "Delete": "刪除"
+    "Delete": "刪除",
+    "Arrived": "已到達",
+    "Expired": "已過期",
+    "Pending": "已預約",
+    "Default Car - Optional": "常用車輛 - 可留空",
+    "Read Only": "不可更改",
+    "Please Select Warehouse": "請選擇倉庫",
+    "Please Select": "請選擇",
+    "Please Scan QRCode To Input Shipment": "如有Shipment# 請掃描加入",
+    "Manual Input": "手動輸入",
+    "Scan": "掃描",
+    "Camera Permission Not Granted": "沒有相機權限",
+    "Camera Permission": "相機權限",
+    "Deny": "拒絕",
+    "Allow": "準許",
+    "Request For Camera Permission For Scanning QR Code": "存取相機權限以掃描QR Code"
+
 }

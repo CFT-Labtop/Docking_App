@@ -39,7 +39,7 @@ class CarTypeStandardField extends StatelessWidget {
     return StandardTextField(
       textController: textController,
       hintText: "Enter Your Car Licence Number".tr(),
-      textInputType: TextInputType.phone,
+      textInputType: TextInputType.text,
       fontSize: Util.responsiveSize(context, 18),
       prefixOnPress: () {
         showPickerArray(context);

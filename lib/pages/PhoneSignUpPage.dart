@@ -79,7 +79,15 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                 SizedBox(
                   height: Util.responsiveSize(context, 24.0),
                 ),
-                // ignore: missing_return
+                Text(
+                  "Default Car - Optional".tr(),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: Util.responsiveSize(context, 18)),
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 12),
+                ),
                 CarTypeStandardField(
                   textController: licenseTextController,
                   carType: carType,
