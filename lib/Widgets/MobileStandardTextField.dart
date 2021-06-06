@@ -7,10 +7,11 @@ import 'package:easy_localization/easy_localization.dart';
 class MobileStandardTextField extends StatelessWidget {
   const MobileStandardTextField({
     Key key,
-    @required this.mobileTextController,
+    @required this.mobileTextController, this.enable,
   }) : super(key: key);
 
   final TextEditingController mobileTextController;
+  final bool enable;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class MobileStandardTextField extends StatelessWidget {
       hintText: "Enter Your Phone Number".tr(),
       textInputType: TextInputType.phone,
       fontSize: Util.responsiveSize(context, 18),
+      enable: this.enable,
       prefixWidget: Padding(
         padding:
             EdgeInsets.only(right: Util.responsiveSize(context, 12)),

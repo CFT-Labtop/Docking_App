@@ -2,7 +2,9 @@ import 'package:docking_project/pages/CreateAccountSuccessPage.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:docking_project/pages/LoginPage.dart';
 import 'package:docking_project/pages/MainPage.dart';
+import 'package:docking_project/pages/NewBookingPage.dart';
 import 'package:docking_project/pages/PhoneSignUpPage.dart';
+import 'package:docking_project/pages/ScanQRCodePage.dart';
 import 'package:docking_project/pages/VerificationPage.dart';
 import 'package:docking_project/pages/BookingDetailPage.dart';
 import 'package:fluro/fluro.dart';
@@ -35,7 +37,10 @@ class FlutterRouter extends BaseRouter {
     this.fluroRouter.define("/" + Pages("LoginPage").getName(),
         handler: Handler(handlerFunc: (context, params) => LoginPage()));
     this.fluroRouter.define("/" + Pages("BookingDetailPage").getName(),
-        handler:
-            Handler(handlerFunc: (context, params) => BookingDetailPage()));
+        handler: Handler(handlerFunc: (context, params) => BookingDetailPage()));
+    this.fluroRouter.define("/" + Pages("NewBookingPage").getName(),
+        handler: Handler(handlerFunc: (context, params) => NewBookingPage()));
+    this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),
+        handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));
   }
 }

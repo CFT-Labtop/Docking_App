@@ -74,7 +74,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                   size: Util.responsiveSize(context, 120),
                 ),
                 SizedBox(
-                  height: Util.responsiveSize(context, 24),
+                  height: Util.responsiveSize(context, 36),
                 ),
                 Text(
                   "Verification".tr(),
@@ -137,13 +137,13 @@ class _VerficiationPageState extends State<VerficiationPage> {
                     text: TextSpan(children: [
                       TextSpan(
                           text: "Code expires in:".tr(),
-                          style: TextStyle(color: Colors.grey)),
+                          style: TextStyle(color: Colors.grey, fontSize: Util.responsiveSize(context, 20)), ),
                       TextSpan(
                           text: _current.toString(),
-                          style: TextStyle(color: Colors.red)),
+                          style: TextStyle(color: Colors.red, fontSize: Util.responsiveSize(context, 20))),
                       TextSpan(
                           text: "second".tr(),
-                          style: TextStyle(color: Colors.red)),
+                          style: TextStyle(color: Colors.red, fontSize: Util.responsiveSize(context, 20))),
                     ])),
                 SizedBox(
                   height: Util.responsiveSize(context, 12),
@@ -153,7 +153,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                     text: TextSpan(children: [
                       TextSpan(
                           text: "Can't receive the SMS?".tr(),
-                          style: TextStyle(color: Colors.grey)),
+                          style: TextStyle(color: Colors.grey, fontSize: Util.responsiveSize(context, 16))),
                       TextSpan(text: " "),
                       TextSpan(
                           text: "Click here to resend SMS".tr(),
@@ -164,6 +164,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                           style: TextStyle(
                               color: UtilExtendsion.mainColor,
                               fontWeight: FontWeight.bold,
+                              fontSize: Util.responsiveSize(context, 16),
                               decoration: TextDecoration.underline)),
                     ])),
                 SizedBox(

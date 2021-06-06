@@ -5,11 +5,12 @@ class StandardElevatedButton extends StatelessWidget {
   final Color backgroundColor;
   final String text;
   final VoidCallback onPress;
+  final EdgeInsets padding;
   const StandardElevatedButton({
     Key key,
     @required this.backgroundColor,
     @required this.text,
-    this.onPress
+    this.onPress, this.padding
   }) : super(key: key);
 
   @override
@@ -17,7 +18,7 @@ class StandardElevatedButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: this.onPress ?? null,
       style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(
+          padding: padding?? EdgeInsets.symmetric(
               horizontal: Util.responsiveSize(context, 102),
               vertical: Util.responsiveSize(context, 12)),
           primary: backgroundColor),
