@@ -7,10 +7,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
 class StandardPullDown extends StatefulWidget {
-  const StandardPullDown({Key key, this.textController, this.hintText, @required this.arraySelection, this.dialogTitle, @required this.onSelected}) : super(key: key);
+  const StandardPullDown({Key key, this.textController, this.hintText, @required this.pickerList, this.dialogTitle, @required this.onSelected}) : super(key: key);
   final TextEditingController textController;
   final String hintText;
-  final String arraySelection;
+  final List<PickerItem> pickerList;
   final String dialogTitle;
   final void Function(String value) onSelected;
 
@@ -22,10 +22,7 @@ class _StandardPullDownState extends State<StandardPullDown> {
   showPickerArray(BuildContext context) {
     new Picker(
       columnPadding: EdgeInsets.symmetric(horizontal: 0),
-            adapter: PickerDataAdapter<String>(
-                pickerdata:
-                    new JsonDecoder().convert(widget.arraySelection),
-                isArray: true),
+            adapter: PickerDataAdapter(data: widget.pickerList),
             hideHeader: true,
             title: new Text(widget.dialogTitle ?? "Please Select".tr()),
             textStyle: TextStyle(

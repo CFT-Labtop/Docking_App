@@ -38,7 +38,7 @@
     "Current Bookings": "現時預約",
     "Settings": "設定",
     "Please Select Date": "請選擇時間",
-    "Booking Detail": "Booking Detail",
+    "Booking Detail": "預約詳程",
     "Car Number": "車牌",
     "Reference Number": "參考編號",
     "Arrive": "已到",
@@ -57,6 +57,7 @@
     "Camera Permission": "相機權限",
     "Deny": "拒絕",
     "Allow": "準許",
-    "Request For Camera Permission For Scanning QR Code": "存取相機權限以掃描QR Code"
+    "Request For Camera Permission For Scanning QR Code": "存取相機權限以掃描QR Code",
+    "If You Arrived, Please Click Arrived": "如係已到達指定場所，請按已到"
 
 }

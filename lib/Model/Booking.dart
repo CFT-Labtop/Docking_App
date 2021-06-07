@@ -12,6 +12,7 @@ class Booking{
     this.carType,
     this.status,
   });
+
 }
 
 enum BookingStatus{

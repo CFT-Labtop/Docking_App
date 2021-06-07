@@ -49,13 +49,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
-  image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
+  fluttertoast: 28246c4aced3b2015075b22d8e9fbec5762e20ab
+  image_picker: 8891dfe7d111003b9b3eaa7123dcef579cbf0710
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
-  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  path_provider: d1a68c4065ce2e0f6fd03f8a46d698525dc79f06
+  permission_handler: f1671c1163f814f99824ae20daeaafdd280fe9ae
+  qr_code_scanner: 89eb012f742a8f5326fc497f9a461ee2e57c53cc
+  shared_preferences: 5d0fc5691f4e7293ddfc1b599ca398f8af42f5e7
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
 PODFILE CHECKSUM: 4b4201b7fd7ab07cd284feb9ed590023ad0f5020

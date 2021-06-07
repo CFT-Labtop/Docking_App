@@ -13,20 +13,19 @@ class CarTypeStandardField extends StatelessWidget {
     @required this.textController,
     @required this.onPress,
     @required this.carType,
+    @required this.truckTypeSelection,
   }) : super(key: key);
 
   final TextEditingController textController;
   final void Function(String carType) onPress;
   final String carType;
+  final List<PickerItem> truckTypeSelection;
 
   showPickerArray(BuildContext context) {
     new Picker(
-        adapter: PickerDataAdapter<String>(
-            pickerdata:
-                new JsonDecoder().convert("[[\"小型車輛\",\"中型車輛\",\"大型車輛\"]]"),
-            isArray: true),
-        hideHeader: true,
+        adapter: PickerDataAdapter(data: this.truckTypeSelection),
         title: new Text("Please select your car type").tr(),
+        hideHeader: true,
         cancelText: "Cancel".tr(),
         confirmText: "Confirm".tr(),
         onConfirm: (Picker picker, List value) {

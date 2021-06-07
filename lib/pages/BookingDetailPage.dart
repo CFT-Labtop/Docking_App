@@ -1,124 +1,125 @@
-import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:docking_project/Widgets/StandardAppBar.dart';
+import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_basecomponent/Util.dart';
-import 'package:docking_project/Widgets/StandardElevatedButton.dart';
+import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:docking_project/Widgets/StandardAppBar.dart';
-import 'package:docking_project/Util/Constants.dart';
+import 'package:slimy_card/slimy_card.dart';
+import 'package:flutter_basecomponent/Util.dart';
 
 class BookingDetailPage extends StatefulWidget {
+  const BookingDetailPage({Key key}) : super(key: key);
+
   @override
-  _BookingDetailPage createState() => _BookingDetailPage();
+  _BookingDetailPageState createState() => _BookingDetailPageState();
 }
 
-class _BookingDetailPage extends State<BookingDetailPage> {
+class _BookingDetailPageState extends State<BookingDetailPage> {
+  Widget detailTile(IconData icon, String title) {
+    return Row(children: [
+      Icon(icon, size: Util.responsiveSize(context, 20), color: Colors.white),
+      Text(
+        title,
+        style: TextStyle(
+            color: Colors.white, fontSize: Util.responsiveSize(context, 20)),
+      ),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: StandardAppBar(
-          text: 'Booking Detail'.tr(),
-          backgroundColor: UtilExtendsion.mainColor,
-          fontColor: Colors.white,
-        ),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: SafeArea(
-                child: Column(children: [
-              Padding(
-                  padding: EdgeInsets.all(
-                      Util.responsiveSize(context, Dimensions.pagePadding)),
-                  child: Column(children: [
+      appBar: StandardAppBar(
+        text: 'Booking Detail'.tr(),
+        backgroundColor: UtilExtendsion.mainColor,
+        fontColor: Colors.white,
+      ),
+      body: SafeArea(
+          child: ListView(
+        children: [
+          SizedBox(
+            height: Util.responsiveSize(context, 24),
+          ),
+          SlimyCard(
+            color: UtilExtendsion.mainColor,
+            width: MediaQuery.of(context).size.width * 0.8,
+            topCardHeight: Util.responsiveSize(context, 500),
+            bottomCardHeight: Util.responsiveSize(context, 230),
+            borderRadius: 15,
+            topCardWidget: Column(
+              children: [
+                Text(
+                  "AFC2105210190001",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Util.responsiveSize(context, 24)),
+                ),
+                Divider(
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 32),
+                ),
+                QrImage(
+                  data: "DummyData", // TODO: get value from server
+                  version: QrVersions.auto,
+                  backgroundColor: Colors.white,
+                  size: Util.responsiveSize(context, 200),
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 32),
+                ),
+                Text(
+                  "If You Arrived, Please Click Arrived".tr(),
+                  style: TextStyle(
+                      fontSize: Util.responsiveSize(context, 18),
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 12),
+                ),
+                StandardElevatedButton(
+                  backgroundColor: Colors.green,
+                  text: "Arrive".tr(),
+                  onPress: () {}, // TODO: onPress handling
+                ),
+              ],
+            ),
+            bottomCardWidget: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Text(
-                      '2021 年 五月 十一日', // TODO: get value from server
+                      'Booking Detail'.tr(),
                       style: TextStyle(
-                          fontSize: Util.responsiveSize(context, Fonts.medium)),
+                          color: Colors.white,
+                          fontSize: Util.responsiveSize(context, 24)),
                     ),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    Text(
-                      '12:00', // TODO: get value from server
-                      style: TextStyle(
-                          fontSize:
-                              Util.responsiveSize(context, Fonts.x_large)),
-                    ),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("Car Number".tr(),
-                            style: TextStyle(
-                                fontSize: Util.responsiveSize(
-                                    context, Fonts.medium))),
-                        Text('HD1234', // TODO: get value from server
-                            style: TextStyle(
-                                fontSize:
-                                    Util.responsiveSize(context, Fonts.medium)))
-                      ],
-                    ),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("Car Type".tr(),
-                            style: TextStyle(
-                                fontSize: Util.responsiveSize(
-                                    context, Fonts.medium))),
-                        Text('40\'', // TODO: get value from server
-                            style: TextStyle(
-                                fontSize:
-                                    Util.responsiveSize(context, Fonts.medium)))
-                      ],
-                    ),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    QrImage(
-                      data: "DummyData", // TODO: get value from server
-                      version: QrVersions.auto,
-                      size: Dimensions.qrCodeSize,
-                    ),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    Text("Reference Number".tr(),
-                        style: TextStyle(
-                            fontSize:
-                                Util.responsiveSize(context, Fonts.medium))),
-                    Text("202105101023".tr(), // TODO: get value from server
-                        style: TextStyle(
-                            fontSize:
-                                Util.responsiveSize(context, Fonts.medium))),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    StandardElevatedButton(
-                      backgroundColor: UtilExtendsion.mainColor,
-                      text: "Arrive".tr(),
-                      onPress: () {}, // TODO: onPress handling
-                    ),
-                    SizedBox(
-                      height:
-                          Util.responsiveSize(context, Dimensions.itemPadding),
-                    ),
-                    StandardElevatedButton(
-                      backgroundColor: Colors.red,
-                      text: "Delete".tr(),
-                      onPress: () {}, // TODO: onPress handling
-                    )
-                  ]))
-            ]))));
+                    IconButton(
+                        onPressed: () {
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ))
+                  ],
+                ),
+                Divider(
+                  color: Colors.white,
+                ),
+                detailTile(Icons.store, "長沙灣"),
+                detailTile(Icons.car_repair, "貨車(AA1234)"),
+                detailTile(Icons.schedule,
+                    new DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()))
+              ],
+            ),
+            slimeEnabled: true,
+          )
+        ],
+      )),
+    );
   }
 }

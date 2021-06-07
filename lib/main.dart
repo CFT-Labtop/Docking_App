@@ -1,13 +1,14 @@
+import 'package:docking_project/Util/Config.dart';
+import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_basecomponent/Util.dart';
 import 'Util/FlutterRouter.dart';
 
 Future<void> main() async {
   FlutterRouter.initialize();
+  Request.initialize(Config.baseURL);
   FlutterRouter().configureRoutes();
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
