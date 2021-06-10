@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:docking_project/Widgets/StandardTextField.dart';
+import 'package:docking_project/Widgets/StandardTextFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -45,7 +45,7 @@ class _StandardPullDownState extends State<StandardPullDown> {
         onTap: () {
           showPickerArray(context);
         },
-        child: StandardTextField(
+        child: StandardTextFormField(
           textController: widget.textController,
           fontSize: Util.responsiveSize(context, 18),
           hintText: widget.hintText,

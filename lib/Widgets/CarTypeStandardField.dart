@@ -1,7 +1,8 @@
 import 'dart:convert';
 
+import 'package:docking_project/Enum/LanguageType.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
-import 'package:docking_project/Widgets/StandardTextField.dart';
+import 'package:docking_project/Widgets/StandardTextFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -33,9 +34,18 @@ class CarTypeStandardField extends StatelessWidget {
         }).showDialog(context);
   }
 
+  String getNameByType(String value){
+    try{
+      Text widget = this.truckTypeSelection.firstWhere((element) => element.value == value).text as Text;
+      return widget.data;
+    }catch(error){
+      return "Car Type".tr();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StandardTextField(
+    return StandardTextFormField(
       textController: textController,
       hintText: "Enter Your Car Licence Number".tr(),
       textInputType: TextInputType.text,
@@ -52,7 +62,7 @@ class CarTypeStandardField extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(Util.responsiveSize(context, 10.0)),
               child: Text(
-                carType,
+                getNameByType(carType) ?? "Car Type".tr(),
                 style: TextStyle(
                     color: UtilExtendsion.mainColor,
                     fontSize: Util.responsiveSize(context, 18)),

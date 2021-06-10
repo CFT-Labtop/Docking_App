@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
 import 'package:flutter_basecomponent/BaseRequest.dart';
+import 'package:flutter_basecomponent/Util.dart';
 class Request extends BaseRequest{
   static final Request _request = Request._internal();
   Request._internal();
@@ -14,8 +15,7 @@ class Request extends BaseRequest{
 
   Future<List<TruckType>> getTrunckType()async {
     try {
-      this.dio.options.headers["Authorization"] = "64033357d7f1337b2b6de4a46694ffa15e550d8582e4e25cd3905cdfc61c449a10f33c2ed9e5cbb3540ade4b8a21fc4f1cb1b4b6a33e0213378c93ab26880930";
-      Response response = await this.dio.get(this.baseURL + "TruckType");
+      Response response = await this.dio.get(this.baseURL + "Master/TruckType");
       return (response.data as List<dynamic>).map((f) => TruckType.fromJson(f)).toList();
     } on DioError catch(e){
       throw e.error.message;
@@ -26,10 +26,61 @@ class Request extends BaseRequest{
 
   Future<List<Warehouse>> getWarehouse()async {
     try {
-      this.dio.options.headers["Authorization"] = "64033357d7f1337b2b6de4a46694ffa15e550d8582e4e25cd3905cdfc61c449a10f33c2ed9e5cbb3540ade4b8a21fc4f1cb1b4b6a33e0213378c93ab26880930";
-      Response response = await this.dio.get(this.baseURL + "Warehouse");
+      this.dio.options.headers["Authorization"] = Util.sharedPreferences.getString("Authorization");
+      Response response = await this.dio.get(this.baseURL + "Master/Warehouse");
       return (response.data as List<dynamic>).map((f) => Warehouse.fromJson(f)).toList();
     } on DioError catch(e){
+      throw e.error.message;
+    }catch(e){
+      throw e;
+    }
+  }
+
+  Future<void> driverRegister({String mobileNumber, String countryCode , String carType, String license})async {
+    try {
+      Response response = await this.dio.post(this.baseURL + "Driver", data: {
+        "tel": mobileNumber,
+        "countryCode": countryCode,
+        "default_Truck_Type": carType ?? null,
+        "default_Truck_No": license ?? null,
+      });
+      if(response.data["rstCode"] != 0)
+        throw response.data["rstMsg"];
+      print("Verifiy Code " + response.data["rstData"]);
+    }on DioError catch(e){
+      throw e.error.message;
+    }catch(e){
+      throw e;
+    }
+  }
+
+  Future<void> verify({String countryCode, String tel , String verificationCode})async {
+    try {
+      Response response = await this.dio.post(this.baseURL + "Driver/Verify", data: {
+        "countryCode": countryCode,
+        "tel": tel,
+        "verificationCode": verificationCode,
+      });
+      if(response.data["rstCode"] != 0)
+        throw response.data["rstMsg"];
+      await Util.sharedPreferences.setString("sharedPreferences", response.data["rstData"]);
+    }on DioError catch(e){
+      throw e.error.message;
+    }catch(e){
+      throw e;
+    }
+  }
+
+  Future<void> login({String countryCode, String tel})async {
+    try {
+      Response response = await this.dio.post(this.baseURL + "Driver/Login", data: {
+        "countryCode": countryCode,
+        "tel": tel,
+      });
+      if(response.data["rstCode"] != 0)
+        throw response.data["rstMsg"];
+      print("Verifiy Code " + response.data["rstData"]);
+    }on DioError catch(e){
       throw e.error.message;
     }catch(e){
       throw e;

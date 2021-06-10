@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:docking_project/Util/FlutterRouter.dart';
+import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
@@ -14,23 +14,29 @@ import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:quiver/async.dart';
 
 class VerficiationPage extends StatefulWidget {
+  String tel;
+  String countryCode;
+
+  VerficiationPage({Key key, this.tel, this.countryCode}) : super(key: key);
+  
   @override
   _VerficiationPageState createState() => _VerficiationPageState();
 }
 
 class _VerficiationPageState extends State<VerficiationPage> {
-  int _current = 60;
+  int _current = 300;
+  String _verifiyCode = "";
   StreamSubscription sub;
   void startTimer() {
     if (sub != null) sub.cancel();
     CountdownTimer countDownTimer = new CountdownTimer(
-      new Duration(seconds: 60),
+      new Duration(seconds: 300),
       new Duration(seconds: 1),
     );
     sub = countDownTimer.listen(null);
     sub.onData((duration) {
       setState(() {
-        _current = 60 - duration.elapsed.inSeconds;
+        _current = 300 - duration.elapsed.inSeconds;
       });
     });
     sub.onDone(() {
@@ -53,7 +59,6 @@ class _VerficiationPageState extends State<VerficiationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       appBar: StandardAppBar( text: "Verification".tr(),backgroundColor: UtilExtendsion.mainColor, fontColor: Colors.white,),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -122,7 +127,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                   length: 6,
                   onCompleted: (String value) {
                     setState(() {
-                      // _code = value;
+                      _verifiyCode = value;
                     });
                   },
                   onEditing: (bool value) {
@@ -158,8 +163,16 @@ class _VerficiationPageState extends State<VerficiationPage> {
                       TextSpan(
                           text: "Click here to resend SMS".tr(),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              startTimer();
+                            ..onTap = () async {
+                              try{
+                                Util.showLoadingDialog(context);
+                                await Request().login(countryCode: widget.countryCode, tel: widget.tel);
+                                startTimer();
+                                Navigator.pop(context);
+                              }catch(error){
+                                Navigator.pop(context);
+                                Util.showAlertDialog(context, error.toString());
+                              }
                             },
                           style: TextStyle(
                               color: UtilExtendsion.mainColor,
@@ -173,8 +186,18 @@ class _VerficiationPageState extends State<VerficiationPage> {
                 StandardElevatedButton(
                   backgroundColor: UtilExtendsion.mainColor,
                   text: "Next".tr(),
-                  onPress: () {
-                    FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"));
+                  onPress: () async {
+                    try{
+                      Util.showLoadingDialog(context);
+                      if(_verifiyCode.length != 6)
+                        throw "Please Enter Verification Code".tr();
+                      await Request().verify(countryCode: widget.countryCode, tel: widget.tel, verificationCode: _verifiyCode);
+                      Navigator.pop(context);
+                      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"));
+                    }catch(error){
+                      Navigator.pop(context);
+                      Util.showAlertDialog(context, error.toString());
+                    }
                   },
                 )
               ],

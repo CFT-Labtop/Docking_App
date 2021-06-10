@@ -25,8 +25,10 @@ class FlutterRouter extends BaseRouter {
   void configureRoutes() {
     this.fluroRouter.define("/" + Pages("FirstPage").getName(),
         handler: Handler(handlerFunc: (context, params) => FirstPage()));
-    this.fluroRouter.define("/" + Pages("VerificationPage").getName(),
-        handler: Handler(handlerFunc: (context, params) => VerficiationPage()));
+    this.fluroRouter.define("/" + Pages("VerificationPage").getName() + "/:tel/:countryCode",
+        handler: Handler(handlerFunc: (context, params) {
+          return VerficiationPage(tel: params["tel"][0], countryCode: params["countryCode"][0],);
+        }));
     this.fluroRouter.define("/" + Pages("PhoneSignUpPage").getName(),
         handler: Handler(handlerFunc: (context, params) => PhoneSignUpPage()));
     this.fluroRouter.define("/" + Pages("CreateAccountSuccessPage").getName(),

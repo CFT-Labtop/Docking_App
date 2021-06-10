@@ -58,6 +58,11 @@
     "Deny": "拒絕",
     "Allow": "準許",
     "Request For Camera Permission For Scanning QR Code": "存取相機權限以掃描QR Code",
-    "If You Arrived, Please Click Arrived": "如係已到達指定場所，請按已到"
+    "If You Arrived, Please Click Arrived": "如係已到達指定場所，請按已到",
+    "Mobile Number Cannot Be Empty": "手機號碼不能空白",
+    "Car Type": "車型",
+    "Please Select Country Code": "請選擇區號",
+    "Country Code Cannot Be Empty": "區號不能為空白",
+    "Please Enter Verification Code": "請填寫驗證碼"
 
 }

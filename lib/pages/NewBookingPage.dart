@@ -6,7 +6,7 @@ import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
-import 'package:docking_project/Widgets/StandardTextField.dart';
+import 'package:docking_project/Widgets/StandardTextFormField.dart';
 import 'package:docking_project/Widgets/TimeSlotGrid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
@@ -128,7 +128,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                           onTap: () {
                             showDateDialog();
                           },
-                          child: StandardTextField(
+                          child: StandardTextFormField(
                             textController: timeTextController,
                             fontSize: Util.responsiveSize(context, 18),
                             hintText: "Please Select Booking Date Time".tr(),

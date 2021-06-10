@@ -94,23 +94,23 @@ class _FirstPageState extends State<FirstPage> {
                         textAlign: TextAlign.center,
                         text: TextSpan(children: [
                           TextSpan(
-                              text: "By signing up, you agree to our".tr(), style: TextStyle(fontSize: Util.responsiveSize(context, 18))),
+                              text: "By signing up, you agree to our".tr(), style: TextStyle(fontSize: Util.responsiveSize(context, 14))),
                           TextSpan(text: " "),
                           TextSpan(
                             text: "Terms of Service".tr(),
                             style: TextStyle(
                               decoration: TextDecoration.underline,
-                              fontSize: Util.responsiveSize(context, 18)
+                              fontSize: Util.responsiveSize(context, 14)
                             ),
                           ),
                           TextSpan(text: " "),
-                          TextSpan(text: "and".tr() ,style: TextStyle(fontSize: Util.responsiveSize(context, 18))),
+                          TextSpan(text: "and".tr() ,style: TextStyle(fontSize: Util.responsiveSize(context, 14))),
                           TextSpan(text: " "),
                           TextSpan(
                               text: "Privacy Policy".tr(),
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                fontSize: Util.responsiveSize(context, 18)
+                                fontSize: Util.responsiveSize(context, 14)
                               )),
                         ])),
                   ),
