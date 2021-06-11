@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:docking_project/Enum/VerificationType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
@@ -16,8 +17,9 @@ import 'package:quiver/async.dart';
 class VerficiationPage extends StatefulWidget {
   String tel;
   String countryCode;
+  VerificationType verificationType;
 
-  VerficiationPage({Key key, this.tel, this.countryCode}) : super(key: key);
+  VerficiationPage({Key key, this.tel, this.countryCode, this.verificationType}) : super(key: key);
   
   @override
   _VerficiationPageState createState() => _VerficiationPageState();
@@ -70,6 +72,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
             child: SafeArea(
                 child: Column(
               children: [
+                // Text(widget.verificationType.toString()),
                 SizedBox(
                   height: Util.responsiveSize(context, 48),
                 ),
@@ -192,8 +195,9 @@ class _VerficiationPageState extends State<VerficiationPage> {
                       if(_verifiyCode.length != 6)
                         throw "Please Enter Verification Code".tr();
                       await Request().verify(countryCode: widget.countryCode, tel: widget.tel, verificationCode: _verifiyCode);
+                      await UtilExtendsion.initDriver();
                       Navigator.pop(context);
-                      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"));
+                      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"), parameters: "/" + widget.verificationType.toString());
                     }catch(error){
                       Navigator.pop(context);
                       Util.showAlertDialog(context, error.toString());

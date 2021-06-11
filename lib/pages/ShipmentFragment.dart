@@ -24,23 +24,28 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
   final TextEditingController wareHouseTextController = TextEditingController();
   final TextEditingController manualTextController = TextEditingController();
   List<PickerItem> warehouseSelection;
-  List<String> shipmentList = [
-    "1120-CMSHK",
-    "1121-CMSHK",
-    "1122-CMSHK",
-    "1123-CMSHK"
-  ];
-  String _carType = "車型";
+  final _formKey = GlobalKey<FormState>();
+  List<String> shipmentList = [];
+  String _carType;
+  int selectedWarehouseID;
+  Future futureBuilder;
+  
 
   Future<void> getWarehouse() async{
     List<Warehouse> warehouseList = await Request().getWarehouse();
-    this.warehouseSelection = warehouseList.map((e) => new PickerItem(text: Text(e.warehouse_Code + " " + e.warehouse_Name), value: e.warehouse_Code + " " + e.warehouse_Name)).toList();
+    this.warehouseSelection = warehouseList.map((e) => new PickerItem(text: Text(e.warehouse_Code + " " + e.warehouse_Name), value: e.warehouse_ID)).toList();
+  }
+
+  @override
+  void initState() {
+    futureBuilder = getWarehouse();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getWarehouse(),
+      future: futureBuilder,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
           return Center(
@@ -60,8 +65,9 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                 textController: wareHouseTextController,
                 hintText: "Please Select Warehouse".tr(),
                 dialogTitle: "Please Select Warehouse".tr(),
-                onSelected: (String value) {
-                  wareHouseTextController.text = value;
+                onSelected: (dynamic value, String displayValue) {
+                  selectedWarehouseID = value;
+                  wareHouseTextController.text = displayValue.toString();
                 }, pickerList: warehouseSelection,
               ),
               SizedBox(
@@ -221,8 +227,17 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
               StandardElevatedButton(
                 backgroundColor: UtilExtendsion.mainColor,
                 text: "Next".tr(),
-                onPress: () {
-                  FlutterRouter().goToPage(context, Pages("NewBookingPage"));
+                onPress: () async{
+                  try{
+                    Util.showLoadingDialog(context);
+                    if(wareHouseTextController.text == null || wareHouseTextController.text.isEmpty)
+                      throw "Warehouse Cannot Be Empty".tr();
+                    Navigator.pop(context);
+                    FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + selectedWarehouseID.toString() + "/" + this.shipmentList.toString());
+                  }catch(error){
+                    Navigator.pop(context);
+                    Util.showAlertDialog(context, error.toString());
+                  }
                 },
               ),
               SizedBox(

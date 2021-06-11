@@ -1,5 +1,5 @@
+import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TruckType.dart';
-import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
@@ -8,7 +8,6 @@ import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -22,28 +21,36 @@ class SettingFragment extends StatefulWidget {
 class _SettingFragmentState extends State<SettingFragment> {
   final TextEditingController mobileTextController = TextEditingController();
   final TextEditingController licenseTextController = TextEditingController();
-  String carType = "車型";
+  String carType;
   List<PickerItem> truckTypeSelection;
+  Driver driver;
+  Future futureBuilder;
 
-  @override
-  void initState() {
-    mobileTextController.text = "12345678";
-    super.initState();
-  }
-
-  Future<void> getTruckType() async{
+  Future<void> getInformation() async{
     try{
       List<TruckType> truckTypeList = await Request().getTrunckType();
-      this.truckTypeSelection = truckTypeList.map((e) => new PickerItem(text: Text(e.typeName_Ch), value: e.typeName_Ch)).toList();
+      Request().getDriver();
+      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      driver = await Request().getDriver();
+      mobileTextController.text = driver.tel;
+      licenseTextController.text = driver.default_Truck_No;
+      carType = driver.default_Truck_Type;
     }catch(e){
       throw e;
     }
   }
 
   @override
+  void initState() {
+    futureBuilder = getInformation();
+    super.initState();
+  }
+  
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getTruckType(),
+      future: futureBuilder,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
           return Center(
@@ -76,7 +83,7 @@ class _SettingFragmentState extends State<SettingFragment> {
                   SizedBox(
                     height: Util.responsiveSize(context, 24),
                   ),
-                  MobileStandardTextField(
+                  MobileStandardTextField(//NO Country Code
                     mobileTextController: mobileTextController,
                     enable: false,
                   ),
@@ -99,7 +106,7 @@ class _SettingFragmentState extends State<SettingFragment> {
                       setState(() {
                         carType = selectedCarType;
                       });
-                    }, truckTypeSelection: truckTypeSelection
+                    }, truckTypeSelection: this.truckTypeSelection
                   ),
                   Expanded(
                     child: SizedBox(),
@@ -107,7 +114,17 @@ class _SettingFragmentState extends State<SettingFragment> {
                   StandardElevatedButton(
                     backgroundColor: UtilExtendsion.mainColor,
                     text: "Submit".tr(),
-                    onPress: () {},
+                    onPress: ()async {
+                      try{
+                        Util.showLoadingDialog(context);
+                        await Request().updateSetting(tel: mobileTextController.text, countryCode: "852", default_Truck_No: licenseTextController.text, default_Truck_Type: carType);
+                        Navigator.pop(context);
+                        Util.showAlertDialog(context, "",  title: "Update Successfully".tr());
+                      }catch(error){
+                        Navigator.pop(context);
+                        Util.showAlertDialog(context, error.toString());
+                      }
+                    },
                   ),
                   SizedBox(
                     height: Util.responsiveSize(context, 12),

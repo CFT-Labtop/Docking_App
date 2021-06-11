@@ -1,0 +1,4 @@
+enum VerificationType{
+  REGISTER,
+  LOGIN
+}

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:docking_project/Enum/VerificationType.dart';
 import 'package:docking_project/pages/CreateAccountSuccessPage.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:docking_project/pages/LoginPage.dart';
@@ -25,23 +28,27 @@ class FlutterRouter extends BaseRouter {
   void configureRoutes() {
     this.fluroRouter.define("/" + Pages("FirstPage").getName(),
         handler: Handler(handlerFunc: (context, params) => FirstPage()));
-    this.fluroRouter.define("/" + Pages("VerificationPage").getName() + "/:tel/:countryCode",
+    this.fluroRouter.define("/" + Pages("VerificationPage").getName() + "/:tel/:countryCode/:verificationType",
         handler: Handler(handlerFunc: (context, params) {
-          return VerficiationPage(tel: params["tel"][0], countryCode: params["countryCode"][0],);
+          return VerficiationPage(tel: params["tel"][0], countryCode: params["countryCode"][0], verificationType: VerificationType.values.firstWhere((e) => e.toString() == params["verificationType"][0]));
         }));
     this.fluroRouter.define("/" + Pages("PhoneSignUpPage").getName(),
         handler: Handler(handlerFunc: (context, params) => PhoneSignUpPage()));
-    this.fluroRouter.define("/" + Pages("CreateAccountSuccessPage").getName(),
+    this.fluroRouter.define("/" + Pages("CreateAccountSuccessPage/:verificationType").getName(),
         handler: Handler(
-            handlerFunc: (context, params) => CreateAccountSuccessPage()));
+            handlerFunc: (context, params) {
+              return CreateAccountSuccessPage(verificationType: VerificationType.values.firstWhere((e) => e.toString() == params["verificationType"][0]));
+            }));
     this.fluroRouter.define("/" + Pages("MainPage").getName(),
         handler: Handler(handlerFunc: (context, params) => MainPage()));
     this.fluroRouter.define("/" + Pages("LoginPage").getName(),
         handler: Handler(handlerFunc: (context, params) => LoginPage()));
     this.fluroRouter.define("/" + Pages("BookingDetailPage").getName(),
         handler: Handler(handlerFunc: (context, params) => BookingDetailPage()));
-    this.fluroRouter.define("/" + Pages("NewBookingPage").getName(),
-        handler: Handler(handlerFunc: (context, params) => NewBookingPage()));
+    this.fluroRouter.define("/" + Pages("NewBookingPage").getName() + "/:warehouse/:shipmentList",
+        handler: Handler(handlerFunc: (context, params){
+          return NewBookingPage(warehouse: params["warehouse"][0], shipmentList: params["shipmentList"][0].split(",").map((e) => e.toString()).toList() as List<String>,);
+        }));
     this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),
         handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));
   }

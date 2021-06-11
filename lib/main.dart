@@ -15,6 +15,7 @@ Future<void> main() async {
   FlutterRouter().configureRoutes();
   WidgetsFlutterBinding.ensureInitialized();
   Util.sharedPreferences = await SharedPreferences.getInstance();
+  UtilExtendsion.initDriver();
   
   await EasyLocalization.ensureInitialized();
   runApp(EasyLocalization(

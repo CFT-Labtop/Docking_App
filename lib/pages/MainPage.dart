@@ -2,13 +2,13 @@ import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/pages/BookingListFragment.dart';
-import 'package:docking_project/pages/NewBookingPage.dart';
 import 'package:docking_project/pages/SettingFragment.dart';
 import 'package:docking_project/pages/ShipmentFragment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
+import 'package:flutter_basecomponent/Util.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key key}) : super(key: key);
@@ -17,9 +17,16 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
+
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
   PageController _pageViewcontroller = new PageController();
+
+  @override
+  void initState() {
+    print(UtilExtendsion.getToken());
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +36,10 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: UtilExtendsion.mainColor,
         trailingActions: [
           PlatformIconButton(
-            onPressed: () => FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true),
+            onPressed: () async {
+              await Util.sharedPreferences.setString("Authorization", "");
+              FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+            },
             icon: Icon(
               Icons.logout_outlined,
               color: Colors.white,

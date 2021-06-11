@@ -1,3 +1,4 @@
+import 'package:docking_project/Enum/VerificationType.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
@@ -36,10 +37,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
   Future<void> getTruckType() async {
     try {
       List<TruckType> truckTypeList = await Request().getTrunckType();
-      this.truckTypeSelection = truckTypeList
-          .map((e) =>
-              new PickerItem(text: Text(e.typeName_Ch), value: e.truck_Type))
-          .toList();
+      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(truckTypeList);
     } catch (e) {
       throw e;
     }
@@ -131,7 +129,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                                 Util.showLoadingDialog(context);
                                 await Request().driverRegister(countryCode: _countryCode, mobileNumber: mobileTextController.text, carType: _carType, license: licenseTextController.text);
                                 Navigator.pop(context);
-                                FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _countryCode);
+                                FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _countryCode + "/" + VerificationType.REGISTER.toString());
                               }catch(error){
                                 Navigator.pop(context);
                                 Util.showAlertDialog(context, error.toString());

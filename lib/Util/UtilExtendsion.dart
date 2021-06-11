@@ -1,10 +1,51 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:docking_project/Model/Driver.dart';
+import 'package:docking_project/Model/TruckType.dart';
+import 'package:docking_project/Util/Request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 extension UtilExtendsion on Util {
   static const Color mainColor = Color.fromRGBO(72, 144, 201, 1);
+  static List<PickerItem> getTruckTypeSelection(List<TruckType> truckTypeList) {
+    return truckTypeList
+        .map((e) =>
+            new PickerItem(text: Text(e.typeName_Ch), value: e.truck_Type))
+        .toList();
+  }
+  static Future<void> initDriver() async {
+    try{
+      Driver driver = await Request().getDriver();
+      await Util.sharedPreferences.setString("default_Truck_No", driver.default_Truck_No);
+      await Util.sharedPreferences.setString("default_Truck_Type", driver.default_Truck_Type);
+    }catch(error){
+      print(error);
+    }
+  }
+  static String getDefaultTruckNo(){
+    try{
+      return Util.sharedPreferences.getString("default_Truck_No");
+    }catch(error){
+      return "";
+    }
+  }
+  static String getDefaultTruckType(){
+    try{
+      return  Util.sharedPreferences.getString("default_Truck_Type");
+    }catch(error){
+      return "";
+    }
+  }
+
+  static String getToken(){
+    try{
+      return  Util.sharedPreferences.getString("Authorization");
+    }catch(error){
+      return "";
+    }
+  }
 }

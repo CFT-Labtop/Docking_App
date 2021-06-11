@@ -1,35 +1,20 @@
+import 'package:docking_project/Model/TimeSlot.dart';
 import 'package:docking_project/Widgets/TimeSlotBox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class TimeSlotGrid extends StatefulWidget {
-  const TimeSlotGrid({Key key}) : super(key: key);
+  final List<TimeSlot> timeSlotList;
+  final Function(int index, TimeSlot selectedTimeSlot) onSelected;
+  final int selectedIndex;
+  const TimeSlotGrid({Key key, @required this.timeSlotList, @required this.onSelected, this.selectedIndex = -1}) : super(key: key);
 
   @override
   _TimeSlotGridState createState() => _TimeSlotGridState();
 }
 
 class _TimeSlotGridState extends State<TimeSlotGrid> {
-  int _selectedIndex = 0;
-  List sampleListText = [
-    "9:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-    "21:00",
-    "22:00",
-    "23:00",
-    "24:00",
-  ];
 
   int getRowCount(){
     double screenWidth = MediaQuery.of(context).size.width;
@@ -43,6 +28,12 @@ class _TimeSlotGridState extends State<TimeSlotGrid> {
       return 6;
   }
 
+  TimeSlotType getTimeSlotType(TimeSlot timeSlot, int index){
+    if(!timeSlot.isAvailable)
+      return TimeSlotType.DISABLED;
+    return widget.selectedIndex == index?  TimeSlotType.SELECTED : TimeSlotType.AVAILABLE;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,7 +44,7 @@ class _TimeSlotGridState extends State<TimeSlotGrid> {
             crossAxisSpacing: Util.responsiveSize(context, 12),
             mainAxisSpacing: Util.responsiveSize(context, 8),
             children: List.generate(
-                sampleListText.length,
+                widget.timeSlotList.length,
                 (index) => AnimationConfiguration.staggeredGrid(
                       position: index,
                       duration: const Duration(milliseconds: 375),
@@ -61,14 +52,13 @@ class _TimeSlotGridState extends State<TimeSlotGrid> {
                       child: ScaleAnimation(
                         child: FadeInAnimation(
                           child: TimeSlotBox(
-                            timeSlotType: _selectedIndex == index
-                                ? TimeSlotType.SELECTED
-                                : TimeSlotType.AVAILABLE,
-                            timeText: sampleListText[index],
-                            onPress: (String timeText) {
-                              setState(() {
-                                _selectedIndex = index;
-                              });
+                            timeSlotType: getTimeSlotType(widget.timeSlotList[index], index),
+                            timeText: widget.timeSlotList[index].startTime.substring(0,5),
+                            onPress: (String text, TimeSlotType timeSlotType) {
+                              if(timeSlotType != TimeSlotType.DISABLED){
+                                  widget.onSelected(index, widget.timeSlotList[index]);
+                              }
+                              // widget.onSelected(widget.timeSlotList[index]);
                             },
                           ),
                         ),

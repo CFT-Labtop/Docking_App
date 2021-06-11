@@ -1,3 +1,4 @@
+import 'package:docking_project/Enum/VerificationType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,8 @@ import 'dart:async';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class CreateAccountSuccessPage extends StatefulWidget {
-  const CreateAccountSuccessPage({Key key}) : super(key: key);
+  final VerificationType verificationType;
+  const CreateAccountSuccessPage({Key key, this.verificationType}) : super(key: key);
 
   @override
   _CreateAccountSuccessPageState createState() =>
@@ -21,6 +23,14 @@ class _CreateAccountSuccessPageState extends State<CreateAccountSuccessPage> {
       FlutterRouter().goToPage(context, Pages("MainPage"), clear: true);
     });
     super.initState();
+  }
+
+  String getLoginMessage(VerificationType verificationType){
+    if(verificationType == VerificationType.REGISTER)
+      return "Account Created Successfully".tr();
+    else if (verificationType == VerificationType.LOGIN)
+      return "Login Successfully".tr();
+    return "";
   }
 
   @override
@@ -42,7 +52,7 @@ class _CreateAccountSuccessPageState extends State<CreateAccountSuccessPage> {
             SizedBox(
               height: Util.responsiveSize(context, 48),
             ),
-            Text("Account Created Successfully".tr(),
+            Text(getLoginMessage(widget.verificationType),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.white,
