@@ -132,6 +132,4 @@ class Request extends BaseRequest{
       throw e;
     }
   }
-
-  
 }

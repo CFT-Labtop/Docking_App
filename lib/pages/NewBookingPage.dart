@@ -148,8 +148,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                       SizedBox(
                         height: Util.responsiveSize(context, 32),
                       ),
-                      CarTypeStandardField(
-                        carType: _carType,
+                      CarTypeStandardField( 
                         textController: licenseTextController,
                         onPress: (String carType) {
                           setState(() {

@@ -5,18 +5,29 @@ import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/Picker.dart';
 
-class MobileStandardTextField extends StatelessWidget {
+class MobileStandardTextField extends StatefulWidget {
   const MobileStandardTextField({
     Key key,
     @required this.mobileTextController, this.enable,
-    @required this.onPress, this.countryCode = "852",
-  }) : super(key: key);
+    @required this.onPress, this.initialPrefix ,
+   }) : super(key: key);
 
   final TextEditingController mobileTextController;
   final bool enable;
+  final String initialPrefix;
   final void Function(String countryCode) onPress;
-  final String countryCode;
 
+  @override
+  MobileStandardTextFieldState createState() => MobileStandardTextFieldState();
+}
+
+class MobileStandardTextFieldState extends State<MobileStandardTextField> {
+  String countryCode = "852";
+  @override
+  void initState() {
+    countryCode = widget.initialPrefix ?? countryCode;
+    super.initState();
+  }
   showPickerArray(BuildContext context) {
     new Picker(
         adapter: PickerDataAdapter(data: [new PickerItem(text: Text("852"), value: "852"), new PickerItem(text: Text("86"), value: "86")] ),
@@ -25,14 +36,18 @@ class MobileStandardTextField extends StatelessWidget {
         cancelText: "Cancel".tr(),
         confirmText: "Confirm".tr(),
         onConfirm: (Picker picker, List value) {
-          onPress(picker.getSelectedValues()[0]);
+          setState(() {
+            String selectedValue = picker.getSelectedValues()[0]; 
+            widget.onPress(selectedValue);
+            countryCode = selectedValue;
+          });
         }).showDialog(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return StandardTextFormField(
-      textController: mobileTextController,
+      textController: widget.mobileTextController,
       hintText: "Enter Your Phone Number".tr(),
       textInputType: TextInputType.phone,
       validator: (text) {
@@ -43,7 +58,7 @@ class MobileStandardTextField extends StatelessWidget {
         return null;
       },
       fontSize: Util.responsiveSize(context, 18),
-      enable: this.enable,
+      enable: this.widget.enable,
       prefixOnPress: (){
         showPickerArray(context);
       },

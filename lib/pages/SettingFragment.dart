@@ -101,7 +101,6 @@ class _SettingFragmentState extends State<SettingFragment> {
                   ),
                   CarTypeStandardField(
                     textController: licenseTextController,
-                    carType: carType,
                     onPress: (String selectedCarType) {
                       setState(() {
                         carType = selectedCarType;

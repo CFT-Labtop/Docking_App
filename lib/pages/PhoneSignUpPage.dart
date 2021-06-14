@@ -23,8 +23,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
   final TextEditingController mobileTextController = TextEditingController();
   final TextEditingController licenseTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _carTypeTextFieldKey = GlobalKey<CarTypeStandardFieldState>();
   List<PickerItem> truckTypeSelection;
-  String _carType;
   String _countryCode = "852";
 
   @override
@@ -89,7 +89,6 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                           height: Util.responsiveSize(context, 24.0),
                         ),
                         MobileStandardTextField(
-                            countryCode: _countryCode,
                             mobileTextController: mobileTextController, onPress: (String countryCode) {
                               setState(() {
                                   _countryCode = countryCode;
@@ -109,12 +108,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                         ),
                         CarTypeStandardField(
                           textController: licenseTextController,
-                          carType: _carType,
-                          onPress: (String selectedCarType) {
-                            setState(() {
-                              _carType = selectedCarType;
-                            });
-                          },
+                          key: _carTypeTextFieldKey,
+                          onPress: (String selectedCarType) {},
                           truckTypeSelection: this.truckTypeSelection,
                         ),
                         SizedBox(
@@ -127,7 +122,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                             if (_formKey.currentState.validate()) {
                               try{
                                 Util.showLoadingDialog(context);
-                                await Request().driverRegister(countryCode: _countryCode, mobileNumber: mobileTextController.text, carType: _carType, license: licenseTextController.text);
+                                await Request().driverRegister(countryCode: _countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text);
                                 Navigator.pop(context);
                                 FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _countryCode + "/" + VerificationType.REGISTER.toString());
                               }catch(error){

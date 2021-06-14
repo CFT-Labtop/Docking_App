@@ -14,7 +14,7 @@ class Booking{
   });
 
 }
-
+ 
 enum BookingStatus{
   ARRIVED,
   PENDING,
