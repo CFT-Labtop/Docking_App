@@ -47,15 +47,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
     return FutureBuilder(
       future: futureBuilder,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-              child: Text(
-            snapshot.error,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.grey, fontSize: Util.responsiveSize(context, 24)),
-          ));
-        } else if (snapshot.connectionState == ConnectionState.done) {
+        return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
           return Column(
             children: [
               SizedBox(
@@ -233,7 +225,9 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                     if(wareHouseTextController.text == null || wareHouseTextController.text.isEmpty)
                       throw "Warehouse Cannot Be Empty".tr();
                     Navigator.pop(context);
-                    FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + selectedWarehouseID.toString() + "/" + this.shipmentList.toString());
+                    FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + selectedWarehouseID.toString(), routeSettings: RouteSettings(
+                      arguments: this.shipmentList
+                    ));
                   }catch(error){
                     Navigator.pop(context);
                     Util.showAlertDialog(context, error.toString());
@@ -245,9 +239,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
               ),
             ],
           );
-        } else {
-          return Center(child: PlatformCircularProgressIndicator());
-        }
+        });
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:docking_project/Enum/VerificationType.dart';
+import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/pages/CreateAccountSuccessPage.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:docking_project/pages/LoginPage.dart';
@@ -44,10 +45,14 @@ class FlutterRouter extends BaseRouter {
     this.fluroRouter.define("/" + Pages("LoginPage").getName(),
         handler: Handler(handlerFunc: (context, params) => LoginPage()));
     this.fluroRouter.define("/" + Pages("BookingDetailPage").getName(),
-        handler: Handler(handlerFunc: (context, params) => BookingDetailPage()));
-    this.fluroRouter.define("/" + Pages("NewBookingPage").getName() + "/:warehouse/:shipmentList",
         handler: Handler(handlerFunc: (context, params){
-          return NewBookingPage(warehouse: params["warehouse"][0], shipmentList: params["shipmentList"][0].split(",").map((e) => e.toString()).toList() as List<String>,);
+          final booking = context.settings.arguments as Booking;
+          return BookingDetailPage(booking: booking,);
+        }));
+    this.fluroRouter.define("/" + Pages("NewBookingPage").getName() + "/:warehouse",
+        handler: Handler(handlerFunc: (context, params){
+          final shipmentList = context.settings.arguments as List<String>;
+          return NewBookingPage(warehouse: params["warehouse"][0], shipmentList:shipmentList,);
         }));
     this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),
         handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));

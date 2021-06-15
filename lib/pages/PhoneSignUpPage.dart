@@ -24,8 +24,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
   final TextEditingController licenseTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _carTypeTextFieldKey = GlobalKey<CarTypeStandardFieldState>();
+  final _mobileTextFieldKey = GlobalKey<MobileStandardTextFieldState>();
   List<PickerItem> truckTypeSelection;
-  String _countryCode = "852";
 
   @override
   void dispose() {
@@ -89,11 +89,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                           height: Util.responsiveSize(context, 24.0),
                         ),
                         MobileStandardTextField(
-                            mobileTextController: mobileTextController, onPress: (String countryCode) {
-                              setState(() {
-                                  _countryCode = countryCode;
-                              });
-                            },),
+                          key: _mobileTextFieldKey,
+                            mobileTextController: mobileTextController, onPress: (String countryCode) {  },),
                         SizedBox(
                           height: Util.responsiveSize(context, 24.0),
                         ),
@@ -122,9 +119,9 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                             if (_formKey.currentState.validate()) {
                               try{
                                 Util.showLoadingDialog(context);
-                                await Request().driverRegister(countryCode: _countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text);
+                                await Request().driverRegister(countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeTextFieldKey.currentState.carType);
                                 Navigator.pop(context);
-                                FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _countryCode + "/" + VerificationType.REGISTER.toString());
+                                FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.REGISTER.toString());
                               }catch(error){
                                 Navigator.pop(context);
                                 Util.showAlertDialog(context, error.toString());

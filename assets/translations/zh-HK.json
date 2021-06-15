@@ -58,14 +58,23 @@
     "Deny": "拒絕",
     "Allow": "準許",
     "Request For Camera Permission For Scanning QR Code": "存取相機權限以掃描QR Code",
-    "If You Arrived, Please Click Arrived": "如係已到達指定場所，請按已到",
+    "If You Arrived, Please Click Arrived": "如果已到達指定場所，請按已到",
     "Mobile Number Cannot Be Empty": "手機號碼不能空白",
-    "Car Type": "車型",
     "Please Select Country Code": "請選擇區號",
     "Country Code Cannot Be Empty": "區號不能為空白",
     "Warehouse Cannot Be Empty": "倉庫不能為空白",
     "Please Enter Verification Code": "請填寫驗證碼",
     "Login Successfully": "成功登入用戶",
-    "Update Successfully": "更新成功"
-
+    "Update Successfully": "更新成功",
+    "Driver ID Cannot Be Empty": "司機ID不能為空白",
+    "License Cannot Be Empty": "車牌不能為空白",
+    "Car Type Cannot Be Empty": "車型不能為空白",
+    "Booking Date Cannot Be Empty": "預約日期不能為空白",
+    "Booking Time Slot Cannot Be Empty": "預約時段日期不能為空白",
+    "Is ChHK Truck?": "是否為中港車輛?",
+    "Yes": "是",
+    "No": "否",
+    "Booking Successfully": "預約成功",
+    "Booked": "已預約",
+    "Shipment": "Shipment"
 }

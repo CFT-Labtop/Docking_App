@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
@@ -90,6 +91,7 @@ class Request extends BaseRequest{
 
   Future<void> updateSetting({String countryCode, String tel, String default_Truck_No, String default_Truck_Type})async {
     try {
+      this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
       Response response = await this.dio.put(this.baseURL + "Driver", data: {
         "countryCode": countryCode,
         "tel": tel,
@@ -113,7 +115,7 @@ class Request extends BaseRequest{
         throw response.data["rstMsg"];
       String driverID = response.data["rstData"];
       response = await this.dio.get(this.baseURL + "Driver/" + driverID);
-      return Driver(driver_ID: response.data["driver_ID"], tel: response.data["tel"], default_Truck_No: response.data["default_Truck_No"], default_Truck_Type: response.data["default_Truck_Type"]);
+      return Driver(driver_ID: response.data["driver_ID"], tel: response.data["tel"], default_Truck_No: response.data["default_Truck_No"], default_Truck_Type: response.data["default_Truck_Type"], countryCode: response.data["countryCode"]);
     }on DioError catch(e){
       throw e.message;
     }catch(e){
@@ -126,6 +128,43 @@ class Request extends BaseRequest{
       this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
       Response response = await this.dio.get(this.baseURL + "Booking/TimeSlot/" + warehouseID.toString());
       return response.data;
+    }on DioError catch(e){
+      throw e.message;
+    }catch(e){
+      throw e;
+    }
+  }
+
+  Future<void> createBooking({String warehouseID, List<String> shipmentList, String driverID, String driverTel, String driverCountryCode, String truckNo, String truckType, String bookingDate, String timeSlotId, bool isChHKTruck})async {
+    try{
+      this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
+      Response response = await this.dio.post(this.baseURL + "Booking",data: {
+        "warehouseID": warehouseID,
+        "shipmentList": shipmentList,
+        "driverID": driverID,
+        "driverTel": driverTel,
+        "driverCountryCode": driverCountryCode,
+        "truckNo": truckNo,
+        "truckType": truckType,
+        "bookingDate": bookingDate,
+        "timeSlotId": timeSlotId,
+        "isChHKTruck": isChHKTruck
+      });
+      if(response.data["rstCode"] != 0)
+        throw response.data["rstMsg"];
+    }on DioError catch(e){
+      throw e.message;
+    }catch(e){
+      throw e;
+    }
+  }
+  Future<List<Booking>> getBookingList(String tel)async {
+    try{
+      this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
+      Response response = await this.dio.get(this.baseURL + "Booking/Search", queryParameters: {
+        "driverTel": tel
+      });
+      return (response.data as List<dynamic>).map((f) => Booking.fromJson(f)).toList();
     }on DioError catch(e){
       throw e.message;
     }catch(e){

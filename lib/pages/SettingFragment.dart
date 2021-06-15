@@ -21,7 +21,7 @@ class SettingFragment extends StatefulWidget {
 class _SettingFragmentState extends State<SettingFragment> {
   final TextEditingController mobileTextController = TextEditingController();
   final TextEditingController licenseTextController = TextEditingController();
-  String carType;
+  final _carTypeTextFieldKey = GlobalKey<CarTypeStandardFieldState>();
   List<PickerItem> truckTypeSelection;
   Driver driver;
   Future futureBuilder;
@@ -29,12 +29,10 @@ class _SettingFragmentState extends State<SettingFragment> {
   Future<void> getInformation() async{
     try{
       List<TruckType> truckTypeList = await Request().getTrunckType();
-      Request().getDriver();
       this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(truckTypeList);
       driver = await Request().getDriver();
       mobileTextController.text = driver.tel;
       licenseTextController.text = driver.default_Truck_No;
-      carType = driver.default_Truck_Type;
     }catch(e){
       throw e;
     }
@@ -100,12 +98,10 @@ class _SettingFragmentState extends State<SettingFragment> {
                     height: Util.responsiveSize(context, 12),
                   ),
                   CarTypeStandardField(
+                    initCarType: driver.default_Truck_Type,
                     textController: licenseTextController,
-                    onPress: (String selectedCarType) {
-                      setState(() {
-                        carType = selectedCarType;
-                      });
-                    }, truckTypeSelection: this.truckTypeSelection
+                    key: _carTypeTextFieldKey,
+                    onPress: (String selectedCarType) {}, truckTypeSelection: this.truckTypeSelection
                   ),
                   Expanded(
                     child: SizedBox(),
@@ -116,7 +112,7 @@ class _SettingFragmentState extends State<SettingFragment> {
                     onPress: ()async {
                       try{
                         Util.showLoadingDialog(context);
-                        await Request().updateSetting(tel: mobileTextController.text, countryCode: "852", default_Truck_No: licenseTextController.text, default_Truck_Type: carType);
+                        await Request().updateSetting(tel: mobileTextController.text, countryCode: "86", default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeTextFieldKey.currentState.carType);
                         Navigator.pop(context);
                         Util.showAlertDialog(context, "",  title: "Update Successfully".tr());
                       }catch(error){

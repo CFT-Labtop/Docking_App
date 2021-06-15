@@ -17,35 +17,65 @@ extension UtilExtendsion on Util {
             new PickerItem(text: Text(e.typeName_Ch), value: e.truck_Type))
         .toList();
   }
+
   static Future<void> initDriver() async {
-    try{
+    try {
       Driver driver = await Request().getDriver();
-      await Util.sharedPreferences.setString("default_Truck_No", driver.default_Truck_No);
-      await Util.sharedPreferences.setString("default_Truck_Type", driver.default_Truck_Type);
-    }catch(error){
+      await Util.sharedPreferences
+          .setString("default_Truck_No", driver.default_Truck_No);
+      await Util.sharedPreferences
+          .setString("default_Truck_Type", driver.default_Truck_Type);
+      await Util.sharedPreferences.setString("tel", driver.tel);
+    } catch (error) {
       print(error);
     }
   }
-  static String getDefaultTruckNo(){
-    try{
+
+  static String getDefaultTruckNo() {
+    try {
       return Util.sharedPreferences.getString("default_Truck_No");
-    }catch(error){
-      return "";
-    }
-  }
-  static String getDefaultTruckType(){
-    try{
-      return  Util.sharedPreferences.getString("default_Truck_Type");
-    }catch(error){
+    } catch (error) {
       return "";
     }
   }
 
-  static String getToken(){
-    try{
-      return  Util.sharedPreferences.getString("Authorization");
-    }catch(error){
+  static String getDefaultTruckType() {
+    try {
+      return Util.sharedPreferences.getString("default_Truck_Type");
+    } catch (error) {
       return "";
+    }
+  }
+
+  static String getTel() {
+    try {
+      return Util.sharedPreferences.getString("tel");
+    } catch (error) {
+      return "";
+    }
+  }
+
+  static String getToken() {
+    try {
+      return Util.sharedPreferences.getString("Authorization");
+    } catch (error) {
+      return "";
+    }
+  }
+
+  static Widget CustomFutureBuild(BuildContext context, AsyncSnapshot<dynamic> snapshot, Widget Function() callBack) {
+    if (snapshot.hasError) {
+      return Center(
+          child: Text(
+        snapshot.error,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Colors.grey, fontSize: Util.responsiveSize(context, 24)),
+      ));
+    } else if (snapshot.connectionState == ConnectionState.done) {
+      return callBack();
+    } else {
+      return Center(child: PlatformCircularProgressIndicator());
     }
   }
 }

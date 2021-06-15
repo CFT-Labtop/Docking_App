@@ -1,14 +1,17 @@
+import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:slimy_card/slimy_card.dart';
 import 'package:flutter_basecomponent/Util.dart';
 
 class BookingDetailPage extends StatefulWidget {
-  const BookingDetailPage({Key key}) : super(key: key);
+  final Booking booking;
+  const BookingDetailPage({Key key, this.booking}) : super(key: key);
 
   @override
   _BookingDetailPageState createState() => _BookingDetailPageState();
@@ -33,23 +36,32 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         text: 'Booking Detail'.tr(),
         backgroundColor: UtilExtendsion.mainColor,
         fontColor: Colors.white,
+        trailingActions: [
+          PlatformIconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+          )
+        ],
       ),
       body: SafeArea(
           child: ListView(
         children: [
+          Text(widget.booking.shipmentList.length.toString()),
           SizedBox(
             height: Util.responsiveSize(context, 24),
           ),
           SlimyCard(
             color: UtilExtendsion.mainColor,
             width: MediaQuery.of(context).size.width * 0.8,
-            topCardHeight: Util.responsiveSize(context, 500),
-            bottomCardHeight: Util.responsiveSize(context, 230),
+            topCardHeight: Util.responsiveSize(context, 600),
+            bottomCardHeight: Util.responsiveSize(context, 26.5)* 6,
             borderRadius: 15,
             topCardWidget: Column(
               children: [
                 Text(
-                  "AFC2105210190001",
+                  widget.booking.bookingRef,
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: Util.responsiveSize(context, 24)),
@@ -61,13 +73,30 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   height: Util.responsiveSize(context, 32),
                 ),
                 QrImage(
-                  data: "DummyData", // TODO: get value from server
+                  data: widget.booking.qrCodeString ?? "",
+                  // data: "AA",
                   version: QrVersions.auto,
                   backgroundColor: Colors.white,
                   size: Util.responsiveSize(context, 200),
                 ),
                 SizedBox(
                   height: Util.responsiveSize(context, 32),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: Util.responsiveSize(context, 28)),
+                  child: Column(
+                    children: [
+                      detailTile(Icons.date_range,widget.booking.displayBookingDate()),
+                      detailTile(Icons.schedule, widget.booking.timeSlot),
+                      detailTile(Icons.store, widget.booking.warehouse),
+                      detailTile(Icons.car_repair,
+                          widget.booking.showTruckAndLicense()),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 24),
                 ),
                 Text(
                   "If You Arrived, Please Click Arrived".tr(),
@@ -87,33 +116,23 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
               ],
             ),
             bottomCardWidget: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Booking Detail'.tr(),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Util.responsiveSize(context, 24)),
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {});
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ))
-                  ],
+                Text(
+                  'Shipment'.tr(),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Util.responsiveSize(context, 24)),
                 ),
                 Divider(
                   color: Colors.white,
                 ),
-                detailTile(Icons.store, "長沙灣"),
-                detailTile(Icons.car_repair, "貨車(AA1234)"),
-                detailTile(Icons.schedule,
-                    new DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()))
+                detailTile(Icons.date_range,widget.booking.displayBookingDate()),
+                detailTile(Icons.date_range,widget.booking.displayBookingDate()),
+                detailTile(Icons.date_range,widget.booking.displayBookingDate()),
+                detailTile(Icons.date_range,widget.booking.displayBookingDate()),
+                detailTile(Icons.date_range,widget.booking.displayBookingDate()),
+                detailTile(Icons.date_range,widget.booking.displayBookingDate()),
               ],
             ),
             slimeEnabled: true,
