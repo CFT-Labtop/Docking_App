@@ -38,7 +38,9 @@ class IntroductionSwiper extends StatelessWidget {
           );
         },
         itemCount: listComponents.length,
-        pagination: new SwiperPagination(),
+        pagination: new SwiperPagination(builder: DotSwiperPaginationBuilder(
+          activeColor: Colors.amber
+        )),
         control: new SwiperControl(color: Colors.white),
       ),
     );

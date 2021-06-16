@@ -9,7 +9,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="docking_project"
+        android:label="預約埋台系統"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

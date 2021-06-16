@@ -84,6 +84,7 @@ class _SettingFragmentState extends State<SettingFragment> {
                   MobileStandardTextField(//NO Country Code
                     mobileTextController: mobileTextController,
                     enable: false,
+                    initialPrefix: driver.countryCode,
                   ),
                   SizedBox(
                     height: Util.responsiveSize(context, 24),
@@ -112,7 +113,8 @@ class _SettingFragmentState extends State<SettingFragment> {
                     onPress: ()async {
                       try{
                         Util.showLoadingDialog(context);
-                        await Request().updateSetting(tel: mobileTextController.text, countryCode: "86", default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeTextFieldKey.currentState.carType);
+                        await Request().updateSetting(tel: mobileTextController.text, countryCode: driver.countryCode, default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeTextFieldKey.currentState.carType);
+                        await UtilExtendsion.initDriver();
                         Navigator.pop(context);
                         Util.showAlertDialog(context, "",  title: "Update Successfully".tr());
                       }catch(error){

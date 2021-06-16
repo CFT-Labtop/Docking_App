@@ -19,15 +19,23 @@ class _FirstPageState extends State<FirstPage> {
       heightFactor: 1,
       child: Container(
         color: Colors.white,
-        child: Center(
-            child: Text(
-          "Dock Booking System",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: Util.responsiveSize(context, 40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset("assets/logo.png", height: Util.responsiveSize(context, 80),),
+            SizedBox(
+              height: Util.responsiveSize(context, 10),
+            ),
+            Text(
+              "Dock Booking System",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+              fontSize: Util.responsiveSize(context, 25.0),
               fontWeight: FontWeight.bold,
               color: UtilExtendsion.mainColor),
-        ).tr()),
+            ).tr(),
+          ],
+        ),
       ),
     );
   }
@@ -36,8 +44,17 @@ class _FirstPageState extends State<FirstPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          color: UtilExtendsion.mainColor,
           width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+              colors: [
+                Color(0xff94050c),
+                Color(0xfff13e4a)
+              ],
+            )
+          ),
           child: SafeArea(
             bottom: false,
             child: Column(
@@ -45,12 +62,12 @@ class _FirstPageState extends State<FirstPage> {
                 children: [
                   Flexible(child: header()),
                   SizedBox(
-                    height: Util.responsiveSize(context, 34),
+                    height: Util.responsiveSize(context, 50),
                   ),
                   Text(
                     "Ready to get stuff done?",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context, 20)),
+                    style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context,20)),
                   ).tr(),
                   Expanded(
                     flex: 2,
@@ -114,7 +131,9 @@ class _FirstPageState extends State<FirstPage> {
                               )),
                         ])),
                   ),
-                  SizedBox(height: Util.responsiveSize(context, 48.0))
+                  SizedBox(height: Util.responsiveSize(context, 8.0)),
+                  Text("Version 0.0.5", style: TextStyle(fontSize: Util.responsiveSize(context, 14), color: Colors.white),),
+                  SizedBox(height: Util.responsiveSize(context, 32.0)),
                 ]),
           )),
     );

@@ -10,7 +10,7 @@ import 'package:flutter_picker/Picker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 extension UtilExtendsion on Util {
-  static const Color mainColor = Color.fromRGBO(72, 144, 201, 1);
+  static const Color mainColor = Color.fromRGBO(202,37,46,1);
   static List<PickerItem> getTruckTypeSelection(List<TruckType> truckTypeList) {
     return truckTypeList
         .map((e) =>

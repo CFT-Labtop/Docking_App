@@ -169,8 +169,9 @@ class _VerficiationPageState extends State<VerficiationPage> {
                             ..onTap = () async {
                               try{
                                 Util.showLoadingDialog(context);
-                                await Request().login(countryCode: widget.countryCode, tel: widget.tel);
+                                String verificationCode = await Request().login(countryCode: widget.countryCode, tel: widget.tel);
                                 startTimer();
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + verificationCode)));
                                 Navigator.pop(context);
                               }catch(error){
                                 Navigator.pop(context);

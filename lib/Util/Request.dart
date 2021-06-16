@@ -38,7 +38,7 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<void> driverRegister({String mobileNumber, String countryCode , String carType, String license})async {
+  Future<String> driverRegister({String mobileNumber, String countryCode , String carType, String license})async {
     try {
       Response response = await this.dio.post(this.baseURL + "Driver", data: {
         "tel": mobileNumber,
@@ -49,6 +49,7 @@ class Request extends BaseRequest{
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
       print("Verifiy Code " + response.data["rstData"]);
+      return response.data["rstData"];
     }on DioError catch(e){
       throw e.message;
     }catch(e){
@@ -73,7 +74,7 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<void> login({String countryCode, String tel})async {
+  Future<String> login({String countryCode, String tel})async {
     try {
       Response response = await this.dio.post(this.baseURL + "Driver/Login", data: {
         "countryCode": countryCode,
@@ -82,6 +83,7 @@ class Request extends BaseRequest{
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
       print("Verifiy Code " + response.data["rstData"]);
+      return response.data["rstData"];
     }on DioError catch(e){
       throw e.message;
     }catch(e){
@@ -135,7 +137,7 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<void> createBooking({String warehouseID, List<String> shipmentList, String driverID, String driverTel, String driverCountryCode, String truckNo, String truckType, String bookingDate, String timeSlotId, bool isChHKTruck})async {
+  Future<Booking> createBooking({String warehouseID, List<String> shipmentList, String driverID, String driverTel, String driverCountryCode, String truckNo, String truckType, String bookingDate, String timeSlotId, bool isChHKTruck})async {
     try{
       this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
       Response response = await this.dio.post(this.baseURL + "Booking",data: {
@@ -152,6 +154,7 @@ class Request extends BaseRequest{
       });
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
+      return new Booking.fromJson(response.data["rstData"]);
     }on DioError catch(e){
       throw e.message;
     }catch(e){
@@ -164,11 +167,38 @@ class Request extends BaseRequest{
       Response response = await this.dio.get(this.baseURL + "Booking/Search", queryParameters: {
         "driverTel": tel
       });
+      if(response.data == "") return [];
       return (response.data as List<dynamic>).map((f) => Booking.fromJson(f)).toList();
     }on DioError catch(e){
       throw e.message;
     }catch(e){
       throw e;
     }
+  }
+
+  Future<void> deleteBooking(String bookingRef)async {
+    try{
+      this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
+      Response response = await this.dio.delete(this.baseURL + "Booking/" + bookingRef);
+      if(response.data["rstCode"] != 0)
+        throw response.data["rstMsg"];
+    }on DioError catch(e){
+      throw e.message;
+    }catch(e){
+      throw e;
+    }
+  }
+  Future<void> truckArrive(String bookingRef)async {
+    try{
+      this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
+      Response response = await this.dio.put(this.baseURL + "Booking/TruckArrive/" + bookingRef);
+      if(response.data["rstCode"] != 0)
+        throw response.data["rstMsg"];
+    }on DioError catch(e){
+      throw e.message;
+    }catch(e){
+      throw e;
+    }
+
   }
 }

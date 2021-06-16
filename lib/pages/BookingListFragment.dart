@@ -58,7 +58,7 @@ class _BookingListFragmentState extends State<BookingListFragment> {
                   _refreshController.refreshCompleted();
                 });
               },
-              child: ListView.builder(
+              child: bookingList.length > 0 ? ListView.builder(
                   itemCount: bookingList.length,
                   itemBuilder: (context, index) {
                     return AnimationConfiguration.staggeredList(
@@ -68,11 +68,9 @@ class _BookingListFragmentState extends State<BookingListFragment> {
                         verticalOffset: 50.0,
                         child: FadeInAnimation(
                           child: GestureDetector(
-                            onTap: () {
-                              FlutterRouter().goToPage(
-                                  context, Pages("BookingDetailPage"),
-                                  routeSettings: RouteSettings(
-                                      arguments: this.bookingList[index]));
+                            onTap: () async{
+                              await FlutterRouter().goToPage(context, Pages("BookingDetailPage"),routeSettings: RouteSettings(arguments: this.bookingList[index]));
+                              _refreshController.requestRefresh();
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(
@@ -213,7 +211,7 @@ class _BookingListFragmentState extends State<BookingListFragment> {
                         ),
                       ),
                     );
-                  }),
+                  }): Center(child: Text("No Active Booking".tr(), style: TextStyle(fontSize: Util.responsiveSize(context, 24), color: Colors.grey))),
             ),
           );
         });

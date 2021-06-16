@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TimeSlot.dart';
 import 'package:docking_project/Model/TruckType.dart';
+import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
@@ -16,6 +18,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class NewBookingPage extends StatefulWidget {
   final String warehouse;
@@ -126,16 +129,16 @@ class _NewBookingPageState extends State<NewBookingPage> {
         throw "Driver ID Cannot Be Empty".tr();
       if (driver.tel == null || driver.tel.isEmpty)
         throw "Mobile Number Cannot Be Empty".tr();
-      if (driver.default_Truck_No == null || driver.default_Truck_No.isEmpty)
+      if (licenseTextController.text == null || licenseTextController.text.isEmpty)
         throw "License Cannot Be Empty".tr();
-      if (driver.default_Truck_Type == null ||
-          driver.default_Truck_Type.isEmpty)
+      if (_carTypeTextFieldKey.currentState.carType== null ||
+          _carTypeTextFieldKey.currentState.carType.isEmpty)
         throw "Car Type Cannot Be Empty".tr();
       if (selectedDate == null || selectedDate.isEmpty)
         throw "Booking Date Cannot Be Empty".tr();
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
-      await Request().createBooking(
+      Booking booking = await Request().createBooking(
           warehouseID: widget.warehouse,
           shipmentList: widget.shipmentList ?? [],
           driverID: driver.driver_ID,
@@ -147,7 +150,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
           timeSlotId: selectedTime,
           isChHKTruck: isChHKTruck);
       Navigator.pop(context);
-      Util.showAlertDialog(context, "", title: "Booking Successfully".tr());
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));
+      FlutterRouter().goToPage(context, Pages("BookingDetailPage"),routeSettings: RouteSettings(arguments: booking), replace: true);
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());

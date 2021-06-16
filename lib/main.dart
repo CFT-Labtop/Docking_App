@@ -3,6 +3,7 @@ import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:docking_project/pages/MainPage.dart';
+import 'package:docking_project/pages/SplashPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,19 +34,19 @@ class RouterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Future.delayed(Duration(microseconds: 250)),
+      future: Future.delayed(Duration(seconds: 1)),
       builder: (context, AsyncSnapshot snapshot) {
-        return MaterialApp(
-            title: 'Docking',
-            theme: ThemeData(
-              primaryColor: UtilExtendsion.mainColor,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-            ),
-            home: (Util.sharedPreferences.getString("Authorization") != "" && Util.sharedPreferences.getString("Authorization") != null)? MainPage(): FirstPage(),
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            onGenerateRoute: FlutterRouter().fluroRouter.generator);
+          return MaterialApp(
+              title: 'Docking',
+              theme: ThemeData(
+                primaryColor: UtilExtendsion.mainColor,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+              ),
+              home: snapshot.connectionState == ConnectionState.waiting? SplashPage() : (Util.sharedPreferences.getString("Authorization") != "" && Util.sharedPreferences.getString("Authorization") != null)? MainPage(): FirstPage(),
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              onGenerateRoute: FlutterRouter().fluroRouter.generator);
       },
     );
   }

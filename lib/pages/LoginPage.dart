@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   MobileStandardTextField(
                     key: _mobileTextFieldKey,
-                    initialPrefix: "86",
+                    initialPrefix: "852",
                     onPress: (String value){},
                       mobileTextController: mobileTextController),
                   SizedBox(
@@ -63,8 +63,9 @@ class _LoginPageState extends State<LoginPage> {
                       if (_formKey.currentState.validate()) {
                         try{
                           Util.showLoadingDialog(context);
-                          await Request().login(countryCode: _mobileTextFieldKey.currentState.countryCode, tel: mobileTextController.text);
+                          String verificationCode = await Request().login(countryCode: _mobileTextFieldKey.currentState.countryCode, tel: mobileTextController.text);
                           Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + verificationCode)));
                           FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.LOGIN.toString());
                         }catch(error){
                           Navigator.pop(context);

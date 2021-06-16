@@ -37,7 +37,7 @@ class _MainPageState extends State<MainPage> {
         trailingActions: [
           PlatformIconButton(
             onPressed: () async {
-              await Util.sharedPreferences.setString("Authorization", "");
+              Util.sharedPreferences.clear();
               FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
             },
             icon: Icon(
@@ -56,9 +56,9 @@ class _MainPageState extends State<MainPage> {
           },
         ),
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.book_online_outlined), title: Text("New Booking".tr())),
-          BottomNavigationBarItem(icon: Icon(Icons.schedule), title: Text("Current Bookings".tr())),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings".tr())),
+          BottomNavigationBarItem(activeIcon: Icon(Icons.book_online_outlined, color: UtilExtendsion.mainColor,), icon: Icon(Icons.book_online_outlined), title: Text("New Booking".tr(), style: TextStyle(color: UtilExtendsion.mainColor))),
+          BottomNavigationBarItem(activeIcon: Icon(Icons.schedule, color: UtilExtendsion.mainColor), icon: Icon(Icons.schedule), title: Text("Current Bookings".tr(), style: TextStyle(color: UtilExtendsion.mainColor),)),
+          BottomNavigationBarItem(activeIcon: Icon(Icons.settings, color: UtilExtendsion.mainColor,), icon: Icon(Icons.settings), title: Text("Settings".tr(), style: TextStyle(color: UtilExtendsion.mainColor))),
         ],
       ),
       body: SafeArea(

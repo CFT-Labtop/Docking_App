@@ -26,7 +26,6 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
   List<PickerItem> warehouseSelection;
   final _formKey = GlobalKey<FormState>();
   List<String> shipmentList = [];
-  String _carType;
   int selectedWarehouseID;
   Future futureBuilder;
   
@@ -225,9 +224,12 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                     if(wareHouseTextController.text == null || wareHouseTextController.text.isEmpty)
                       throw "Warehouse Cannot Be Empty".tr();
                     Navigator.pop(context);
-                    FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + selectedWarehouseID.toString(), routeSettings: RouteSettings(
-                      arguments: this.shipmentList
-                    ));
+                    await FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + selectedWarehouseID.toString(), routeSettings: RouteSettings(arguments: this.shipmentList));
+                    setState(() {
+                      selectedWarehouseID = null;
+                      wareHouseTextController.text = "";
+                      shipmentList = [];
+                    });
                   }catch(error){
                     Navigator.pop(context);
                     Util.showAlertDialog(context, error.toString());
