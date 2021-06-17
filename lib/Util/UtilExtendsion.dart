@@ -21,11 +21,10 @@ extension UtilExtendsion on Util {
   static Future<void> initDriver() async {
     try {
       Driver driver = await Request().getDriver();
-      await Util.sharedPreferences
-          .setString("default_Truck_No", driver.default_Truck_No);
-      await Util.sharedPreferences
-          .setString("default_Truck_Type", driver.default_Truck_Type);
-      await Util.sharedPreferences.setString("tel", driver.tel);
+      await Util.sharedPreferences.setString("default_Truck_No", driver.default_Truck_No ?? "");
+      await Util.sharedPreferences.setString("default_Truck_Type", driver.default_Truck_Type ?? "");
+      await Util.sharedPreferences.setString("tel", driver.tel ?? "");
+      await Util.sharedPreferences.setString("driver_ID", driver.driver_ID ?? "");
     } catch (error) {
       print(error);
     }
@@ -50,6 +49,14 @@ extension UtilExtendsion on Util {
   static String getTel() {
     try {
       return Util.sharedPreferences.getString("tel");
+    } catch (error) {
+      return "";
+    }
+  }
+
+  static String getDriverID() {
+    try {
+      return Util.sharedPreferences.getString("driver_ID");
     } catch (error) {
       return "";
     }

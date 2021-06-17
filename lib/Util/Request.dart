@@ -161,11 +161,12 @@ class Request extends BaseRequest{
       throw e;
     }
   }
-  Future<List<Booking>> getBookingList(String tel)async {
+  Future<List<Booking>> getBookingList(String driverID)async {
+    //TODO Use Different API
     try{
       this.dio.options.headers["Authorization"] = "bearer " + Util.sharedPreferences.getString("Authorization");
-      Response response = await this.dio.get(this.baseURL + "Booking/Search", queryParameters: {
-        "driverTel": tel
+      Response response = await this.dio.get(this.baseURL + "Booking", queryParameters: {
+        "driverId": driverID
       });
       if(response.data == "") return [];
       return (response.data as List<dynamic>).map((f) => Booking.fromJson(f)).toList();
@@ -202,3 +203,6 @@ class Request extends BaseRequest{
 
   }
 }
+
+//TODO Pulldown menu display
+//TODO Shipment length validation
