@@ -7,7 +7,9 @@ import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:docking_project/Widgets/CarTypePullDown.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
+import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:docking_project/Widgets/StandardPullDown.dart';
@@ -34,7 +36,7 @@ class NewBookingPage extends StatefulWidget {
 class _NewBookingPageState extends State<NewBookingPage> {
   final TextEditingController licenseTextController = TextEditingController();
   final TextEditingController timeTextController = TextEditingController();
-  final _carTypeTextFieldKey = GlobalKey<CarTypeStandardFieldState>();
+  final _carTypeKey = GlobalKey<CarTypePullDownState>();
   List<PickerItem> truckTypeSelection;
   List<PickerItem> dateSelection;
   List<dynamic> dateList;
@@ -43,7 +45,6 @@ class _NewBookingPageState extends State<NewBookingPage> {
   String selectedDate;
   int selectedTimeSlotIndex = -1;
   String selectedTime;
-  bool isChHKTruck = false;
   Future futureBuilder;
 
   @override
@@ -131,27 +132,29 @@ class _NewBookingPageState extends State<NewBookingPage> {
         throw "Mobile Number Cannot Be Empty".tr();
       if (licenseTextController.text == null || licenseTextController.text.isEmpty)
         throw "License Cannot Be Empty".tr();
-      if (_carTypeTextFieldKey.currentState.carType== null ||
-          _carTypeTextFieldKey.currentState.carType.isEmpty)
+      if (_carTypeKey.currentState.selectedValue== null ||
+          _carTypeKey.currentState.selectedValue.isEmpty)
         throw "Car Type Cannot Be Empty".tr();
       if (selectedDate == null || selectedDate.isEmpty)
         throw "Booking Date Cannot Be Empty".tr();
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
-      Booking booking = await Request().createBooking(
-          warehouseID: widget.warehouse,
-          shipmentList: widget.shipmentList ?? [],
-          driverID: driver.driver_ID,
-          driverTel: driver.tel,
-          driverCountryCode: driver.countryCode,
-          truckNo: licenseTextController.text,
-          truckType: _carTypeTextFieldKey.currentState.carType,
-          bookingDate: selectedDate,
-          timeSlotId: selectedTime,
-          isChHKTruck: isChHKTruck);
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));
-      FlutterRouter().goToPage(context, Pages("BookingDetailPage"),routeSettings: RouteSettings(arguments: booking), replace: true);
+        FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"));
+      // Booking booking = await Request().createBooking(
+      //     warehouseID: widget.warehouse,
+      //     shipmentList: widget.shipmentList ?? [],
+      //     driverID: driver.driver_ID,
+      //     driverTel: driver.tel,
+      //     driverCountryCode: driver.countryCode,
+      //     truckNo: licenseTextController.text,
+      //     truckType: _carTypeKey.currentState.selectedValue,
+      //     bookingDate: selectedDate,
+      //     timeSlotId: selectedTime,
+      //     isChHKTruck: false);
+      // Navigator.pop(context);
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));
+      // FlutterRouter().goToPage(context, Pages("BookingDetailPage"),routeSettings: RouteSettings(arguments: booking), replace: true);
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());
@@ -192,42 +195,18 @@ class _NewBookingPageState extends State<NewBookingPage> {
                       SizedBox(
                         height: Util.responsiveSize(context, 32),
                       ),
-                      CarTypeStandardField(
-                        textController: licenseTextController,
-                        key: _carTypeTextFieldKey,
-                        initCarType: UtilExtendsion.getDefaultTruckType(),
-                        onPress: (String carType) {},
-                        truckTypeSelection: truckTypeSelection,
-                      ),
+                      // CarTypeStandardField(
+                      //   textController: licenseTextController,
+                      //   key: _carTypeTextFieldKey,
+                      //   initCarType: UtilExtendsion.getDefaultTruckType(),
+                      //   onPress: (String carType) {},
+                      //   truckTypeSelection: truckTypeSelection,
+                      // ),
+                      CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey,),
+                      SizedBox(height: Util.responsiveSize(context, 24),),
+                      LicenseStandardTextField(textController: licenseTextController,),
                       SizedBox(
                         height: Util.responsiveSize(context, 24),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: Util.responsiveSize(context, 20)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Is ChHK Truck?".tr()),
-                            SizedBox(
-                              width: Util.responsiveSize(context, 32),
-                            ),
-                            Row(
-                              children: [
-                                Text("No".tr()),
-                                PlatformSwitch(
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      isChHKTruck = value;
-                                    });
-                                  },
-                                  value: isChHKTruck,
-                                ),
-                                Text("Yes".tr()),
-                              ],
-                            ),
-                          ],
-                        ),
                       ),
                       Divider(
                         color: Colors.black,
@@ -237,7 +216,6 @@ class _NewBookingPageState extends State<NewBookingPage> {
                       ),
                       StandardPullDown(
                         hintText: "Please Select Booking Date Time".tr(),
-                        textController: timeTextController,
                         pickerList: dateSelection,
                         onSelected: (value, String displayLabel) {
                           setState(() {

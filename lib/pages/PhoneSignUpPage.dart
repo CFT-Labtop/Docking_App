@@ -3,10 +3,14 @@ import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:docking_project/Widgets/CarTypePullDown.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
+import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
 import 'package:docking_project/Widgets/MobileStandardTextField.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
+import 'package:docking_project/Widgets/StandardPullDown.dart';
+import 'package:docking_project/Widgets/StandardTextFormField.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
@@ -23,7 +27,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
   final TextEditingController mobileTextController = TextEditingController();
   final TextEditingController licenseTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final _carTypeTextFieldKey = GlobalKey<CarTypeStandardFieldState>();
+  final _carTypeKey = GlobalKey<CarTypePullDownState>();
   final _mobileTextFieldKey = GlobalKey<MobileStandardTextFieldState>();
   List<PickerItem> truckTypeSelection;
 
@@ -88,9 +92,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                         SizedBox(
                           height: Util.responsiveSize(context, 24.0),
                         ),
-                        MobileStandardTextField(
-                          key: _mobileTextFieldKey,
-                            mobileTextController: mobileTextController, onPress: (String countryCode) {  },),
+                        MobileStandardTextField(key: _mobileTextFieldKey,mobileTextController: mobileTextController, onPress: (String countryCode) {  },),
                         SizedBox(
                           height: Util.responsiveSize(context, 24.0),
                         ),
@@ -103,12 +105,9 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                         SizedBox(
                           height: Util.responsiveSize(context, 12),
                         ),
-                        CarTypeStandardField(
-                          textController: licenseTextController,
-                          key: _carTypeTextFieldKey,
-                          onPress: (String selectedCarType) {},
-                          truckTypeSelection: this.truckTypeSelection,
-                        ),
+                        CarTypePullDown(truckTypeSelection: truckTypeSelection, key: _carTypeKey,),
+                        SizedBox(height: Util.responsiveSize(context, 24),),
+                        LicenseStandardTextField(textController: licenseTextController,),
                         SizedBox(
                           height: Util.responsiveSize(context, 32),
                         ),
@@ -119,7 +118,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                             if (_formKey.currentState.validate()) {
                               try{
                                 Util.showLoadingDialog(context);
-                                String verificationCode = await Request().driverRegister(countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeTextFieldKey.currentState.carType);
+                                String verificationCode = await Request().driverRegister(countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeKey.currentState.selectedValue);
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + verificationCode)));
                                 FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.REGISTER.toString());

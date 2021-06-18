@@ -4,6 +4,7 @@ import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:docking_project/Widgets/StandardPullDown.dart';
+import 'package:docking_project/Widgets/WarehousePullDown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -21,24 +22,37 @@ class ShipmentFragment extends StatefulWidget {
 }
 
 class _ShipmentFragmentState extends State<ShipmentFragment> {
-  final TextEditingController wareHouseTextController = TextEditingController();
   final TextEditingController manualTextController = TextEditingController();
+  final _warehouseKey = GlobalKey<WarehousePullDownState>();
   List<PickerItem> warehouseSelection;
   final _formKey = GlobalKey<FormState>();
   List<String> shipmentList = [];
-  int selectedWarehouseID;
+  // int selectedWarehouseID;
   Future futureBuilder;
   
 
   Future<void> getWarehouse() async{
     List<Warehouse> warehouseList = await Request().getWarehouse();
-    this.warehouseSelection = warehouseList.map((e) => new PickerItem(text: Text(e.warehouse_Code + " " + e.warehouse_Name), value: e.warehouse_ID)).toList();
+    this.warehouseSelection = warehouseList.map((e) => new PickerItem(text: Text(e.warehouse_Name), value: e.warehouse_ID)).toList();
   }
 
   @override
   void initState() {
     futureBuilder = getWarehouse();
     super.initState();
+  }
+
+  void addShipment(String shipNo){
+    try{
+      if(shipmentList.firstWhere((element) => element == shipNo, orElse: () => null) != null)
+        throw "Duplicated Shipment".tr();
+      else if(shipmentList.length +1 > 50)
+        throw "Limited 50 Shipment Per Booking".tr();
+    else
+      shipmentList.add(shipNo);  
+    }catch(error){
+      Util.showAlertDialog(context, "", title: error);
+    }
   }
 
   @override
@@ -52,15 +66,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
               SizedBox(
                 height: Util.responsiveSize(context, 24),
               ),
-              StandardPullDown(
-                textController: wareHouseTextController,
-                hintText: "Please Select Warehouse".tr(),
-                dialogTitle: "Please Select Warehouse".tr(),
-                onSelected: (dynamic value, String displayValue) {
-                  selectedWarehouseID = value;
-                  wareHouseTextController.text = displayValue.toString();
-                }, pickerList: warehouseSelection,
-              ),
+              WarehousePullDown(warehouseSelection: warehouseSelection, key: _warehouseKey,),
               SizedBox(
                 height: Util.responsiveSize(context, 24),
               ),
@@ -137,7 +143,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                               shipmentNo.code != "" &&
                               shipmentNo.code != null)
                             setState(() {
-                              shipmentList.add(shipmentNo.code);
+                              addShipment(shipmentNo.code);
                             });
                         } else {
                           showPlatformDialog(
@@ -180,6 +186,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                                 title: Text("Manual Input".tr()),
                                 content: PlatformTextField(
                                   controller: manualTextController,
+                                  autofocus: true,
                                 ),
                                 actions: <Widget>[
                                   PlatformDialogAction(
@@ -190,11 +197,9 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                                     child: PlatformText("Confirm".tr()),
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      if (manualTextController.text != "" &&
-                                          manualTextController.text != null)
+                                      if (manualTextController.text != "" &&manualTextController.text != null)
                                         setState(() {
-                                          shipmentList
-                                              .add(manualTextController.text);
+                                          addShipment(manualTextController.text);
                                         });
                                       manualTextController.clear();
                                     },
@@ -221,13 +226,11 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                 onPress: () async{
                   try{
                     Util.showLoadingDialog(context);
-                    if(wareHouseTextController.text == null || wareHouseTextController.text.isEmpty)
+                    if(_warehouseKey.currentState.selectedValue == null)
                       throw "Warehouse Cannot Be Empty".tr();
                     Navigator.pop(context);
-                    await FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + selectedWarehouseID.toString(), routeSettings: RouteSettings(arguments: this.shipmentList));
+                    await FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + _warehouseKey.currentState.selectedValue.toString(), routeSettings: RouteSettings(arguments: this.shipmentList));
                     setState(() {
-                      selectedWarehouseID = null;
-                      wareHouseTextController.text = "";
                       shipmentList = [];
                     });
                   }catch(error){

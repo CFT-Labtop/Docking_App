@@ -21,8 +21,8 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   runApp(EasyLocalization(
       supportedLocales: [
-        // Locale('en', 'US'),
-        // Locale('zh', 'CN'),
+        Locale('en', 'US'),
+        Locale('zh', 'CN'),
         Locale('zh', 'HK')
       ],
       path: 'assets/translations', // <-- change patch to your

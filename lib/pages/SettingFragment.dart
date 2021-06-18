@@ -2,7 +2,9 @@ import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:docking_project/Widgets/CarTypePullDown.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
+import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
 import 'package:docking_project/Widgets/MobileStandardTextField.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +22,8 @@ class SettingFragment extends StatefulWidget {
 
 class _SettingFragmentState extends State<SettingFragment> {
   final TextEditingController mobileTextController = TextEditingController();
-  final TextEditingController licenseTextController = TextEditingController();
-  final _carTypeTextFieldKey = GlobalKey<CarTypeStandardFieldState>();
+final TextEditingController licenseTextController = TextEditingController();
+  final _carTypeKey = GlobalKey<CarTypePullDownState>();
   List<PickerItem> truckTypeSelection;
   Driver driver;
   Future futureBuilder;
@@ -98,12 +100,9 @@ class _SettingFragmentState extends State<SettingFragment> {
                   SizedBox(
                     height: Util.responsiveSize(context, 12),
                   ),
-                  CarTypeStandardField(
-                    initCarType: driver.default_Truck_Type,
-                    textController: licenseTextController,
-                    key: _carTypeTextFieldKey,
-                    onPress: (String selectedCarType) {}, truckTypeSelection: this.truckTypeSelection
-                  ),
+                  CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey,),
+                  SizedBox(height: Util.responsiveSize(context, 24),),
+                  LicenseStandardTextField(textController: licenseTextController,),
                   Expanded(
                     child: SizedBox(),
                   ),
@@ -113,7 +112,7 @@ class _SettingFragmentState extends State<SettingFragment> {
                     onPress: ()async {
                       try{
                         Util.showLoadingDialog(context);
-                        await Request().updateSetting(tel: mobileTextController.text, countryCode: driver.countryCode, default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeTextFieldKey.currentState.carType);
+                        await Request().updateSetting(tel: mobileTextController.text, countryCode: driver.countryCode, default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeKey.currentState.selectedValue);
                         await UtilExtendsion.initDriver();
                         Navigator.pop(context);
                         Util.showAlertDialog(context, "",  title: "Update Successfully".tr());

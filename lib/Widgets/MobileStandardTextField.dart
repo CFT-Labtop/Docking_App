@@ -55,6 +55,10 @@ class MobileStandardTextFieldState extends State<MobileStandardTextField> {
           return "Mobile Number Cannot Be Empty".tr();
         if(countryCode == null || countryCode.isEmpty)
           return "Country Code Cannot Be Empty".tr();
+        if(text.length > 20)
+          return "Mobile Number Cannot Larger Than 20 Characters".tr();
+        if (countryCode == "852" && text.length > 8)
+          return "Hong Kong Mobile Number Cannot Larger Than 8 Characters".tr();
         return null;
       },
       fontSize: Util.responsiveSize(context, 18),

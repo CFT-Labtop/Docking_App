@@ -1,24 +1,23 @@
-License 限制10個字
-SMS 重發
+License 限制10個字(Done)
+SMS 重發限制(Done)
 Error message 如果send SMS 太多
-一開始就focus
-Main Page disable swipe
-Not allow duplicate shipment
-Warehouse 淨係show value
-Setting Page change language
-Shipment max 50個
+一開始就focus(Done)
+Main Page disable swipe(Done)
+Not allow duplicate shipment(Done)
+Warehouse 淨係show value(Done)
+Setting Page change language(Done)
+Shipment max 50個(Done)
 New Booking Page remark field
 Create Booking Confirm Page
-isChHK 永遠pass false
+isChHK 永遠pass false(Done)
 Arrived後不能delet
 Booking 有工作中status
 已到=>通知到達
 已完成=>已到達
 工作中=>不能click
-Shipment ＝》單號
-Setting page => mobile 唔用 standard text field
+Shipment ＝》單號(Done)
 倉庫要用上次value
 Setting Page 最新消息頁
-First Page Login Button Size
-Verification Code 要自動Enter
+First Page Login Button Size(Done)
+Verification Code 要自動Enter(Done)
 Apps名叫新興物流

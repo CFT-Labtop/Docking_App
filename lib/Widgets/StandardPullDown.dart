@@ -9,23 +9,32 @@ import 'package:flutter_picker/flutter_picker.dart';
 class StandardPullDown extends StatefulWidget {
   const StandardPullDown(
       {Key key,
-      this.textController,
       this.hintText,
       @required this.pickerList,
       this.dialogTitle,
-      @required this.onSelected})
+      @required this.onSelected, this.initValue})
       : super(key: key);
-  final TextEditingController textController;
   final String hintText;
   final List<PickerItem> pickerList;
   final String dialogTitle;
   final void Function(dynamic value, String displayLabel) onSelected;
+  final dynamic initValue;
 
   @override
   _StandardPullDownState createState() => _StandardPullDownState();
 }
 
 class _StandardPullDownState extends State<StandardPullDown> {
+  dynamic selectedValue = null;
+  TextEditingController textController = TextEditingController();
+
+  @override
+  void initState() {
+    selectedValue = widget.initValue;
+    textController.text = getNameByValue(selectedValue);
+    super.initState();
+  }
+
   showPickerArray(BuildContext context) {
     new Picker(
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
@@ -37,10 +46,9 @@ class _StandardPullDownState extends State<StandardPullDown> {
         cancelText: "Cancel".tr(),
         confirmText: "Confirm".tr(),
         onConfirm: (Picker picker, List value) {
-          setState(() {
-            var selectedValue = picker.getSelectedValues()[0];
-            widget.onSelected(selectedValue, getNameByValue(selectedValue));
-          });
+            selectedValue = picker.getSelectedValues()[0];
+            textController.text = getNameByValue(selectedValue);
+            widget.onSelected(selectedValue, textController.text);
         }).showDialog(context);
   }
 
@@ -60,7 +68,7 @@ class _StandardPullDownState extends State<StandardPullDown> {
           showPickerArray(context);
         },
         child: StandardTextFormField(
-          textController: widget.textController,
+          textController: textController,
           fontSize: Util.responsiveSize(context, 18),
           hintText: widget.hintText,
           enable: false,

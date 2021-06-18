@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:docking_project/Enum/VerificationType.dart';
 import 'package:docking_project/Model/Booking.dart';
+import 'package:docking_project/pages/ConfirmBookingPage.dart';
 import 'package:docking_project/pages/CreateAccountSuccessPage.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:docking_project/pages/LoginPage.dart';
@@ -54,7 +55,7 @@ class FlutterRouter extends BaseRouter {
           final shipmentList = context.settings.arguments as List<String>;
           return NewBookingPage(warehouse: params["warehouse"][0], shipmentList:shipmentList,);
         }));
-    this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),
-        handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));
+    this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));
+    this.fluroRouter.define("/" + Pages("ConfirmBookingPage").getName(),handler: Handler(handlerFunc: (context, params) => ConfirmBookingPage()));
   }
 }

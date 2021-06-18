@@ -84,7 +84,7 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: Util.responsiveSize(context,Util.responsiveSize(context, 48))),
+                        horizontal: Util.responsiveSize(context,Util.responsiveSize(context, 32))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -132,7 +132,7 @@ class _FirstPageState extends State<FirstPage> {
                         ])),
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
-                  Text("Version 0.0.5", style: TextStyle(fontSize: Util.responsiveSize(context, 14), color: Colors.white),),
+                  Text("Version 0.0.6", style: TextStyle(fontSize: Util.responsiveSize(context, 14), color: Colors.white),),
                   SizedBox(height: Util.responsiveSize(context, 32.0)),
                 ]),
           )),

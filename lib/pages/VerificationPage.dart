@@ -19,26 +19,27 @@ class VerficiationPage extends StatefulWidget {
   String countryCode;
   VerificationType verificationType;
 
-  VerficiationPage({Key key, this.tel, this.countryCode, this.verificationType}) : super(key: key);
-  
+  VerficiationPage({Key key, this.tel, this.countryCode, this.verificationType})
+      : super(key: key);
+
   @override
   _VerficiationPageState createState() => _VerficiationPageState();
 }
 
 class _VerficiationPageState extends State<VerficiationPage> {
-  int _current = 300;
+  int _current = 60;
   String _verifiyCode = "";
   StreamSubscription sub;
   void startTimer() {
     if (sub != null) sub.cancel();
     CountdownTimer countDownTimer = new CountdownTimer(
-      new Duration(seconds: 300),
+      new Duration(seconds: 60),
       new Duration(seconds: 1),
     );
     sub = countDownTimer.listen(null);
     sub.onData((duration) {
       setState(() {
-        _current = 300 - duration.elapsed.inSeconds;
+        _current = 60 - duration.elapsed.inSeconds;
       });
     });
     sub.onDone(() {
@@ -52,6 +53,21 @@ class _VerficiationPageState extends State<VerficiationPage> {
     startTimer();
   }
 
+  void submit() async {
+    if (_current != 0) {
+      Util.showLoadingDialog(context);
+      if (_verifiyCode.length != 6) throw "Please Enter Verification Code".tr();
+      await Request().verify(
+          countryCode: widget.countryCode,
+          tel: widget.tel,
+          verificationCode: _verifiyCode);
+      await UtilExtendsion.initDriver();
+      Navigator.pop(context);
+      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"),
+          parameters: "/" + widget.verificationType.toString());
+    }
+  }
+
   @override
   void dispose() {
     sub?.cancel();
@@ -61,7 +77,11 @@ class _VerficiationPageState extends State<VerficiationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: StandardAppBar( text: "Verification".tr(),backgroundColor: UtilExtendsion.mainColor, fontColor: Colors.white,),
+      appBar: StandardAppBar(
+        text: "Verification".tr(),
+        backgroundColor: UtilExtendsion.mainColor,
+        fontColor: Colors.white,
+      ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Container(
@@ -123,7 +143,8 @@ class _VerficiationPageState extends State<VerficiationPage> {
                 ),
                 VerificationCode(
                   textStyle: TextStyle(
-                      fontSize: Util.responsiveSize(context, 20), color: UtilExtendsion.mainColor),
+                      fontSize: Util.responsiveSize(context, 20),
+                      color: UtilExtendsion.mainColor),
                   underlineColor: UtilExtendsion.mainColor,
                   keyboardType: TextInputType.number,
                   itemSize: Util.responsiveSize(context, 50),
@@ -131,6 +152,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                   onCompleted: (String value) {
                     setState(() {
                       _verifiyCode = value;
+                      submit();
                     });
                   },
                   onEditing: (bool value) {
@@ -144,65 +166,76 @@ class _VerficiationPageState extends State<VerficiationPage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(children: [
                       TextSpan(
-                          text: "Code expires in:".tr(),
-                          style: TextStyle(color: Colors.grey, fontSize: Util.responsiveSize(context, 20)), ),
+                        text: "Code expires in:".tr(),
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: Util.responsiveSize(context, 20)),
+                      ),
                       TextSpan(
                           text: _current.toString(),
-                          style: TextStyle(color: Colors.red, fontSize: Util.responsiveSize(context, 20))),
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: Util.responsiveSize(context, 20))),
                       TextSpan(
                           text: "second".tr(),
-                          style: TextStyle(color: Colors.red, fontSize: Util.responsiveSize(context, 20))),
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: Util.responsiveSize(context, 20))),
                     ])),
                 SizedBox(
                   height: Util.responsiveSize(context, 12),
                 ),
-                RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: "Can't receive the SMS?".tr(),
-                          style: TextStyle(color: Colors.grey, fontSize: Util.responsiveSize(context, 16))),
-                      TextSpan(text: " "),
-                      TextSpan(
-                          text: "Click here to resend SMS".tr(),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () async {
-                              try{
-                                Util.showLoadingDialog(context);
-                                String verificationCode = await Request().login(countryCode: widget.countryCode, tel: widget.tel);
-                                startTimer();
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + verificationCode)));
-                                Navigator.pop(context);
-                              }catch(error){
-                                Navigator.pop(context);
-                                Util.showAlertDialog(context, error.toString());
-                              }
-                            },
-                          style: TextStyle(
-                              color: UtilExtendsion.mainColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: Util.responsiveSize(context, 16),
-                              decoration: TextDecoration.underline)),
-                    ])),
+                _current == 0
+                    ? RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "Can't receive the SMS?".tr(),
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: Util.responsiveSize(context, 16))),
+                          TextSpan(text: " "),
+                          TextSpan(
+                              text: "Click here to resend SMS".tr(),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  try {
+                                    Util.showLoadingDialog(context);
+                                    String verificationCode = await Request()
+                                        .login(
+                                            countryCode: widget.countryCode,
+                                            tel: widget.tel);
+                                    startTimer();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "Verification Code is " +
+                                                    verificationCode)));
+                                    Navigator.pop(context);
+                                  } catch (error) {
+                                    Navigator.pop(context);
+                                    Util.showAlertDialog(
+                                        context, error.toString());
+                                  }
+                                },
+                              style: TextStyle(
+                                  color: UtilExtendsion.mainColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: Util.responsiveSize(context, 16),
+                                  decoration: TextDecoration.underline)),
+                        ]))
+                    : SizedBox(),
                 SizedBox(
                   height: Util.responsiveSize(context, 38),
                 ),
                 StandardElevatedButton(
-                  backgroundColor: UtilExtendsion.mainColor,
-                  text: "Next".tr(),
+                  backgroundColor:
+                      _current == 0 ? Colors.grey : UtilExtendsion.mainColor,
+                  text: _current == 0
+                      ? "Please Resend Verification Code".tr()
+                      : "Next".tr(),
                   onPress: () async {
-                    try{
-                      Util.showLoadingDialog(context);
-                      if(_verifiyCode.length != 6)
-                        throw "Please Enter Verification Code".tr();
-                      await Request().verify(countryCode: widget.countryCode, tel: widget.tel, verificationCode: _verifiyCode);
-                      await UtilExtendsion.initDriver();
-                      Navigator.pop(context);
-                      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"), parameters: "/" + widget.verificationType.toString());
-                    }catch(error){
-                      Navigator.pop(context);
-                      Util.showAlertDialog(context, error.toString());
-                    }
+                    submit();
                   },
                 )
               ],
