@@ -30,6 +30,19 @@ extension UtilExtendsion on Util {
     }
   }
 
+  static Future<void> setPreviousWarehouse(int warehouseID) async {
+    await Util.sharedPreferences.setInt("previouse_warehouseID",warehouseID ?? null);
+  }
+
+  static int getPreviouseWarehouse() {
+    try {
+      return Util.sharedPreferences.getInt("previouse_warehouseID");
+    }
+    catch(error){
+      return null;
+    }
+  }
+
   static String getDefaultTruckNo() {
     try {
       return Util.sharedPreferences.getString("default_Truck_No");

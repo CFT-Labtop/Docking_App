@@ -18,6 +18,7 @@ class WarehousePullDownState extends State<WarehousePullDown> {
   @override
   void initState() {
     selectedValue = widget.initValue;
+    selectedLabel = StandardPullDown.getPickerValue(widget.warehouseSelection, widget.initValue);
     super.initState();
   }
   @override

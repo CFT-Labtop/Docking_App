@@ -18,6 +18,7 @@ class CarTypePullDownState extends State<CarTypePullDown> {
   @override
   void initState() {
     selectedValue = widget.initValue;
+    selectedLabel = StandardPullDown.getPickerValue(widget.truckTypeSelection, widget.initValue);
     super.initState();
   }
   @override

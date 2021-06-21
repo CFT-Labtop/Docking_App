@@ -56,6 +56,9 @@ class FlutterRouter extends BaseRouter {
           return NewBookingPage(warehouse: params["warehouse"][0], shipmentList:shipmentList,);
         }));
     this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));
-    this.fluroRouter.define("/" + Pages("ConfirmBookingPage").getName(),handler: Handler(handlerFunc: (context, params) => ConfirmBookingPage()));
+    this.fluroRouter.define("/" + Pages("ConfirmBookingPage" + "/:truckTypeName" + "/:timeSlotName").getName(),handler: Handler(handlerFunc: (context, params) {
+      final Booking booking = context.settings.arguments as Booking;
+      return ConfirmBookingPage(booking: booking, truckTypeName: params["truckTypeName"][0],timeSlotName: params["timeSlotName"][0]);
+    }));
   }
 }

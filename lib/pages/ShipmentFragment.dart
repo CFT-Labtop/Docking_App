@@ -27,7 +27,6 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
   List<PickerItem> warehouseSelection;
   final _formKey = GlobalKey<FormState>();
   List<String> shipmentList = [];
-  // int selectedWarehouseID;
   Future futureBuilder;
   
 
@@ -40,6 +39,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
   void initState() {
     futureBuilder = getWarehouse();
     super.initState();
+    
   }
 
   void addShipment(String shipNo){
@@ -66,7 +66,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
               SizedBox(
                 height: Util.responsiveSize(context, 24),
               ),
-              WarehousePullDown(warehouseSelection: warehouseSelection, key: _warehouseKey,),
+              WarehousePullDown(warehouseSelection: warehouseSelection, key: _warehouseKey,initValue: UtilExtendsion.getPreviouseWarehouse() ?? null,),
               SizedBox(
                 height: Util.responsiveSize(context, 24),
               ),
@@ -230,9 +230,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                       throw "Warehouse Cannot Be Empty".tr();
                     Navigator.pop(context);
                     await FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + _warehouseKey.currentState.selectedValue.toString(), routeSettings: RouteSettings(arguments: this.shipmentList));
-                    setState(() {
-                      shipmentList = [];
-                    });
+                    setState(() {shipmentList = [];});
                   }catch(error){
                     Navigator.pop(context);
                     Util.showAlertDialog(context, error.toString());

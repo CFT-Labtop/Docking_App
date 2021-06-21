@@ -6,7 +6,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class TimeSlotGrid extends StatefulWidget {
   final List<TimeSlot> timeSlotList;
-  final Function(int index, TimeSlot selectedTimeSlot) onSelected;
+  final Function(int index, TimeSlot selectedTimeSlot, String timeSlotName) onSelected;
   final int selectedIndex;
   const TimeSlotGrid({Key key, @required this.timeSlotList, @required this.onSelected, this.selectedIndex = -1}) : super(key: key);
 
@@ -56,9 +56,8 @@ class _TimeSlotGridState extends State<TimeSlotGrid> {
                             timeText: widget.timeSlotList[index].startTime.substring(0,5),
                             onPress: (String text, TimeSlotType timeSlotType) {
                               if(timeSlotType != TimeSlotType.DISABLED){
-                                  widget.onSelected(index, widget.timeSlotList[index]);
+                                  widget.onSelected(index, widget.timeSlotList[index], widget.timeSlotList[index].startTime.substring(0,5));
                               }
-                              // widget.onSelected(widget.timeSlotList[index]);
                             },
                           ),
                         ),

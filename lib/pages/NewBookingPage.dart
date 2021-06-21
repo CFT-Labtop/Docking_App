@@ -44,6 +44,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
   Driver driver;
   String selectedDate;
   int selectedTimeSlotIndex = -1;
+  String selectedTimeSlotName = "";
   String selectedTime;
   Future futureBuilder;
 
@@ -140,21 +141,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
       Navigator.pop(context);
-        FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"));
-      // Booking booking = await Request().createBooking(
-      //     warehouseID: widget.warehouse,
-      //     shipmentList: widget.shipmentList ?? [],
-      //     driverID: driver.driver_ID,
-      //     driverTel: driver.tel,
-      //     driverCountryCode: driver.countryCode,
-      //     truckNo: licenseTextController.text,
-      //     truckType: _carTypeKey.currentState.selectedValue,
-      //     bookingDate: selectedDate,
-      //     timeSlotId: selectedTime,
-      //     isChHKTruck: false);
-      // Navigator.pop(context);
-      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));
-      // FlutterRouter().goToPage(context, Pages("BookingDetailPage"),routeSettings: RouteSettings(arguments: booking), replace: true);
+      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel + "/" + timeTextController.text, routeSettings: RouteSettings(arguments: new Booking(warehouse: widget.warehouse, driverID: driver.driver_ID, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime)));
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());
@@ -224,6 +211,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                             getTimeSlot(this.dateList);
                             selectedTimeSlotIndex = -1;
                             selectedTime = null;
+                            selectedTimeSlotName: "";
                           });
                         },
                       ),
@@ -243,10 +231,11 @@ class _NewBookingPageState extends State<NewBookingPage> {
                         child: TimeSlotGrid(
                           selectedIndex: selectedTimeSlotIndex,
                           timeSlotList: this.timeSlotList,
-                          onSelected: (int index, TimeSlot selectedTimeSlot) {
+                          onSelected: (int index, TimeSlot selectedTimeSlot, String timeSlotText) {
                             setState(() {
                               selectedTimeSlotIndex = index;
                               selectedTime = selectedTimeSlot.timeSlotId;
+                              selectedTimeSlotName = timeSlotText;
                             });
                           },
                         ),
@@ -256,7 +245,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                       ),
                       StandardElevatedButton(
                         backgroundColor: UtilExtendsion.mainColor,
-                        text: "Submit".tr(),
+                        text: "Next".tr(),
                         onPress: () => submitBooking(),
                       ),
                       SizedBox(

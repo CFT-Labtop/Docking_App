@@ -12,7 +12,8 @@ class StandardPullDown extends StatefulWidget {
       this.hintText,
       @required this.pickerList,
       this.dialogTitle,
-      @required this.onSelected, this.initValue})
+      @required this.onSelected,
+      this.initValue})
       : super(key: key);
   final String hintText;
   final List<PickerItem> pickerList;
@@ -22,6 +23,16 @@ class StandardPullDown extends StatefulWidget {
 
   @override
   _StandardPullDownState createState() => _StandardPullDownState();
+  static String getPickerValue(List<PickerItem> pickerList, dynamic value) {
+    try {
+      Text textWidget = pickerList
+          .firstWhere((element) => element.value == value)
+          .text as Text;
+      return textWidget.data;
+    } catch (error) {
+      return "";
+    }
+  }
 }
 
 class _StandardPullDownState extends State<StandardPullDown> {
@@ -46,17 +57,19 @@ class _StandardPullDownState extends State<StandardPullDown> {
         cancelText: "Cancel".tr(),
         confirmText: "Confirm".tr(),
         onConfirm: (Picker picker, List value) {
-            selectedValue = picker.getSelectedValues()[0];
-            textController.text = getNameByValue(selectedValue);
-            widget.onSelected(selectedValue, textController.text);
+          selectedValue = picker.getSelectedValues()[0];
+          textController.text = getNameByValue(selectedValue);
+          widget.onSelected(selectedValue, textController.text);
         }).showDialog(context);
   }
 
-  String getNameByValue(dynamic value){
-    try{
-      Text textWidget = widget.pickerList.firstWhere((element) => element.value == value).text as Text;
+  String getNameByValue(dynamic value) {
+    try {
+      Text textWidget = widget.pickerList
+          .firstWhere((element) => element.value == value)
+          .text as Text;
       return textWidget.data;
-    }catch(error){
+    } catch (error) {
       return "";
     }
   }
