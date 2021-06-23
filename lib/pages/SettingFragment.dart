@@ -31,7 +31,7 @@ final TextEditingController licenseTextController = TextEditingController();
   Future<void> getInformation() async{
     try{
       List<TruckType> truckTypeList = await Request().getTrunckType();
-      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(context.locale, truckTypeList);
       driver = await Request().getDriver();
       mobileTextController.text = driver.tel;
       licenseTextController.text = driver.default_Truck_No;

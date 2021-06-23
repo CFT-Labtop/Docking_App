@@ -5,6 +5,8 @@ import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
+import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/BaseRequest.dart';
 import 'package:flutter_basecomponent/Util.dart';
 class Request extends BaseRequest{
@@ -38,7 +40,7 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<String> driverRegister({String mobileNumber, String countryCode , String carType, String license})async {
+  Future<Map<String, dynamic>> driverRegister({String mobileNumber, String countryCode , String carType, String license})async {
     try {
       Response response = await this.dio.post(this.baseURL + "Driver", data: {
         "tel": mobileNumber,
@@ -48,8 +50,8 @@ class Request extends BaseRequest{
       });
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
-      print("Verifiy Code " + response.data["rstData"]);
-      return response.data["rstData"];
+      print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
+      return response.data["rstData"] as Map<String, dynamic>;
     }on DioError catch(e){
       throw e.message;
     }catch(e){
@@ -57,12 +59,13 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<void> verify({String countryCode, String tel , String verificationCode})async {
+  Future<void> verify({String countryCode, String tel , String verificationCode, Locale lang})async {
     try {
       Response response = await this.dio.post(this.baseURL + "Driver/Verify", data: {
         "countryCode": countryCode,
         "tel": tel,
         "verificationCode": verificationCode,
+        "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
@@ -74,7 +77,7 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<String> login({String countryCode, String tel})async {
+  Future<Map<String, dynamic>> login({String countryCode, String tel})async {
     try {
       Response response = await this.dio.post(this.baseURL + "Driver/Login", data: {
         "countryCode": countryCode,
@@ -82,8 +85,8 @@ class Request extends BaseRequest{
       });
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
-      print("Verifiy Code " + response.data["rstData"]);
-      return response.data["rstData"];
+      print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
+      return response.data["rstData"] as Map<String, dynamic>;
     }on DioError catch(e){
       throw e.message;
     }catch(e){
@@ -137,7 +140,7 @@ class Request extends BaseRequest{
     }
   }
 
-  Future<Booking> createBooking({String warehouseID, List<String> shipmentList, String driverID, String driverTel, String driverCountryCode, String truckNo, String truckType, String bookingDate, String timeSlotId, bool isChHKTruck})async {
+  Future<Booking> createBooking({String warehouseID, List<String> shipmentList, String driverID, String driverTel, String driverCountryCode, String truckNo, String truckType, String bookingDate, String timeSlotId, bool isChHKTruck, String bookingRemark})async {
     try{
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "Booking",data: {
@@ -150,7 +153,8 @@ class Request extends BaseRequest{
         "truckType": truckType,
         "bookingDate": bookingDate,
         "timeSlotId": timeSlotId,
-        "isChHKTruck": isChHKTruck
+        "isChHKTruck": isChHKTruck,
+        "bookingRemark": bookingRemark?? ""
       });
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];

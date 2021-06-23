@@ -18,8 +18,9 @@ class VerficiationPage extends StatefulWidget {
   String tel;
   String countryCode;
   VerificationType verificationType;
+  String verificationTimeString;
 
-  VerficiationPage({Key key, this.tel, this.countryCode, this.verificationType})
+  VerficiationPage({Key key, this.tel, this.countryCode, this.verificationType, this.verificationTimeString})
       : super(key: key);
 
   @override
@@ -55,16 +56,21 @@ class _VerficiationPageState extends State<VerficiationPage> {
 
   void submit() async {
     if (_current != 0) {
-      Util.showLoadingDialog(context);
+      try{
+        Util.showLoadingDialog(context);
       if (_verifiyCode.length != 6) throw "Please Enter Verification Code".tr();
       await Request().verify(
           countryCode: widget.countryCode,
           tel: widget.tel,
-          verificationCode: _verifiyCode);
+          verificationCode: _verifiyCode,
+          lang: context.locale);
       await UtilExtendsion.initDriver();
       Navigator.pop(context);
-      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"),
-          parameters: "/" + widget.verificationType.toString());
+      FlutterRouter().goToPage(context, Pages("CreateAccountSuccessPage"),parameters: "/" + widget.verificationType.toString());
+      }catch(error){
+        Navigator.pop(context);
+        Util.showAlertDialog(context, error.toString());
+      }
     }
   }
 
@@ -139,7 +145,11 @@ class _VerficiationPageState extends State<VerficiationPage> {
                   ),
                 ),
                 SizedBox(
-                  height: Util.responsiveSize(context, 48),
+                  height: Util.responsiveSize(context, 12)
+                ),
+                Text("Sent Time".tr() + " " +widget.verificationTimeString, style: TextStyle(fontSize: Util.responsiveSize(context, 12), color: Colors.grey)),
+                SizedBox(
+                  height: Util.responsiveSize(context, 32),
                 ),
                 VerificationCode(
                   textStyle: TextStyle(
@@ -201,16 +211,12 @@ class _VerficiationPageState extends State<VerficiationPage> {
                                 ..onTap = () async {
                                   try {
                                     Util.showLoadingDialog(context);
-                                    String verificationCode = await Request()
-                                        .login(
-                                            countryCode: widget.countryCode,
-                                            tel: widget.tel);
+                                    Map<String, dynamic> result = await Request().login(countryCode: widget.countryCode,tel: widget.tel);
                                     startTimer();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                "Verification Code is " +
-                                                    verificationCode)));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " +result["verificationCode"])));
+                                    setState(() {
+                                      widget.verificationTimeString = result["issueTimeString"];
+                                    });
                                     Navigator.pop(context);
                                   } catch (error) {
                                     Navigator.pop(context);

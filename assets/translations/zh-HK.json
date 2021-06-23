@@ -100,5 +100,6 @@
     "License Number": "車牌",
     "TimeSlot": "時段",
     "Booking Date": "預約日期",
-    "Remark": "備註"
+    "Remark": "備註",
+    "Sent Time": "發送時間"
 }

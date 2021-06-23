@@ -104,7 +104,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
               value: e["bookingDate"]))
           .toList();
       this.truckTypeSelection =
-          UtilExtendsion.getTruckTypeSelection(truckTypeList);
+          UtilExtendsion.getTruckTypeSelection(context.locale, truckTypeList);
       licenseTextController.text = driver.default_Truck_No;
     } catch (e) {
       throw e;

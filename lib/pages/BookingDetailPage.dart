@@ -39,10 +39,75 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
-  Divider _whiteDivider(){
-    return Divider(color: Colors.white,);
+  Divider _whiteDivider() {
+    return Divider(
+      color: Colors.white,
+    );
   }
 
+  Widget _myPopMenu() {
+    return Material(
+      color: Colors.transparent,
+      child: PopupMenuButton(
+          onSelected: (value) {
+            switch (value) {
+              case 1:
+                Util.showAlertDialog(context, shipmentList.join("\n"),
+                    title: "Shipment".tr());
+                break;
+              case 2:
+                Util.showConfirmDialog(context,
+                    title: "Confirm To Delete?".tr(), onPress: () async {
+                  try {
+                    Util.showLoadingDialog(context);
+                    await Request().deleteBooking(widget.booking.bookingRef);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Delete Successfully".tr())));
+                    Navigator.pop(context);
+                  } catch (error) {
+                    Navigator.pop(context);
+                    Util.showAlertDialog(context, error.toString());
+                  }
+                });
+                break;
+            }
+          },
+          icon: Icon(
+            Icons.menu,
+            color: Colors.white,
+          ),
+          itemBuilder: (context) => [
+                PopupMenuItem(
+                    value: 1,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                          child: Icon(Icons.list, color: Colors.black),
+                        ),
+                        Text('Shipment'.tr())
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 2,
+                    enabled: !_isArrivedOrWIP(),
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                          child: Icon(Icons.delete, color: Colors.red),
+                        ),
+                        Text('Delete'.tr())
+                      ],
+                    )),
+              ]),
+    );
+  }
+
+  bool _isArrivedOrWIP(){
+    return (widget.booking.bookingStatus == "WIP" || widget.booking.bookingStatus == "工作中" || widget.booking.bookingStatus == "Arrived" || widget.booking.bookingStatus == "已到達" || widget.booking.bookingStatus == "已到达");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,35 +116,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         backgroundColor: UtilExtendsion.mainColor,
         fontColor: Colors.white,
         trailingActions: [
-          PlatformIconButton(
-            icon: Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-            onPressed: () async{
-              Util.showConfirmDialog(context, title: "Confirm To Delete?".tr(), onPress: () async{
-                try{
-                  Util.showLoadingDialog(context);
-                  await Request().deleteBooking(widget.booking.bookingRef);
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Delete Successfully".tr())));
-                  Navigator.pop(context);
-                }catch(error){
-                  Navigator.pop(context);
-                  Util.showAlertDialog(context, error.toString());
-                }
-              });
-            },
-          ),
-          PlatformIconButton(
-            icon: Icon(
-              Icons.list,
-              color: Colors.white,
-            ),
-            onPressed: (){
-              Util.showAlertDialog(context, shipmentList.join("\n"), title: "Shipment".tr());
-            },
-          )
+          _myPopMenu()
         ],
       ),
       body: SafeArea(
@@ -143,30 +180,32 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     SizedBox(
                       height: Util.responsiveSize(context, 12),
                     ),
-                    widget.booking.bookingStatus == "Arrived"?
-                    StandardElevatedButton(
-                      backgroundColor: Colors.grey,
-                      text: "Done".tr(),
-                      onPress: () {}, 
-                    ):
-                    StandardElevatedButton(
-                      backgroundColor: Colors.green,
-                      text: "Arrive".tr(),
-                      onPress: () async{
-                        try{
-                          Util.showLoadingDialog(context);
-                          await Request().truckArrive(widget.booking.bookingRef);
-                          Navigator.pop(context);
-                          Util.showAlertDialog(context, "", title: "Confirm Successfully".tr());
-                          setState(() {
-                            widget.booking.bookingStatus = "Arrived";
-                          });
-                        }catch(error){
-                          Navigator.pop(context);
-                          Util.showAlertDialog(context, error.toString());
-                        }
-                    }, 
-                    ),
+                    _isArrivedOrWIP()
+                        ? StandardElevatedButton(
+                            backgroundColor: Colors.grey,
+                            text: "Done".tr(),
+                            onPress: () {},
+                          )
+                        : StandardElevatedButton(
+                            backgroundColor: Colors.green,
+                            text: "Arrive".tr(),
+                            onPress: () async {
+                              try {
+                                Util.showLoadingDialog(context);
+                                await Request()
+                                    .truckArrive(widget.booking.bookingRef);
+                                Navigator.pop(context);
+                                Util.showAlertDialog(context, "",
+                                    title: "Confirm Successfully".tr());
+                                setState(() {
+                                  widget.booking.bookingStatus = "Arrived";
+                                });
+                              } catch (error) {
+                                Navigator.pop(context);
+                                Util.showAlertDialog(context, error.toString());
+                              }
+                            },
+                          ),
                     SizedBox(
                       height: Util.responsiveSize(context, 24),
                     ),

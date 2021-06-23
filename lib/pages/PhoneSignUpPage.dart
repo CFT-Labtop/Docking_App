@@ -41,7 +41,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
   Future<void> getTruckType() async {
     try {
       List<TruckType> truckTypeList = await Request().getTrunckType();
-      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(context.locale, truckTypeList);
     } catch (e) {
       throw e;
     }
@@ -86,6 +86,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                         ),
                         Text(
                           "Enter Your Phone Number and Licence Number".tr(),
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: Util.responsiveSize(context, 28)),
                         ),
@@ -118,10 +119,10 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                             if (_formKey.currentState.validate()) {
                               try{
                                 Util.showLoadingDialog(context);
-                                String verificationCode = await Request().driverRegister(countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeKey.currentState.selectedValue);
+                                Map<String, dynamic> result = await Request().driverRegister(countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeKey.currentState.selectedValue);
                                 Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + verificationCode)));
-                                FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.REGISTER.toString());
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + result["verificationCode"])));
+                                FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.REGISTER.toString()+ "/" + result["issueTimeString"]);
                               }catch(error){
                                 Navigator.pop(context);
                                 Util.showAlertDialog(context, error.toString());

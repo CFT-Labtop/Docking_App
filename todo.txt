@@ -7,14 +7,14 @@ Not allow duplicate shipment(Done)
 Warehouse 淨係show value(Done)
 Setting Page change language(Done)
 Shipment max 50個(Done)
-New Booking Page remark field (API Not Completed)
+New Booking Page remark field (Done)
 Create Booking Confirm Page (Done)
 isChHK 永遠pass false(Done)
-Arrived後不能delete
-Booking 有工作中status
+Arrived後不能delete(Done)
+Booking 有工作中status(Done)
 已到=>通知到達(Done)
 已完成=>已到達(Done)
-工作中=>不能click
+工作中=>不能click(Done)
 Shipment ＝》單號(Done)
 倉庫要用上次value(Done)
 Setting Page 最新消息頁(API Not Completed)
@@ -22,3 +22,4 @@ First Page Login Button Size(Done)
 Verification Code 要自動Enter(Done)
 Apps名叫新興物流(Done)
 ShipmentList(API Not Completed)
+RenewToken

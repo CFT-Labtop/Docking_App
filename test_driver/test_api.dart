@@ -34,12 +34,11 @@ void main() {
     Util.sharedPreferences = await SharedPreferences.getInstance();
     List<TruckType> truckList = await Request().getTrunckType();
     String selectedTruckType = truckList.first.truck_Type;
-    String verificationCode = await Request()
-        .driverRegister(mobileNumber: mobileNumber, countryCode: countryCode);
-    await Request().verify(
-        countryCode: countryCode,
-        tel: mobileNumber,
-        verificationCode: verificationCode);
+    // String verificationCode = await Request().driverRegister(mobileNumber: mobileNumber, countryCode: countryCode);
+    // await Request().verify(
+    //     countryCode: countryCode,
+    //     tel: mobileNumber,
+    //     verificationCode: verificationCode);
     await Request().updateSetting(
         countryCode: countryCode,
         tel: mobileNumber,
@@ -52,12 +51,11 @@ void main() {
     await Future.delayed(
       Duration(seconds: 2),
       () async {
-        String verificationCode =
-            await Request().login(countryCode: countryCode, tel: mobileNumber);
-        await Request().verify(
-            countryCode: countryCode,
-            tel: mobileNumber,
-            verificationCode: verificationCode);
+        // String verificationCode =await Request().login(countryCode: countryCode, tel: mobileNumber);
+        // await Request().verify(
+        //     countryCode: countryCode,
+        //     tel: mobileNumber,
+        //     verificationCode: verificationCode);
         await UtilExtendsion.initDriver();
         Driver driver = await Request().getDriver();
         List<Warehouse> warehouseList = await Request().getWarehouse();
@@ -82,12 +80,12 @@ Future<Driver> login(String countryCode, String mobileNumber) async {
   Request.initialize(Config.baseURL);
   print(countryCode);
   print(mobileNumber);
-        String verificationCode =await Request().login(countryCode: countryCode, tel: mobileNumber);
+        // String verificationCode =await Request().login(countryCode: countryCode, tel: mobileNumber);
         print("1");
-        await Request().verify(
-            countryCode: countryCode,
-            tel: mobileNumber,
-            verificationCode: verificationCode);
+        // await Request().verify(
+        //     countryCode: countryCode,
+        //     tel: mobileNumber,
+        //     verificationCode: verificationCode);
             print("2");
         await UtilExtendsion.initDriver();
         print("3");

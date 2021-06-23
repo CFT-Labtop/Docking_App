@@ -23,12 +23,12 @@ class _BookingListFragmentState extends State<BookingListFragment> {
   Future futureBuilder;
 
   Color convertStatusToColor(String status) {
-    switch (status) {
-      case "Arrived":
-        return Colors.grey;
-      case "Booked":
-        return Colors.green;
-    }
+    if(status == "Arrived" || status == "已到達" || status == "已到达")
+      return Colors.grey;
+    else if (status == "Booked" || status == "已預約" || status == "已预约")
+      return Colors.green;
+    else if (status == "WIP" || status == "工作中" || status == "工作中")
+      return Colors.red;
     return Colors.transparent;
   }
 
