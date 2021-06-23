@@ -1,4 +1,5 @@
 import 'package:docking_project/Model/Booking.dart';
+import 'package:docking_project/Model/TimeSlot.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
@@ -11,9 +12,9 @@ import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class ConfirmBookingPage extends StatefulWidget {
   final Booking booking;
+  final TimeSlot timeSlot;
   final String truckTypeName;
-  final String timeSlotName;
-  const ConfirmBookingPage({Key key, this.booking, this.truckTypeName, this.timeSlotName})
+  const ConfirmBookingPage({Key key, this.booking, this.truckTypeName,  this.timeSlot})
       : super(key: key);
 
   @override
@@ -170,12 +171,12 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
             ),
             _listTile(
                 context, Icons.car_repair, "Car Type".tr(), widget.truckTypeName),
-            _listTile(context, Icons.ac_unit, "License Number".tr(),
+            _listTile(context, Icons.card_travel,"License Number".tr(),
                 widget.booking.truckNo,
                 isDivider: false),
             _greyTile(context),
-            _listTile(context, Icons.schedule, "TimeSlot".tr(),
-                widget.timeSlotName),
+            _listTile(context, Icons.schedule, "Start Time".tr(),widget.timeSlot.startTime.substring(0,5)),
+            _listTile(context, Icons.schedule_sharp, "End Time".tr(),widget.timeSlot.endTime.substring(0,5)),
             _listTile(
                 context,
                 Icons.date_range,

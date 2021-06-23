@@ -48,6 +48,25 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
+  Widget _remarkText(){
+    return GestureDetector(
+      onTap: (){
+        Util.showAlertDialog(context, widget.booking.bookingRemark, title: "Remark".tr());
+      },
+      child: Padding(
+        padding:  EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 24)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Remark".tr() + ":", style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context, 18),decoration: TextDecoration.underline, ),),
+            SizedBox(width: Util.responsiveSize(context, 12)),
+            Flexible(child: Text(widget.booking.bookingRemark,overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.blue, fontSize: Util.responsiveSize(context, 18),decoration: TextDecoration.underline, ), )),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _myPopMenu() {
     return Material(
       color: Colors.transparent,
@@ -94,7 +113,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     )),
                 PopupMenuItem(
                     value: 2,
-                    enabled: !_isArrivedOrWIP(),
+                    enabled: !_isArrivedOrWIPOrDeleted(),
                     child: Row(
                       children: <Widget>[
                         Padding(
@@ -108,8 +127,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
-  bool _isArrivedOrWIP(){
-    return (widget.booking.bookingStatus == "WIP" || widget.booking.bookingStatus == "工作中" || widget.booking.bookingStatus == "Arrived" || widget.booking.bookingStatus == "已到達" || widget.booking.bookingStatus == "已到达");
+  bool _isArrivedOrWIPOrDeleted(){
+    return (widget.booking.bookingStatus == "WIP" || widget.booking.bookingStatus == "工作中" || widget.booking.bookingStatus == "Arrived" || widget.booking.bookingStatus == "已到達" || widget.booking.bookingStatus == "已到达" || widget.booking.bookingStatus == "Cancelled" || widget.booking.bookingStatus == "已取消");
   }
   @override
   Widget build(BuildContext context) {
@@ -173,6 +192,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     SizedBox(
                       height: Util.responsiveSize(context, 24),
                     ),
+                    _remarkText(),
+                    SizedBox(
+                      height: Util.responsiveSize(context, 12),
+                    ),
                     Text(
                       "If You Arrived, Please Click Arrived".tr(),
                       style: TextStyle(
@@ -183,10 +206,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     SizedBox(
                       height: Util.responsiveSize(context, 12),
                     ),
-                    _isArrivedOrWIP()
+                    _isArrivedOrWIPOrDeleted()
                         ? StandardElevatedButton(
                             backgroundColor: Colors.grey,
-                            text: "Done".tr(),
+                            text: widget.booking.bookingStatus,
                             onPress: () {},
                           )
                         : StandardElevatedButton(

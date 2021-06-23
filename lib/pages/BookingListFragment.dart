@@ -28,6 +28,8 @@ class _BookingListFragmentState extends State<BookingListFragment> {
     else if (status == "Booked" || status == "已預約" || status == "已预约")
       return Colors.green;
     else if (status == "WIP" || status == "工作中" || status == "工作中")
+      return Colors.orange;
+    else if (status == "Cancelled" || status == "已取消" || status == "已取消")
       return Colors.red;
     return Colors.transparent;
   }

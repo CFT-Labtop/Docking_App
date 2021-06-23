@@ -101,5 +101,9 @@
     "TimeSlot": "时段",
     "Booking Date": "预约日期",
     "Remark": "备注",
-    "Sent Time": "发送时间"
+    "Sent Time": "发送时间",
+    "Start Time": "开始时间",
+    "End Time": "结束时间",
+    "Error": "错误",
+    "Dismiss": "取消"
 }

@@ -41,10 +41,10 @@ class _NewBookingPageState extends State<NewBookingPage> {
   List<PickerItem> dateSelection;
   List<dynamic> dateList;
   List<TimeSlot> timeSlotList = [];
+  TimeSlot selectedTimeSlot;
   Driver driver;
   String selectedDate;
   int selectedTimeSlotIndex = -1;
-  String selectedTimeSlotName = "";
   String selectedTime;
   Future futureBuilder;
 
@@ -141,7 +141,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
       Navigator.pop(context);
-      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel + "/" + selectedTimeSlotName, routeSettings: RouteSettings(arguments: new Booking(warehouse: widget.warehouse, driverID: driver.driver_ID, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime)));
+      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel, routeSettings: RouteSettings(arguments: {"booking": new Booking(warehouse: widget.warehouse, driverID: driver.driver_ID, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime), "timeSlot": selectedTimeSlot} ));
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());
@@ -207,11 +207,11 @@ class _NewBookingPageState extends State<NewBookingPage> {
                         onSelected: (value, String displayLabel) {
                           setState(() {
                             selectedDate = value;
+                            selectedTimeSlot = null;
                             timeTextController.text = displayLabel;
                             getTimeSlot(this.dateList);
                             selectedTimeSlotIndex = -1;
                             selectedTime = null;
-                            selectedTimeSlotName: "";
                           });
                         },
                       ),
@@ -235,7 +235,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                             setState(() {
                               selectedTimeSlotIndex = index;
                               selectedTime = selectedTimeSlot.timeSlotId;
-                              selectedTimeSlotName = timeSlotText;
+                              this.selectedTimeSlot = selectedTimeSlot;
                             });
                           },
                         ),
