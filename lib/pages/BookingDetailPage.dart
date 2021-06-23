@@ -23,6 +23,9 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   Widget detailTile(IconData icon, String title) {
     return Row(children: [
       Icon(icon, size: Util.responsiveSize(context, 20), color: Colors.white),
+      SizedBox(
+        width: Util.responsiveSize(context, 8),
+      ),
       Text(
         title,
         style: TextStyle(

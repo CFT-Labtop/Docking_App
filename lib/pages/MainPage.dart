@@ -12,7 +12,8 @@ import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:flutter_basecomponent/Util.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key key}) : super(key: key);
+  final int initIndex;
+  const MainPage({Key key, this.initIndex = 1}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -113,6 +114,15 @@ class _MainPageState extends State<MainPage> {
                     )),
               ]),
     );
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _currentIndex = widget.initIndex;
+      _pageViewcontroller.jumpToPage(widget.initIndex);
+    });
+    super.initState();
   }
 
   @override

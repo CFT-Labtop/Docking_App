@@ -141,7 +141,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
       Navigator.pop(context);
-      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel + "/" + timeTextController.text, routeSettings: RouteSettings(arguments: new Booking(warehouse: widget.warehouse, driverID: driver.driver_ID, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime)));
+      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel + "/" + selectedTimeSlotName, routeSettings: RouteSettings(arguments: new Booking(warehouse: widget.warehouse, driverID: driver.driver_ID, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime)));
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());
