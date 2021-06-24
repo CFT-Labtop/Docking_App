@@ -143,7 +143,8 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           bookingDate: widget.booking.bookingDate,
           timeSlotId: widget.booking.timeSlot,
           isChHKTruck: false,
-          bookingRemark: textEditingController.text);
+          bookingRemark: textEditingController.text,
+          timeSlotUsage: widget.booking.timeSlotUsage);
       UtilExtendsion.setPreviousWarehouse( int.parse(widget.booking.warehouse));
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));

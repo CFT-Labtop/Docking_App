@@ -12,8 +12,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 extension UtilExtendsion on Util {
   static const Color mainColor = Color.fromRGBO(202,37,46,1);
   static List<PickerItem> getTruckTypeSelection(Locale locale, List<TruckType> truckTypeList) {
-    return truckTypeList
-        .map((e) =>new PickerItem(text: Text(locale.toString() == "en_US" ? e.typeName_En : e.typeName_Ch), value: e.truck_Type)).toList();
+    return truckTypeList.map((e) =>new PickerItem(text: Text(locale.toString() == "en_US" ? e.typeName_En : e.typeName_Ch), value: e.truck_Type)).toList();
   }
 
   static Future<void> initDriver() async {

@@ -17,7 +17,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Util.sharedPreferences = await SharedPreferences.getInstance();
   // await Request().renewToken();
-  await UtilExtendsion.initDriver();
+  if(Util.sharedPreferences.getString("Authorization") != null && Util.sharedPreferences.getString("Authorization").isNotEmpty)
+    await UtilExtendsion.initDriver();
   
   await EasyLocalization.ensureInitialized();
   runApp(EasyLocalization(

@@ -42,6 +42,7 @@ class Booking{
   String clientName;
   String bookingRemark;
   String bookingInternalRemark;
+  int timeSlotUsage;
 
   Booking({
     this.warehouse,
@@ -60,7 +61,8 @@ class Booking{
     this.qrCodeString,
     this.clientName,
     this.bookingRemark,
-    this.bookingInternalRemark
+    this.bookingInternalRemark,
+    this.timeSlotUsage
   });
 
   Booking.fromJson(Map json){
@@ -82,6 +84,7 @@ class Booking{
     this.clientName = json ["clientName"] ?? null;
     this.bookingRemark = json ["bookingRemark"] ?? null;
     this.bookingInternalRemark = json ["bookingInternalRemark"] ?? null;
+    this.timeSlotUsage = json ["timeSlotUsage"] ?? 0;
   }
 
   String displayBookingDate(){

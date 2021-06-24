@@ -31,8 +31,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
   
 
   Future<void> getWarehouse() async{
-    // Request().renewToken();
-    List<Warehouse> warehouseList = await Request().getWarehouse();
+    List<Warehouse> warehouseList = await Request().getWarehouse(context);
     this.warehouseSelection = warehouseList.map((e) => new PickerItem(text: Text(e.warehouse_Name), value: e.warehouse_ID)).toList();
   }
 

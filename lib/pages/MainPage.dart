@@ -26,7 +26,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   PageController _pageViewcontroller = new PageController();
 
   void showLanguageButton() {
@@ -105,10 +105,6 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ));
-  }
-
-  void _logout(){
-    
   }
 
   Widget myPopMenu() {

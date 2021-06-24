@@ -31,3 +31,4 @@ login verify getTruckType need lang
 轉language call api
 http code 401 轉First Page
 createBooking -> pass countryCode and timeSlotUsage = 1 (Done)
+pass timeSlot_Usage to createBooking
