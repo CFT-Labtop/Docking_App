@@ -22,11 +22,12 @@ class SettingFragment extends StatefulWidget {
 
 class _SettingFragmentState extends State<SettingFragment> {
   final TextEditingController mobileTextController = TextEditingController();
-final TextEditingController licenseTextController = TextEditingController();
+  final TextEditingController licenseTextController = TextEditingController();
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
   List<PickerItem> truckTypeSelection;
   Driver driver;
   Future futureBuilder;
+  FocusNode _focusNode = new FocusNode();
 
   Future<void> getInformation() async{
     try{
@@ -40,6 +41,11 @@ final TextEditingController licenseTextController = TextEditingController();
     }
   }
 
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
   @override
   void initState() {
     futureBuilder = getInformation();
@@ -100,9 +106,11 @@ final TextEditingController licenseTextController = TextEditingController();
                   SizedBox(
                     height: Util.responsiveSize(context, 12),
                   ),
-                  CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey,),
+                  CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey, onSelected: (String selectedValue, String selectedLabel){
+                    _focusNode.requestFocus();
+                  },),
                   SizedBox(height: Util.responsiveSize(context, 24),),
-                  LicenseStandardTextField(textController: licenseTextController,),
+                  LicenseStandardTextField(textController: licenseTextController, focusNode: _focusNode,),
                   Expanded(
                     child: SizedBox(),
                   ),
@@ -114,6 +122,7 @@ final TextEditingController licenseTextController = TextEditingController();
                         Util.showLoadingDialog(context);
                         await Request().updateSetting(tel: mobileTextController.text, countryCode: driver.countryCode, default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeKey.currentState.selectedValue);
                         await UtilExtendsion.initDriver();
+                        await getInformation();
                         Navigator.pop(context);
                         Util.showAlertDialog(context, "",  title: "Update Successfully".tr());
                       }catch(error){

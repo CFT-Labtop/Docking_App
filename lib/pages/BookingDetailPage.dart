@@ -18,8 +18,6 @@ class BookingDetailPage extends StatefulWidget {
 }
 
 class _BookingDetailPageState extends State<BookingDetailPage> {
-  List<String> shipmentList = ["testing1", "testing2", "testing3", "testing4"];
-  //TODO Sample ShipmentList
   Widget detailTile(IconData icon, String title) {
     return Row(children: [
       Icon(icon, size: Util.responsiveSize(context, 20), color: Colors.white),
@@ -49,7 +47,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   }
 
   Widget _remarkText(){
-    return GestureDetector(
+    return (widget.booking.bookingRemark != null && widget.booking.bookingRemark.isNotEmpty)? GestureDetector(
       onTap: (){
         Util.showAlertDialog(context, widget.booking.bookingRemark, title: "Remark".tr());
       },
@@ -64,7 +62,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           ],
         ),
       ),
-    );
+    ): SizedBox();
   }
 
   Widget _myPopMenu() {
@@ -74,7 +72,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           onSelected: (value) {
             switch (value) {
               case 1:
-                Util.showAlertDialog(context, shipmentList.join("\n"),
+                Util.showAlertDialog(context, widget.booking.shipmentList.join("\n"),
                     title: "Shipment".tr());
                 break;
               case 2:

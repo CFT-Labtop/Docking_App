@@ -1,4 +1,6 @@
+import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
+import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/pages/BookingListFragment.dart';
@@ -10,6 +12,10 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:flutter_basecomponent/Util.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
+
 
 class MainPage extends StatefulWidget {
   final int initIndex;
@@ -56,6 +62,55 @@ class _MainPageState extends State<MainPage> {
         }).showDialog(context);
   }
 
+  void showLatestNews() async {
+    List<News> newsList = [];
+    try {
+      Util.showLoadingDialog(context);
+      newsList = await Request().getLatestNews();
+      Navigator.pop(context);
+    } catch (error) {
+      Navigator.pop(context);
+      Util.showAlertDialog(context, error.toString());
+    }
+    showPlatformDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              actions: [
+                TextButton(
+                  child: Text("Cancel".tr()),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              ],
+              content: Container(
+                height: MediaQuery.of(context).size.height * .5,
+                width: MediaQuery.of(context).size.width * .5,
+                child: Swiper(
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: EdgeInsets.all(Util.responsiveSize(context, 4)),
+                      child: ListView(
+                        children: [
+                          Text(newsList[index].subject, style: TextStyle(color: Colors.black, fontSize: Util.responsiveSize(context, 32), fontWeight: FontWeight.bold),),
+                          SizedBox(height: Util.responsiveSize(context, 12)),
+                          Html(data: newsList[index].content)
+                        ],
+                      )
+                    );
+                  },
+                  itemCount: newsList.length,
+                  pagination: new SwiperPagination(builder: DotSwiperPaginationBuilder(
+                    activeColor: UtilExtendsion.mainColor,
+                    color: Colors.grey
+                  ))
+                ),
+              ),
+            ));
+  }
+
+  void _logout(){
+    
+  }
+
   Widget myPopMenu() {
     return Material(
       color: Colors.transparent,
@@ -65,8 +120,12 @@ class _MainPageState extends State<MainPage> {
               case 1:
                 showLanguageButton();
                 break;
+              case 2:
+                showLatestNews();
+                break;
               case 3:
                 Util.showConfirmDialog(context, onPress: () {
+                  Request().logout();
                   Util.sharedPreferences.clear();
                   FlutterRouter()
                       .goToPage(context, Pages("FirstPage"), clear: true);
@@ -118,7 +177,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _currentIndex = widget.initIndex;
       _pageViewcontroller.jumpToPage(widget.initIndex);
     });

@@ -36,14 +36,23 @@ class StandardPullDown extends StatefulWidget {
 }
 
 class _StandardPullDownState extends State<StandardPullDown> {
-  dynamic selectedValue = null;
+  dynamic selectedValue;
+  int selectedIndex;
   TextEditingController textController = TextEditingController();
 
   @override
   void initState() {
     selectedValue = widget.initValue;
     textController.text = getNameByValue(selectedValue);
+    selectedIndex = _findIndexBySelectedValue(selectedValue, widget.pickerList);
     super.initState();
+  }
+
+  int _findIndexBySelectedValue(dynamic value, List<PickerItem> pickerList){
+    for(int i = 0; i < pickerList.length; i++){
+      if(pickerList[i].value == value) return i;
+    }
+    return 0;
   }
 
   showPickerArray(BuildContext context) {
@@ -51,6 +60,7 @@ class _StandardPullDownState extends State<StandardPullDown> {
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
         adapter: PickerDataAdapter(data: widget.pickerList),
         hideHeader: true,
+        selecteds: [selectedIndex],
         title: new Text(widget.dialogTitle ?? "Please Select".tr()),
         textStyle: TextStyle(
             color: Colors.black, fontSize: Util.responsiveSize(context, 19)),
@@ -58,6 +68,7 @@ class _StandardPullDownState extends State<StandardPullDown> {
         confirmText: "Confirm".tr(),
         onConfirm: (Picker picker, List value) {
           selectedValue = picker.getSelectedValues()[0];
+          selectedIndex = _findIndexBySelectedValue(selectedValue, widget.pickerList);
           textController.text = getNameByValue(selectedValue);
           widget.onSelected(selectedValue, textController.text);
         }).showDialog(context);

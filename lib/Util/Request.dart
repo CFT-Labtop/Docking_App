@@ -1,14 +1,14 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
+import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/BaseRequest.dart';
 import 'package:flutter_basecomponent/Util.dart';
+
 class Request extends BaseRequest{
   static final Request _request = Request._internal();
   Request._internal();
@@ -154,11 +154,11 @@ class Request extends BaseRequest{
         "bookingDate": bookingDate,
         "timeSlotId": timeSlotId,
         "isChHKTruck": isChHKTruck,
-        "bookingRemark": bookingRemark?? ""
+        "bookingRemark": bookingRemark?? "",
+        "timeSlotUsage": 1
       });
       if(response.data["rstCode"] != 0)
         throw response.data["rstMsg"];
-      print("Create Booking Done");
       return new Booking.fromJson(response.data["rstData"]);
     }on DioError catch(e){
       throw e.message;
@@ -211,6 +211,32 @@ class Request extends BaseRequest{
       throw response.data["rstMsg"];
     await Util.sharedPreferences.setString("Authorization", response.data["rstData"]);
     return response.data["rstData"];
+  }
+
+  Future<List<News>> getLatestNews()async {
+    try{
+    _setHeader();
+    Response response = await this.dio.get(this.baseURL + "LatestNews");
+    if(response.data == "") return [];
+      return (response.data as List<dynamic>).map((f) => News.fromJson(f)).toList();
+    }on DioError catch(e){
+      throw e.message;
+    }catch(e){
+      throw e;
+    }
+  }
+
+  Future<List<News>> logout()async {
+    try{
+    _setHeader();
+    Response response = await this.dio.post(this.baseURL + "User/Logout");
+    if(response.data["rstCode"] != 0)
+      throw response.data["rstMsg"];
+    }on DioError catch(e){
+      throw e.message;
+    }catch(e){
+      throw e;
+    }
   }
 
   void _setHeader(){

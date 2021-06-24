@@ -6,10 +6,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/Picker.dart';
 
 class MobileStandardTextField extends StatefulWidget {
-  const MobileStandardTextField({
+  MobileStandardTextField({
     Key key,
     @required this.mobileTextController, this.enable,
-    @required this.onPress, this.initialPrefix ,
+    @required this.onPress, this.initialPrefix,
    }) : super(key: key);
 
   final TextEditingController mobileTextController;
@@ -23,14 +23,19 @@ class MobileStandardTextField extends StatefulWidget {
 
 class MobileStandardTextFieldState extends State<MobileStandardTextField> {
   String countryCode = "852";
+  List<PickerItem> pickerList = [new PickerItem(text: Text("852"), value: "852"), new PickerItem(text: Text("86"), value: "86")];
+  int selectedIndex;
+
   @override
   void initState() {
     countryCode = widget.initialPrefix ?? countryCode;
+    selectedIndex = _findIndexBySelectedValue(countryCode, pickerList);
     super.initState();
   }
   showPickerArray(BuildContext context) {
     new Picker(
-        adapter: PickerDataAdapter(data: [new PickerItem(text: Text("852"), value: "852"), new PickerItem(text: Text("86"), value: "86")] ),
+        selecteds: [selectedIndex],
+        adapter: PickerDataAdapter(data: pickerList ),
         title: new Text("Please Select Country Code").tr(),
         hideHeader: true,
         cancelText: "Cancel".tr(),
@@ -38,10 +43,18 @@ class MobileStandardTextFieldState extends State<MobileStandardTextField> {
         onConfirm: (Picker picker, List value) {
           setState(() {
             String selectedValue = picker.getSelectedValues()[0]; 
+            selectedIndex = _findIndexBySelectedValue(selectedValue, pickerList);
             widget.onPress(selectedValue);
             countryCode = selectedValue;
           });
         }).showDialog(context);
+  }
+
+  int _findIndexBySelectedValue(String value, List<PickerItem> pickerList){
+    for(int i = 0; i < pickerList.length; i++){
+      if(pickerList[i].value == value) return i;
+    }
+    return 0;
   }
 
   @override

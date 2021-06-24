@@ -100,7 +100,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
           .dateList
           .map((e) => new PickerItem(
               text: Text(DateFormat("yyyy-MM-dd")
-                  .format(DateTime.parse(e["bookingDate"]))),
+                  .format(DateTime.parse(e["bookingDate"].substring(0,10)))),
               value: e["bookingDate"]))
           .toList();
       this.truckTypeSelection =
@@ -116,7 +116,6 @@ class _NewBookingPageState extends State<NewBookingPage> {
       List<dynamic> list = dateList.firstWhere((element) =>
           element["bookingDate"] == this.selectedDate)["bookingTimeSlots"];
       this.timeSlotList = list.map((e) => new TimeSlot.fromJson(e)).toList();
-      this.timeSlotList.sort((a, b) => a.timeSlotId.compareTo(b.timeSlotId));
     } catch (error) {
       this.timeSlotList = [];
     }
@@ -141,7 +140,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
       Navigator.pop(context);
-      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel, routeSettings: RouteSettings(arguments: {"booking": new Booking(warehouse: widget.warehouse, driverID: driver.driver_ID, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime), "timeSlot": selectedTimeSlot} ));
+      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel, routeSettings: RouteSettings(arguments: {"booking": new Booking(warehouse: widget.warehouse, shipmentList: widget.shipmentList, driverID: driver.driver_ID, driverCountryCode: driver.countryCode, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime), "timeSlot": selectedTimeSlot} ));
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());

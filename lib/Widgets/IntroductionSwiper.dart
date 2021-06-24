@@ -17,7 +17,7 @@ class IntroductionSwiper extends StatelessWidget {
             padding: EdgeInsets.all(Util.responsiveSize(context, 42)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+          children: [
                 Icon(
                   listComponents[index].icon,
                   color: Colors.white,

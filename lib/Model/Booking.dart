@@ -76,7 +76,8 @@ class Booking{
     this.truckType = json ["truckType"] ?? null;
     this.truckCompanyName = json ["truckCompanyName"] ?? null;
     this.deleted = json ["deleted"] ?? true;
-    this.shipmentList = json ["shipmentList"] ?? [];
+    List<dynamic> shipmentList = json ["shipmentList"] as List<dynamic> ?? [];
+    this.shipmentList = shipmentList.map((e) => e.toString()).toList();
     this.qrCodeString = json ["qrCodeString"] ?? null;
     this.clientName = json ["clientName"] ?? null;
     this.bookingRemark = json ["bookingRemark"] ?? null;

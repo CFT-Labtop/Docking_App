@@ -4,9 +4,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/Util.dart';
 
 class LicenseStandardTextField extends StatefulWidget {
-  const LicenseStandardTextField({Key key, @required this.textController})
+  const LicenseStandardTextField({Key key, @required this.textController, this.focusNode})
       : super(key: key);
   final TextEditingController textController;
+  final FocusNode focusNode;
 
   @override
   _LicenseStandardTextFieldState createState() =>
@@ -19,6 +20,7 @@ class _LicenseStandardTextFieldState extends State<LicenseStandardTextField> {
     return StandardTextFormField(
         textController: widget.textController,
         hintText: "Enter Your Car Licence Number".tr(),
+        focusNode: widget.focusNode,
         textInputType: TextInputType.text,
         fontSize: Util.responsiveSize(context, 18),
         validator: (text) {

@@ -23,7 +23,7 @@ class WarehousePullDownState extends State<WarehousePullDown> {
   }
   @override
   Widget build(BuildContext context) {
-    return StandardPullDown(initValue: widget.initValue, pickerList: widget.warehouseSelection, hintText: "Please Select Warehouse".tr(), dialogTitle: "Please Select Warehouse".tr(), onSelected: (value, String displayLabel) { 
+    return StandardPullDown(initValue: widget.initValue ?? null, pickerList: widget.warehouseSelection, hintText: "Please Select Warehouse".tr(), dialogTitle: "Please Select Warehouse".tr(), onSelected: (value, String displayLabel) { 
         selectedValue = value;
         selectedLabel = displayLabel;
      },);
