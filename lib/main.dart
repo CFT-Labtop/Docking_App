@@ -27,7 +27,7 @@ Future<void> main() async {
         Locale('zh', 'CN'),
         Locale('zh', 'HK')
       ],
-      path: 'assets/translations', // <-- change patch to your
+      path: 'assets/translations', 
       fallbackLocale: Locale('zh', 'HK'),
       child: RouterPage()));
 }

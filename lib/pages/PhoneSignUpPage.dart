@@ -40,8 +40,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
 
   Future<void> getTruckType() async {
     try {
-      List<TruckType> truckTypeList = await Request().getTrunckType();
-      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(context.locale, truckTypeList);
+      List<TruckType> truckTypeList = await Request().getTrunckType(context, context.locale);
+      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(truckTypeList);
     } catch (e) {
       throw e;
     }
@@ -59,18 +59,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
       body: FutureBuilder(
         future: getTruckType(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                snapshot.error,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: Util.responsiveSize(context, 24)),
-              ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            return GestureDetector(
+          return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
+                        return GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Container(
                   color: Colors.white,
@@ -119,7 +109,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                             if (_formKey.currentState.validate()) {
                               try{
                                 Util.showLoadingDialog(context);
-                                Map<String, dynamic> result = await Request().driverRegister(countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeKey.currentState.selectedValue);
+                                Map<String, dynamic> result = await Request().driverRegister(context, countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeKey.currentState.selectedValue);
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + result["verificationCode"])));
                                 FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.REGISTER.toString()+ "/" + result["issueTimeString"]);
@@ -166,9 +156,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                     ),
                   ))),
             );
-          } else {
-            return Center(child: PlatformCircularProgressIndicator());
-          }
+          });
         },
       ),
     );

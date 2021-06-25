@@ -59,7 +59,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
       try{
         Util.showLoadingDialog(context);
       if (_verifiyCode.length != 6) throw "Please Enter Verification Code".tr();
-      await Request().verify(
+      await Request().verify(context,
           countryCode: widget.countryCode,
           tel: widget.tel,
           verificationCode: _verifiyCode,
@@ -211,7 +211,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                                 ..onTap = () async {
                                   try {
                                     Util.showLoadingDialog(context);
-                                    Map<String, dynamic> result = await Request().login(countryCode: widget.countryCode,tel: widget.tel);
+                                    Map<String, dynamic> result = await Request().login(context, countryCode: widget.countryCode,tel: widget.tel);
                                     startTimer();
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " +result["verificationCode"])));
                                     setState(() {

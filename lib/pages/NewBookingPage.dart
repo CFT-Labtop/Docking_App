@@ -51,7 +51,11 @@ class _NewBookingPageState extends State<NewBookingPage> {
 
   @override
   void initState() {
-    futureBuilder = getInformation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        futureBuilder = getInformation();
+      });
+    });
     super.initState();
   }
 
@@ -98,9 +102,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
 
   Future<void> getInformation() async {
     try {
-      this.truckTypeList = await Request().getTrunckType();
-      driver = await Request().getDriver();
-      this.dateList = await Request().getTimeSlot(widget.warehouse);
+      this.truckTypeList = await Request().getTrunckType(context, context.locale);
+      driver = await Request().getDriver(context: context);
+      this.dateList = await Request().getTimeSlot(context, widget.warehouse);
       this.dateSelection = this
           .dateList
           .map((e) => new PickerItem(
@@ -109,7 +113,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
               value: e["bookingDate"]))
           .toList();
       this.truckTypeSelection =
-          UtilExtendsion.getTruckTypeSelection(context.locale, this.truckTypeList);
+          UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
       licenseTextController.text = driver.default_Truck_No;
     } catch (e) {
       throw e;
@@ -163,18 +167,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
       body: FutureBuilder(
         future: futureBuilder,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                snapshot.error,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: Util.responsiveSize(context, 24)),
-              ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            return GestureDetector(
+          return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
+                        return GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Container(
                 width: double.infinity,
@@ -186,13 +180,6 @@ class _NewBookingPageState extends State<NewBookingPage> {
                       SizedBox(
                         height: Util.responsiveSize(context, 32),
                       ),
-                      // CarTypeStandardField(
-                      //   textController: licenseTextController,
-                      //   key: _carTypeTextFieldKey,
-                      //   initCarType: UtilExtendsion.getDefaultTruckType(),
-                      //   onPress: (String carType) {},
-                      //   truckTypeSelection: truckTypeSelection,
-                      // ),
                       CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey,),
                       SizedBox(height: Util.responsiveSize(context, 24),),
                       LicenseStandardTextField(textController: licenseTextController,),
@@ -260,9 +247,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                 ),
               ),
             );
-          } else {
-            return Center(child: PlatformCircularProgressIndicator());
-          }
+          });
         },
       ),
     );

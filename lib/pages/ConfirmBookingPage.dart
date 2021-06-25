@@ -132,7 +132,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
   void _submitForm() async{
     try {
       Util.showLoadingDialog(context);
-      Booking booking = await Request().createBooking(
+      Booking booking = await Request().createBooking(context,
           warehouseID: widget.booking.warehouse,
           shipmentList: widget.booking.shipmentList ?? [],
           driverID: widget.booking.driverID,

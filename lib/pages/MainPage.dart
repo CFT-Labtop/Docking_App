@@ -51,12 +51,15 @@ class _MainPageState extends State<MainPage> {
           switch (picker.getSelectedValues()[0]) {
             case "English":
               context.locale = Locale('en', 'US');
+              Request().changeLanguage(context, Locale('en', 'US'));
               break;
             case "Simplified Chinese":
               context.locale = Locale('zh', 'CN');
+              Request().changeLanguage(context, Locale('zh', 'CN'));
               break;
             case "Traditional Chinese":
               context.locale = Locale('zh', 'HK');
+              Request().changeLanguage(context, Locale('zh', 'HK'));
               break;
           }
         }).showDialog(context);
@@ -66,7 +69,7 @@ class _MainPageState extends State<MainPage> {
     List<News> newsList = [];
     try {
       Util.showLoadingDialog(context);
-      newsList = await Request().getLatestNews();
+      newsList = await Request().getLatestNews(context);
       Navigator.pop(context);
     } catch (error) {
       Navigator.pop(context);
@@ -121,7 +124,7 @@ class _MainPageState extends State<MainPage> {
                 break;
               case 3:
                 Util.showConfirmDialog(context, onPress: () {
-                  Request().logout();
+                  Request().logout(context);
                   Util.sharedPreferences.clear();
                   FlutterRouter()
                       .goToPage(context, Pages("FirstPage"), clear: true);
@@ -140,7 +143,7 @@ class _MainPageState extends State<MainPage> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.language),
+                          child: Icon(Icons.language, color: Colors.black,),
                         ),
                         Text('Language'.tr())
                       ],
@@ -151,7 +154,7 @@ class _MainPageState extends State<MainPage> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.tungsten),
+                          child: Icon(Icons.tungsten, color: Colors.black),
                         ),
                         Text('Latest News'.tr())
                       ],
@@ -162,7 +165,7 @@ class _MainPageState extends State<MainPage> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.logout),
+                          child: Icon(Icons.logout, color: Colors.black),
                         ),
                         Text('Logout'.tr())
                       ],

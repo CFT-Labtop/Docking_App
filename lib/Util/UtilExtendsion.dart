@@ -1,18 +1,21 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TruckType.dart';
+import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_basecomponent/BaseRouter.dart';
 
 extension UtilExtendsion on Util {
   static const Color mainColor = Color.fromRGBO(202,37,46,1);
-  static List<PickerItem> getTruckTypeSelection(Locale locale, List<TruckType> truckTypeList) {
-    return truckTypeList.map((e) =>new PickerItem(text: Text(locale.toString() == "en_US" ? e.typeName_En : e.typeName_Ch), value: e.truck_Type)).toList();
+  static List<PickerItem> getTruckTypeSelection(List<TruckType> truckTypeList) {
+    return truckTypeList.map((e) =>new PickerItem(text: Text(e.typeName), value: e.truck_Type)).toList();
   }
 
   static Future<void> initDriver() async {
@@ -82,6 +85,10 @@ extension UtilExtendsion on Util {
 
   static Widget CustomFutureBuild(BuildContext context, AsyncSnapshot<dynamic> snapshot, Widget Function() callBack) {
     if (snapshot.hasError) {
+      if(snapshot.error == "Http status error [401]"){
+        Util.sharedPreferences.clear();
+        FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+      }
       return Center(
           child: Text(
         snapshot.error,

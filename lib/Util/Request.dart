@@ -19,22 +19,18 @@ class Request extends BaseRequest {
     return _request.init(baseUrl, _request) as Request;
   }
 
-  Future<List<TruckType>> getTrunckType() async {
-    try {
+  Future<List<TruckType>> getTrunckType(BuildContext context, Locale lang) async {
+    return await _run<List<TruckType>>(context: context, callback: () async {
       clearToken();
-      Response response = await this.dio.get(this.baseURL + "Master/TruckType");
+      Response response = await this.dio.get(this.baseURL + "Master/TruckType", queryParameters: {"lang": UtilExtendsion.localeToLocaleCode(lang)} );
       return (response.data as List<dynamic>)
           .map((f) => TruckType.fromJson(f))
           .toList();
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
   Future<List<Warehouse>> getWarehouse(BuildContext context) async {
-    try {
+    return await _run<List<Warehouse>>(context: context, callback: () async {
       clearToken();
       _setHeader();
       // _setFakeToken();
@@ -42,23 +38,15 @@ class Request extends BaseRequest {
       return (response.data as List<dynamic>)
           .map((f) => Warehouse.fromJson(f))
           .toList();
-    } on DioError catch (e) {
-      // if(e.response.statusCode == 401)
-      //   WidgetsBinding.instance.addPostFrameCallback((_) {
-      //     FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
-      //   });
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<Map<String, dynamic>> driverRegister(
+  Future<Map<String, dynamic>> driverRegister(BuildContext context,
       {String mobileNumber,
       String countryCode,
       String carType,
       String license}) async {
-    try {
+    return await _run<Map<String, dynamic>>(context: context, callback: () async {
       clearToken();
       Response response = await this.dio.post(this.baseURL + "Driver", data: {
         "tel": mobileNumber,
@@ -69,19 +57,16 @@ class Request extends BaseRequest {
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
       return response.data["rstData"] as Map<String, dynamic>;
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
   Future<void> verify(
+    BuildContext context,
       {String countryCode,
       String tel,
       String verificationCode,
       Locale lang}) async {
-    try {
+    await _run<void>(context: context, callback: () async {
       clearToken();
       Response response =
           await this.dio.post(this.baseURL + "Driver/Verify", data: {
@@ -93,33 +78,30 @@ class Request extends BaseRequest {
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       await Util.sharedPreferences
           .setString("Authorization", response.data["rstData"]);
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<Map<String, dynamic>> login({String countryCode, String tel}) async {
-    try {
+  Future<Map<String, dynamic>> login(BuildContext context, {String countryCode, String tel}) async {
+    return await _run<Map<String, dynamic>>(context: context, callback: () async {
       clearToken();
-      Response response = await this.dio.post(this.baseURL + "Driver/Login", data: {"countryCode": countryCode,"tel": tel,});
+      Response response =
+          await this.dio.post(this.baseURL + "Driver/Login", data: {
+        "countryCode": countryCode,
+        "tel": tel,
+      });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
       return response.data["rstData"] as Map<String, dynamic>;
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
   Future<void> updateSetting(
+    BuildContext context,
       {String countryCode,
       String tel,
       String default_Truck_No,
       String default_Truck_Type}) async {
-    try {
+    await _run<void>(context: context, callback: () async {
       clearToken();
       _setHeader();
       Response response = await this.dio.put(this.baseURL + "Driver", data: {
@@ -129,15 +111,11 @@ class Request extends BaseRequest {
         "default_Truck_Type": default_Truck_Type
       });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<Driver> getDriver() async {
-    try {
+  Future<Driver> getDriver({BuildContext context}) async {
+    return await _run<Driver>(context: context ?? null, callback:  () async {
       clearToken();
       _setHeader();
       Response response = await this.dio.get(this.baseURL + "User/username");
@@ -150,29 +128,33 @@ class Request extends BaseRequest {
           default_Truck_No: response.data["default_Truck_No"],
           default_Truck_Type: response.data["default_Truck_Type"],
           countryCode: response.data["countryCode"]);
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<List<dynamic>> getTimeSlot(String warehouseID) async {
-    try {
+  Future<List<dynamic>> getTimeSlot(BuildContext context,String warehouseID) async {
+    return await _run<List<dynamic>>(context: context, callback: () async {
       clearToken();
       _setHeader();
       Response response = await this
           .dio
           .get(this.baseURL + "Booking/TimeSlot/" + warehouseID.toString());
       return response.data;
+    });
+  }
+
+  Future<T> _run<T>({BuildContext context, @required dynamic callback}) async {
+    try {
+      var response = await callback();
+      return response as T;
     } on DioError catch (e) {
-      throw e.message;
+        throw e.message;
     } catch (e) {
       throw e;
     }
   }
 
   Future<Booking> createBooking(
+    BuildContext context,
       {String warehouseID,
       List<String> shipmentList,
       String driverID,
@@ -184,9 +166,9 @@ class Request extends BaseRequest {
       String timeSlotId,
       bool isChHKTruck,
       String bookingRemark,
-      int timeSlotUsage }) async {
-    try {
-      clearToken();
+      int timeSlotUsage}) async {
+        return await _run<Booking>(context: context, callback: ()async {
+          clearToken();
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "Booking", data: {
         "warehouseID": warehouseID,
@@ -204,113 +186,95 @@ class Request extends BaseRequest {
       });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       return new Booking.fromJson(response.data["rstData"]);
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+        });
   }
 
-  Future<List<Booking>> getBookingList(String driverID) async {
-    try {
-      await Request().renewToken();
+  Future<List<Booking>> getBookingList(BuildContext context, String driverID) async {
+    return await _run<List<Booking>>(context: context, callback: () async{
+      await Request().renewToken(context);
       clearToken();
       _setHeader();
       Response response = await this.dio.get(this.baseURL + "Booking/",
           queryParameters: {"driverID": driverID});
-      if (response.data == "") return [];
-      return (response.data as List<dynamic>)
-          .map((f) => Booking.fromJson(f))
-          .toList();
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+      if (response.data == "") return <Booking>[];
+      return (response.data as List<dynamic>).map((f) => Booking.fromJson(f)).toList();
+    });
   }
 
-  Future<void> deleteBooking(String bookingRef) async {
-    try {
+  Future<void> deleteBooking(BuildContext context, String bookingRef) async {
+    await _run<void>(context: context, callback: ()async {
       clearToken();
       _setHeader();
       Response response =
           await this.dio.delete(this.baseURL + "Booking/" + bookingRef);
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<void> truckArrive(String bookingRef) async {
-    try {
+  Future<void> truckArrive(BuildContext context, String bookingRef) async {
+    await _run<void>(context: context, callback: () async{
       clearToken();
       _setHeader();
       Response response = await this
           .dio
           .put(this.baseURL + "Booking/TruckArrive/" + bookingRef);
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<String> renewToken() async {
-    try {
+  Future<void> renewToken(BuildContext context) async {
+    await _run<void>(context: context,callback: () async {
       clearToken();
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "User/RenewToken");
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       await Util.sharedPreferences.setString("Authorization", response.data["rstData"]);
       return response.data["rstData"];
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<List<News>> getLatestNews() async {
-    try {
+  Future<List<News>> getLatestNews(BuildContext context) async {
+    return await _run<List<News>>(context: context, callback: () async{
       clearToken();
       _setHeader();
       Response response = await this.dio.get(this.baseURL + "LatestNews");
-      if (response.data == "") return [];
+      if (response.data == "") return <News>[];
       return (response.data as List<dynamic>)
           .map((f) => News.fromJson(f))
           .toList();
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
-  Future<List<News>> logout() async {
-    try {
+  Future<void> changeLanguage(BuildContext context, Locale lang) async {
+    await _run<void>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.post(this.baseURL + "User/ChangeLanguage", queryParameters: {'lang': UtilExtendsion.localeToLocaleCode(lang)});;
+      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      await Util.sharedPreferences.setString("Authorization", response.data["rstData"]);
+    });
+  }
+
+  Future<void> logout(BuildContext context) async {
+    await _run<void>(context: context, callback: () async {
       clearToken();
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "User/Logout");
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
-    } on DioError catch (e) {
-      throw e.message;
-    } catch (e) {
-      throw e;
-    }
+    });
   }
 
   void _setHeader() {
-    this.dio.options.headers["Authorization"] ="bearer " + Util.sharedPreferences.getString("Authorization");
+    this.dio.options.headers["Authorization"] =
+        "bearer " + Util.sharedPreferences.getString("Authorization");
   }
 
   void _setFakeToken() {
-    this.dio.options.headers["Authorization"] ="bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiRDAwMDAxMzIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJEcml2ZXIiLCJMYW5nIjoiemhoayIsIm5iZiI6MTYyNDUyNDY4OSwiZXhwIjoxNjI1MTI5NDg5LCJpc3MiOiJTVU5ISU5HR1JPVVAiLCJhdWQiOiJTVU5ISU5HR1JPVVAifQ.WveLwlNq0LIXsVSWke4JOZs_7wxD8nlLACvMAMsaia0";
+    this.dio.options.headers["Authorization"] = "bearer " +
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiRDAwMDAxMzIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJEcml2ZXIiLCJMYW5nIjoiemhoayIsIm5iZiI6MTYyNDUyNDY4OSwiZXhwIjoxNjI1MTI5NDg5LCJpc3MiOiJTVU5ISU5HR1JPVVAiLCJhdWQiOiJTVU5ISU5HR1JPVVAifQ.WveLwlNq0LIXsVSWke4JOZs_7wxD8nlLACvMAMsaia0";
   }
 
-  void clearToken(){
+  void clearToken() {
     this.dio.options.headers["Authorization"] = null;
   }
 }

@@ -80,7 +80,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     title: "Confirm To Delete?".tr(), onPress: () async {
                   try {
                     Util.showLoadingDialog(context);
-                    await Request().deleteBooking(widget.booking.bookingRef);
+                    await Request().deleteBooking(context ,widget.booking.bookingRef);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Delete Successfully".tr())));
@@ -217,7 +217,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                               try {
                                 Util.showLoadingDialog(context);
                                 await Request()
-                                    .truckArrive(widget.booking.bookingRef);
+                                    .truckArrive(context, widget.booking.bookingRef);
                                 Navigator.pop(context);
                                 Util.showAlertDialog(context, "",
                                     title: "Confirm Successfully".tr());
