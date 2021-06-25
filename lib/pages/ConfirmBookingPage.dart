@@ -183,7 +183,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                 Icons.date_range,
                 "Booking Date".tr(),
                 new DateFormat('yyyy-MM-dd')
-                    .format(DateTime.parse(widget.booking.bookingDate)),
+                    .format(DateTime.parse(widget.booking.bookingDate.substring(0,10))),
                 isDivider: false),
             _greyTile(context),
             _remarkField(context),

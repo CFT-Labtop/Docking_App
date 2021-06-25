@@ -214,7 +214,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                             backgroundColor: Colors.green,
                             text: "Arrive".tr(),
                             onPress: () async {
-                              try {
+                              Util.showConfirmDialog(context, title: "Confirm To Arrive?".tr(), onPress: () async{
+                                try {
                                 Util.showLoadingDialog(context);
                                 await Request()
                                     .truckArrive(context, widget.booking.bookingRef);
@@ -228,6 +229,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                 Navigator.pop(context);
                                 Util.showAlertDialog(context, error.toString());
                               }
+                              });
                             },
                           ),
                     SizedBox(

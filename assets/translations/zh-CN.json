@@ -38,7 +38,7 @@
     "Current Bookings": "现时预约",
     "Settings": "设定",
     "Please Select Date": "请选择时间",
-    "Booking Detail": "预约详程",
+    "Booking Detail": "预约详情",
     "Car Number": "车牌",
     "Reference Number": "参考编号",
     "Arrive": "通知到达",
@@ -105,5 +105,6 @@
     "Start Time": "开始时间",
     "End Time": "结束时间",
     "Error": "错误",
-    "Dismiss": "取消"
+    "Dismiss": "取消",
+    "Confirm To Arrive?": "确认到达??"
 }
