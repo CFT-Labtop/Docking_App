@@ -191,7 +191,6 @@ class Request extends BaseRequest {
 
   Future<List<Booking>> getBookingList(BuildContext context, String driverID) async {
     return await _run<List<Booking>>(context: context, callback: () async{
-      await Request().renewToken(context);
       clearToken();
       _setHeader();
       Response response = await this.dio.get(this.baseURL + "Booking/",

@@ -10,6 +10,7 @@ class StandardAppBar extends PreferredSize {
   final Color fontColor;
   final Color backIconColor;
   final List<Widget> trailingActions;
+  final void Function() onPress;
 
   @override
   Size get preferredSize => Size.fromHeight(52);
@@ -22,7 +23,8 @@ class StandardAppBar extends PreferredSize {
       this.fontSize,
       this.height,
       this.backIconColor,
-      this.trailingActions});
+      this.trailingActions,
+      this.onPress});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,12 @@ class StandardAppBar extends PreferredSize {
           color: Colors.transparent,
           child: IconButton(
             icon: Icon(Icons.arrow_back, color: backIconColor ?? Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              if(this.onPress == null)
+                Navigator.of(context).pop();
+              else
+                this.onPress();
+            },
           ),
         ): SizedBox(),
         trailingActions: this.trailingActions ?? [],

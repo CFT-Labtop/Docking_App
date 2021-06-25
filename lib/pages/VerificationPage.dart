@@ -87,6 +87,11 @@ class _VerficiationPageState extends State<VerficiationPage> {
         text: "Verification".tr(),
         backgroundColor: UtilExtendsion.mainColor,
         fontColor: Colors.white,
+        onPress: (){
+            Util.showConfirmDialog(context, onPress: (){
+              Navigator.of(context).pop();
+            }, title: "Confirm".tr());
+          },
       ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

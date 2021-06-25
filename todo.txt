@@ -21,14 +21,19 @@ First Page Login Button Size(Done)
 Verification Code 要自動Enter(Done)
 Apps名叫新興物流(Done)
 ShipmentList(Done)
-RenewToken
+RenewToken(Done)
 Logout call api (User Not found error, Why?)
 car type auto focus License(Done)
 Setting Page submit refresh(Done)
 TimeSlotGrid sorting problem(Done)
 Selection PullDown focuse previous value(Done)
-login verify getTruckType need lang
-轉language call api
-http code 401 轉First Page
+login verify getTruckType need lang(Done)
+轉language call api(Done)
+http code 401 轉First Page(Done)
 createBooking -> pass countryCode and timeSlotUsage = 1 (Done)
-pass timeSlot_Usage to createBooking
+pass timeSlot_Usage to createBooking(Done)
+
+Verify Page Back Confirmation(Done)
+First Page Latest News
+Setting Page Submit 後取消focus(Done)
+401 Loading(Done)

@@ -115,6 +115,7 @@ class _SettingFragmentState extends State<SettingFragment> {
                         await UtilExtendsion.initDriver();
                         await getInformation();
                         Navigator.pop(context);
+                        FocusManager.instance.primaryFocus?.unfocus();
                         Util.showAlertDialog(context, "",  title: "Update Successfully".tr());
                       }catch(error){
                         Navigator.pop(context);
@@ -133,96 +134,4 @@ class _SettingFragmentState extends State<SettingFragment> {
       },
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return FutureBuilder(
-  //     future: futureBuilder,
-  //     builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-  //       if (snapshot.hasError) {
-  //         return Center(
-  //           child: Text(
-  //             snapshot.error,
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //                 color: Colors.grey,
-  //                 fontSize: Util.responsiveSize(context, 24)),
-  //           ),
-  //         );
-  //       } else if (snapshot.connectionState == ConnectionState.done) {
-  //         return GestureDetector(
-  //           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-  //           child: Container(
-  //             height: double.infinity,
-  //             width: double.infinity,
-  //             color: Colors.white,
-  //             child: Column(
-  //               children: [
-  //                 SizedBox(
-  //                   height: Util.responsiveSize(context, 24),
-  //                 ),
-  //                 Text(
-  //                   "Read Only".tr(),
-  //                   style: TextStyle(
-  //                       color: Colors.grey,
-  //                       fontSize: Util.responsiveSize(context, 18)),
-  //                 ),
-  //                 SizedBox(
-  //                   height: Util.responsiveSize(context, 24),
-  //                 ),
-  //                 MobileStandardTextField(//NO Country Code
-  //                   mobileTextController: mobileTextController,
-  //                   enable: false,
-  //                   initialPrefix: driver.countryCode,
-  //                 ),
-  //                 SizedBox(
-  //                   height: Util.responsiveSize(context, 24),
-  //                 ),
-  //                 Text(
-  //                   "Default Car - Optional".tr(),
-  //                   style: TextStyle(
-  //                       color: Colors.grey,
-  //                       fontSize: Util.responsiveSize(context, 18)),
-  //                 ),
-  //                 SizedBox(
-  //                   height: Util.responsiveSize(context, 12),
-  //                 ),
-  //                 CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey, onSelected: (String selectedValue, String selectedLabel){
-  //                   _focusNode.requestFocus();
-  //                 },),
-  //                 SizedBox(height: Util.responsiveSize(context, 24),),
-  //                 LicenseStandardTextField(textController: licenseTextController, focusNode: _focusNode,),
-  //                 Expanded(
-  //                   child: SizedBox(),
-  //                 ),
-  //                 StandardElevatedButton(
-  //                   backgroundColor: UtilExtendsion.mainColor,
-  //                   text: "Submit".tr(),
-  //                   onPress: ()async {
-  //                     try{
-  //                       Util.showLoadingDialog(context);
-  //                       await Request().updateSetting(tel: mobileTextController.text, countryCode: driver.countryCode, default_Truck_No: licenseTextController.text, default_Truck_Type: _carTypeKey.currentState.selectedValue);
-  //                       await UtilExtendsion.initDriver();
-  //                       await getInformation();
-  //                       Navigator.pop(context);
-  //                       Util.showAlertDialog(context, "",  title: "Update Successfully".tr());
-  //                     }catch(error){
-  //                       Navigator.pop(context);
-  //                       Util.showAlertDialog(context, error.toString());
-  //                     }
-  //                   },
-  //                 ),
-  //                 SizedBox(
-  //                   height: Util.responsiveSize(context, 12),
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       } else {
-  //         return Center(child: PlatformCircularProgressIndicator());
-  //       }
-  //     },
-  //   );
-  // }
 }

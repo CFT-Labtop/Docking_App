@@ -176,7 +176,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      await Request().renewToken(context);
       _currentIndex = widget.initIndex;
       _pageViewcontroller.jumpToPage(widget.initIndex);
     });
