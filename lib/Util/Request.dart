@@ -131,7 +131,7 @@ class Request extends BaseRequest {
     });
   }
 
-  Future<List<dynamic>> getTimeSlot(BuildContext context,String warehouseID) async {
+  Future<List<dynamic>> getTimeSlot(BuildContext context,int warehouseID) async {
     return await _run<List<dynamic>>(context: context, callback: () async {
       clearToken();
       _setHeader();
@@ -155,7 +155,7 @@ class Request extends BaseRequest {
 
   Future<Booking> createBooking(
     BuildContext context,
-      {String warehouseID,
+      {int warehouseID,
       List<String> shipmentList,
       String driverID,
       String driverTel,
@@ -171,7 +171,7 @@ class Request extends BaseRequest {
           clearToken();
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "Booking", data: {
-        "warehouseID": warehouseID,
+        "warehouseId": warehouseID.toString(),
         "shipmentList": shipmentList,
         "driverID": driverID,
         "driverTel": driverTel,

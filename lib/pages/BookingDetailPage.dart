@@ -181,7 +181,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                           detailTile(Icons.date_range,
                               widget.booking.displayBookingDate()),
                           detailTile(Icons.schedule, widget.booking.timeSlot),
-                          detailTile(Icons.store, widget.booking.warehouse),
+                          detailTile(Icons.store, widget.booking.warehouse.toString()),
                           detailTile(Icons.car_repair,
                               widget.booking.showTruckAndLicense()),
                         ],
@@ -222,7 +222,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                 Util.showAlertDialog(context, "",
                                     title: "Confirm Successfully".tr());
                                 setState(() {
-                                  widget.booking.bookingStatus = "Arrived";
+                                  widget.booking.bookingStatus = "Arrived".tr();
                                 });
                               } catch (error) {
                                 Navigator.pop(context);

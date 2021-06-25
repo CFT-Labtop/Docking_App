@@ -26,6 +26,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class Booking{
   String warehouse;
+  int warehouseID;
   String bookingRef;
   String bookingDate;
   String bookingStatus;
@@ -46,6 +47,7 @@ class Booking{
 
   Booking({
     this.warehouse,
+    this.warehouseID,
     this.bookingRef,
     this.bookingDate,
     this.bookingStatus,
@@ -67,6 +69,7 @@ class Booking{
 
   Booking.fromJson(Map json){
     this.warehouse = json["warehouse"] ?? null;
+    this.warehouseID = json["warehouseID"] ?? null;
     this.bookingRef = json ["bookingRef"] ?? null;
     this.bookingDate = json ["bookingDate"] ?? null;
     this.bookingStatus = json ["bookingStatus"] ?? null;
@@ -77,7 +80,7 @@ class Booking{
     this.truckNo = json ["truckNo"] ?? null;
     this.truckType = json ["truckType"] ?? null;
     this.truckCompanyName = json ["truckCompanyName"] ?? null;
-    this.deleted = json ["deleted"] ?? true;
+    this.deleted = _convertIntToBool(json ["deleted"]);
     List<dynamic> shipmentList = json ["shipmentList"] as List<dynamic> ?? [];
     this.shipmentList = shipmentList.map((e) => e.toString()).toList();
     this.qrCodeString = json ["qrCodeString"] ?? null;
@@ -85,6 +88,11 @@ class Booking{
     this.bookingRemark = json ["bookingRemark"] ?? null;
     this.bookingInternalRemark = json ["bookingInternalRemark"] ?? null;
     this.timeSlotUsage = json ["timeSlotUsage"] ?? 0;
+  }
+
+  bool _convertIntToBool(int value){
+    if(value == null) return false;
+    return value == 1;
   }
 
   String displayBookingDate(){

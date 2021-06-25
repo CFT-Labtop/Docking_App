@@ -133,7 +133,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
     try {
       Util.showLoadingDialog(context);
       Booking booking = await Request().createBooking(context,
-          warehouseID: widget.booking.warehouse,
+          warehouseID: widget.booking.warehouseID ,
           shipmentList: widget.booking.shipmentList ?? [],
           driverID: widget.booking.driverID,
           driverTel: widget.booking.driverTel,
@@ -145,7 +145,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           isChHKTruck: false,
           bookingRemark: textEditingController.text,
           timeSlotUsage: widget.booking.timeSlotUsage);
-      UtilExtendsion.setPreviousWarehouse( int.parse(widget.booking.warehouse));
+      UtilExtendsion.setPreviousWarehouse( widget.booking.warehouseID);
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));
       FlutterRouter().goToPage(context, Pages("MainPage"),routeSettings: RouteSettings(arguments: booking), clear: true);

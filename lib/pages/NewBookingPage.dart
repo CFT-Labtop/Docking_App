@@ -23,10 +23,10 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class NewBookingPage extends StatefulWidget {
-  final String warehouse;
+  final int warehouseID;
   final List<String> shipmentList;
 
-  const NewBookingPage({Key key, this.warehouse, this.shipmentList})
+  const NewBookingPage({Key key, this.warehouseID, this.shipmentList})
       : super(key: key);
 
   @override
@@ -104,7 +104,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
     try {
       this.truckTypeList = await Request().getTrunckType(context, context.locale);
       driver = await Request().getDriver(context: context);
-      this.dateList = await Request().getTimeSlot(context, widget.warehouse);
+      this.dateList = await Request().getTimeSlot(context, widget.warehouseID);
       this.dateSelection = this
           .dateList
           .map((e) => new PickerItem(
@@ -133,7 +133,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
   void submitBooking() async {
     try {
       Util.showLoadingDialog(context);
-      if (widget.warehouse == null || widget.warehouse.isEmpty)
+      if (widget.warehouseID == null)
         throw "Please Select Warehouse".tr();
       if (driver.driver_ID == null || driver.driver_ID.isEmpty)
         throw "Driver ID Cannot Be Empty".tr();
@@ -149,7 +149,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
       if (selectedTime == null || selectedTime.isEmpty)
         throw "Booking Time Slot Cannot Be Empty".tr();
       Navigator.pop(context);
-      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel, routeSettings: RouteSettings(arguments: {"booking": new Booking(warehouse: widget.warehouse, shipmentList: widget.shipmentList, driverID: driver.driver_ID, driverCountryCode: driver.countryCode, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime, timeSlotUsage: _getTimeSlotUsageByValue(_carTypeKey.currentState.selectedValue)), "timeSlot": selectedTimeSlot} ));
+      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel, routeSettings: RouteSettings(arguments: {"booking": new Booking(warehouseID: widget.warehouseID, shipmentList: widget.shipmentList, driverID: driver.driver_ID, driverCountryCode: driver.countryCode, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime, timeSlotUsage: _getTimeSlotUsageByValue(_carTypeKey.currentState.selectedValue)), "timeSlot": selectedTimeSlot} ));
     } catch (error) {
       Navigator.pop(context);
       Util.showAlertDialog(context, error.toString());

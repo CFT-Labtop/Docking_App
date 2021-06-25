@@ -165,7 +165,7 @@ class _BookingListFragmentState extends State<BookingListFragment> {
                                                   context, 14),
                                               color: Colors.black87),
                                           Text(
-                                            bookingList[index].warehouse,
+                                            bookingList[index].warehouse.toString(),
                                             style: TextStyle(
                                                 color: Colors.black87,
                                                 fontSize: Util.responsiveSize(
