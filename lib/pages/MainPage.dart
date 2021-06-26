@@ -16,7 +16,6 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 
-
 class MainPage extends StatefulWidget {
   final int initIndex;
   const MainPage({Key key, this.initIndex = 1}) : super(key: key);
@@ -25,9 +24,10 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   int _currentIndex = 1;
   PageController _pageViewcontroller = new PageController();
+  bool isLoading = false;
 
   void showLanguageButton() {
     new Picker(
@@ -88,24 +88,30 @@ class _MainPageState extends State<MainPage> {
                 height: MediaQuery.of(context).size.height * .5,
                 width: MediaQuery.of(context).size.width * .5,
                 child: Swiper(
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.all(Util.responsiveSize(context, 4)),
-                      child: ListView(
-                        children: [
-                          Text(newsList[index].subject, style: TextStyle(color: Colors.black, fontSize: Util.responsiveSize(context, 32), fontWeight: FontWeight.bold),),
-                          SizedBox(height: Util.responsiveSize(context, 12)),
-                          Html(data: newsList[index].content)
-                        ],
-                      )
-                    );
-                  },
-                  itemCount: newsList.length,
-                  pagination: new SwiperPagination(builder: DotSwiperPaginationBuilder(
-                    activeColor: UtilExtendsion.mainColor,
-                    color: Colors.grey
-                  ))
-                ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                          padding:
+                              EdgeInsets.all(Util.responsiveSize(context, 4)),
+                          child: ListView(
+                            children: [
+                              Text(
+                                newsList[index].subject,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: Util.responsiveSize(context, 32),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                  height: Util.responsiveSize(context, 12)),
+                              Html(data: newsList[index].content)
+                            ],
+                          ));
+                    },
+                    itemCount: newsList.length,
+                    pagination: new SwiperPagination(
+                        builder: DotSwiperPaginationBuilder(
+                            activeColor: UtilExtendsion.mainColor,
+                            color: Colors.grey))),
               ),
             ));
   }
@@ -143,7 +149,10 @@ class _MainPageState extends State<MainPage> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.language, color: Colors.black,),
+                          child: Icon(
+                            Icons.language,
+                            color: Colors.black,
+                          ),
                         ),
                         Text('Language'.tr())
                       ],
@@ -175,75 +184,103 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    super.didChangeAppLifecycleState(state);
+      if(state == AppLifecycleState.resumed){
+        setState(() {
+          isLoading = true;
+        });
+        await Request().renewToken(context);
+        setState(() {
+          isLoading = false;
+        });
+      }
+  }
+
+  @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Request().renewToken(context);
       _currentIndex = widget.initIndex;
       _pageViewcontroller.jumpToPage(widget.initIndex);
     });
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: StandardAppBar(
-        text: "Dock Booking System".tr(),
-        fontColor: Colors.white,
-        backgroundColor: UtilExtendsion.mainColor,
-        trailingActions: [
-          myPopMenu(),
-        ],
-      ),
-      bottomNavigationBar: PlatformNavBar(
-        currentIndex: _currentIndex,
-        itemChanged: (index) => setState(
-          () {
-            _currentIndex = index;
-            _pageViewcontroller.jumpToPage(index);
-          },
-        ),
-        items: [
-          BottomNavigationBarItem(
-              activeIcon: Icon(
-                Icons.book_online_outlined,
-                color: UtilExtendsion.mainColor,
+    return (isLoading)
+        ? Scaffold(
+            body: Center(
+              child: PlatformCircularProgressIndicator(),
+            ),
+          )
+        : Scaffold(
+            appBar: StandardAppBar(
+              text: "Dock Booking System".tr(),
+              fontColor: Colors.white,
+              backgroundColor: UtilExtendsion.mainColor,
+              trailingActions: [
+                myPopMenu(),
+              ],
+            ),
+            bottomNavigationBar: PlatformNavBar(
+              currentIndex: _currentIndex,
+              itemChanged: (index) => setState(
+                () {
+                  _currentIndex = index;
+                  _pageViewcontroller.jumpToPage(index);
+                },
               ),
-              icon: Icon(Icons.book_online_outlined),
-              title: Text("New Booking".tr(),
-                  style: TextStyle(color: UtilExtendsion.mainColor))),
-          BottomNavigationBarItem(
-              activeIcon: Icon(Icons.schedule, color: UtilExtendsion.mainColor),
-              icon: Icon(Icons.schedule),
-              title: Text(
-                "Current Bookings".tr(),
-                style: TextStyle(color: UtilExtendsion.mainColor),
-              )),
-          BottomNavigationBarItem(
-              activeIcon: Icon(
-                Icons.settings,
-                color: UtilExtendsion.mainColor,
-              ),
-              icon: Icon(Icons.settings),
-              title: Text("Settings".tr(),
-                  style: TextStyle(color: UtilExtendsion.mainColor))),
-        ],
-      ),
-      body: SafeArea(
-          child: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        controller: _pageViewcontroller,
-        children: [
-          ShipmentFragment(),
-          BookingListFragment(),
-          SettingFragment()
-        ],
-      )),
-    );
+              items: [
+                BottomNavigationBarItem(
+                    activeIcon: Icon(
+                      Icons.book_online_outlined,
+                      color: UtilExtendsion.mainColor,
+                    ),
+                    icon: Icon(Icons.book_online_outlined),
+                    title: Text("New Booking".tr(),
+                        style: TextStyle(color: UtilExtendsion.mainColor))),
+                BottomNavigationBarItem(
+                    activeIcon:
+                        Icon(Icons.schedule, color: UtilExtendsion.mainColor),
+                    icon: Icon(Icons.schedule),
+                    title: Text(
+                      "Current Bookings".tr(),
+                      style: TextStyle(color: UtilExtendsion.mainColor),
+                    )),
+                BottomNavigationBarItem(
+                    activeIcon: Icon(
+                      Icons.settings,
+                      color: UtilExtendsion.mainColor,
+                    ),
+                    icon: Icon(Icons.settings),
+                    title: Text("Settings".tr(),
+                        style: TextStyle(color: UtilExtendsion.mainColor))),
+              ],
+            ),
+            body: SafeArea(
+                child: PageView(
+              physics: NeverScrollableScrollPhysics(),
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              controller: _pageViewcontroller,
+              children: [
+                ShipmentFragment(),
+                BookingListFragment(),
+                SettingFragment()
+              ],
+            )),
+          );
   }
 }
