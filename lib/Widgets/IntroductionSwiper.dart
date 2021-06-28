@@ -1,4 +1,6 @@
+import 'package:docking_project/Model/News.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -16,31 +18,24 @@ class IntroductionSwiper extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.all(Util.responsiveSize(context, 42)),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-                Icon(
-                  listComponents[index].icon,
-                  color: Colors.white,
-                  size: Util.responsiveSize(context, 100),
-                ),
-                SizedBox(
-                  height: Util.responsiveSize(context, 48),
-                ),
+              children: [
                 Text(
-                  listComponents[index].text.tr(),
+                  listComponents[index].news.subject,
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: Util.responsiveSize(context, 20)),
-                  textAlign: TextAlign.center,
-                ).tr()
+                      color: Colors.black,
+                      fontSize: Util.responsiveSize(context, 32),
+                      fontWeight: FontWeight.bold),
+                ),
+                Html(
+                  data: listComponents[index].news.content,
+                ),
               ],
             ),
           );
         },
         itemCount: listComponents.length,
-        pagination: new SwiperPagination(builder: DotSwiperPaginationBuilder(
-          activeColor: Colors.amber
-        )),
+        pagination: new SwiperPagination(
+            builder: DotSwiperPaginationBuilder(activeColor: Colors.amber)),
         control: new SwiperControl(color: Colors.white),
       ),
     );
@@ -48,7 +43,6 @@ class IntroductionSwiper extends StatelessWidget {
 }
 
 class SwiperComponent {
-  String text;
-  IconData icon;
-  SwiperComponent(this.text, this.icon);
+  News news;
+  SwiperComponent(this.news);
 }

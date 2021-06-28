@@ -107,7 +107,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(shipmentList[index]),
+                                Flexible(child: Text(shipmentList[index], overflow: TextOverflow.ellipsis)),
                                 IconButton(
                                     onPressed: () {
                                       setState(() {

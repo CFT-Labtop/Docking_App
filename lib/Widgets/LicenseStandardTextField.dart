@@ -24,7 +24,7 @@ class _LicenseStandardTextFieldState extends State<LicenseStandardTextField> {
         textInputType: TextInputType.text,
         fontSize: Util.responsiveSize(context, 18),
         validator: (text) {
-        if(text.length > 8)
+        if(text.length > 10)
           return "License Number Cannot Be Larger Than 10 Characters".tr();
         return null;
       },);

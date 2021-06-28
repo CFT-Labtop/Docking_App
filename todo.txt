@@ -34,6 +34,6 @@ createBooking -> pass countryCode and timeSlotUsage = 1 (Done)
 pass timeSlot_Usage to createBooking(Done)
 
 Verify Page Back Confirmation(Done)
-First Page Latest News
+First Page Latest News(Done)
 Setting Page Submit 後取消focus(Done)
 401 Loading(Done)

@@ -37,6 +37,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
   final TextEditingController licenseTextController = TextEditingController();
   final TextEditingController timeTextController = TextEditingController();
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
+  final _formKey = GlobalKey<FormState>();
   List<PickerItem> truckTypeSelection;
   List<PickerItem> dateSelection;
   List<TruckType> truckTypeList;
@@ -59,8 +60,11 @@ class _NewBookingPageState extends State<NewBookingPage> {
     super.initState();
   }
 
-  int _getTimeSlotUsageByValue(String value){
-    return this.truckTypeList.firstWhere((element) => element.truck_Type == value).timeSlot_Usage;
+  int _getTimeSlotUsageByValue(String value) {
+    return this
+        .truckTypeList
+        .firstWhere((element) => element.truck_Type == value)
+        .timeSlot_Usage;
   }
 
   showDateDialog() {
@@ -78,8 +82,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                 selectedDate = args.value as DateTime;
               },
               monthViewSettings: DateRangePickerMonthViewSettings(
-                blackoutDates: <DateTime>[
-                ],
+                blackoutDates: <DateTime>[],
               ),
             )),
         actions: <Widget>[
@@ -102,14 +105,15 @@ class _NewBookingPageState extends State<NewBookingPage> {
 
   Future<void> getInformation() async {
     try {
-      this.truckTypeList = await Request().getTrunckType(context, context.locale);
+      this.truckTypeList =
+          await Request().getTrunckType(context, context.locale);
       driver = await Request().getDriver(context: context);
       this.dateList = await Request().getTimeSlot(context, widget.warehouseID);
       this.dateSelection = this
           .dateList
           .map((e) => new PickerItem(
               text: Text(DateFormat("yyyy-MM-dd")
-                  .format(DateTime.parse(e["bookingDate"].substring(0,10)))),
+                  .format(DateTime.parse(e["bookingDate"].substring(0, 10)))),
               value: e["bookingDate"]))
           .toList();
       this.truckTypeSelection =
@@ -131,28 +135,46 @@ class _NewBookingPageState extends State<NewBookingPage> {
   }
 
   void submitBooking() async {
-    try {
-      Util.showLoadingDialog(context);
-      if (widget.warehouseID == null)
-        throw "Please Select Warehouse".tr();
-      if (driver.driver_ID == null || driver.driver_ID.isEmpty)
-        throw "Driver ID Cannot Be Empty".tr();
-      if (driver.tel == null || driver.tel.isEmpty)
-        throw "Mobile Number Cannot Be Empty".tr();
-      if (licenseTextController.text == null || licenseTextController.text.isEmpty)
-        throw "License Cannot Be Empty".tr();
-      if (_carTypeKey.currentState.selectedValue== null ||
-          _carTypeKey.currentState.selectedValue.isEmpty)
-        throw "Car Type Cannot Be Empty".tr();
-      if (selectedDate == null || selectedDate.isEmpty)
-        throw "Booking Date Cannot Be Empty".tr();
-      if (selectedTime == null || selectedTime.isEmpty)
-        throw "Booking Time Slot Cannot Be Empty".tr();
-      Navigator.pop(context);
-      FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"), parameters: "/" + _carTypeKey.currentState.selectedLabel, routeSettings: RouteSettings(arguments: {"booking": new Booking(warehouseID: widget.warehouseID, shipmentList: widget.shipmentList, driverID: driver.driver_ID, driverCountryCode: driver.countryCode, driverTel: driver.tel, truckNo: licenseTextController.text, truckType: _carTypeKey.currentState.selectedValue, bookingDate: selectedDate, timeSlot: selectedTime, timeSlotUsage: _getTimeSlotUsageByValue(_carTypeKey.currentState.selectedValue)), "timeSlot": selectedTimeSlot} ));
-    } catch (error) {
-      Navigator.pop(context);
-      Util.showAlertDialog(context, error.toString());
+    if (_formKey.currentState.validate()) {
+      try {
+        Util.showLoadingDialog(context);
+        if (widget.warehouseID == null) throw "Please Select Warehouse".tr();
+        if (driver.driver_ID == null || driver.driver_ID.isEmpty)
+          throw "Driver ID Cannot Be Empty".tr();
+        if (driver.tel == null || driver.tel.isEmpty)
+          throw "Mobile Number Cannot Be Empty".tr();
+        if (licenseTextController.text == null ||
+            licenseTextController.text.isEmpty)
+          throw "License Cannot Be Empty".tr();
+        if (_carTypeKey.currentState.selectedValue == null ||
+            _carTypeKey.currentState.selectedValue.isEmpty)
+          throw "Car Type Cannot Be Empty".tr();
+        if (selectedDate == null || selectedDate.isEmpty)
+          throw "Booking Date Cannot Be Empty".tr();
+        if (selectedTime == null || selectedTime.isEmpty)
+          throw "Booking Time Slot Cannot Be Empty".tr();
+        Navigator.pop(context);
+        FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"),
+            parameters: "/" + _carTypeKey.currentState.selectedLabel,
+            routeSettings: RouteSettings(arguments: {
+              "booking": new Booking(
+                  warehouseID: widget.warehouseID,
+                  shipmentList: widget.shipmentList,
+                  driverID: driver.driver_ID,
+                  driverCountryCode: driver.countryCode,
+                  driverTel: driver.tel,
+                  truckNo: licenseTextController.text,
+                  truckType: _carTypeKey.currentState.selectedValue,
+                  bookingDate: selectedDate,
+                  timeSlot: selectedTime,
+                  timeSlotUsage: _getTimeSlotUsageByValue(
+                      _carTypeKey.currentState.selectedValue)),
+              "timeSlot": selectedTimeSlot
+            }));
+      } catch (error) {
+        Navigator.pop(context);
+        Util.showAlertDialog(context, error.toString());
+      }
     }
   }
 
@@ -168,81 +190,93 @@ class _NewBookingPageState extends State<NewBookingPage> {
         future: futureBuilder,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
-                        return GestureDetector(
+            return GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: Util.responsiveSize(context, 32),
-                      ),
-                      CarTypePullDown(initValue: driver.default_Truck_Type, truckTypeSelection: truckTypeSelection, key: _carTypeKey,),
-                      SizedBox(height: Util.responsiveSize(context, 24),),
-                      LicenseStandardTextField(textController: licenseTextController,),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
-                      ),
-                      Divider(
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 8),
-                      ),
-                      StandardPullDown(
-                        hintText: "Please Select Booking Date Time".tr(),
-                        pickerList: dateSelection,
-                        onSelected: (value, String displayLabel) {
-                          setState(() {
-                            selectedDate = value;
-                            selectedTimeSlot = null;
-                            timeTextController.text = displayLabel;
-                            getTimeSlot(this.dateList);
-                            selectedTimeSlotIndex = -1;
-                            selectedTime = null;
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 32),
-                      ),
-                      Text(
-                        "Available Time Slots".tr(),
-                        style: TextStyle(
-                            fontSize: Util.responsiveSize(context, 28)),
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 32),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        child: TimeSlotGrid(
-                          selectedIndex: selectedTimeSlotIndex,
-                          timeSlotList: this.timeSlotList,
-                          onSelected: (int index, TimeSlot selectedTimeSlot, String timeSlotText) {
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: Util.responsiveSize(context, 32),
+                        ),
+                        CarTypePullDown(
+                          initValue: driver.default_Truck_Type,
+                          truckTypeSelection: truckTypeSelection,
+                          key: _carTypeKey,
+                        ),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 24),
+                        ),
+                        LicenseStandardTextField(
+                          textController: licenseTextController,
+                        ),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 24),
+                        ),
+                        Divider(
+                          color: Colors.black,
+                        ),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 8),
+                        ),
+                        StandardPullDown(
+                          hintText: "Please Select Booking Date Time".tr(),
+                          pickerList: dateSelection,
+                          onSelected: (value, String displayLabel) {
                             setState(() {
-                              selectedTimeSlotIndex = index;
-                              selectedTime = selectedTimeSlot.timeSlotId;
-                              this.selectedTimeSlot = selectedTimeSlot;
+                              selectedDate = value;
+                              selectedTimeSlot = null;
+                              timeTextController.text = displayLabel;
+                              getTimeSlot(this.dateList);
+                              selectedTimeSlotIndex = -1;
+                              selectedTime = null;
                             });
                           },
                         ),
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 18),
-                      ),
-                      StandardElevatedButton(
-                        backgroundColor: UtilExtendsion.mainColor,
-                        text: "Next".tr(),
-                        onPress: () => submitBooking(),
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
-                      ),
-                    ],
+                        SizedBox(
+                          height: Util.responsiveSize(context, 32),
+                        ),
+                        Text(
+                          "Available Time Slots".tr(),
+                          style: TextStyle(
+                              fontSize: Util.responsiveSize(context, 28)),
+                        ),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 32),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.0),
+                          child: TimeSlotGrid(
+                            selectedIndex: selectedTimeSlotIndex,
+                            timeSlotList: this.timeSlotList,
+                            onSelected: (int index, TimeSlot selectedTimeSlot,
+                                String timeSlotText) {
+                              setState(() {
+                                selectedTimeSlotIndex = index;
+                                selectedTime = selectedTimeSlot.timeSlotId;
+                                this.selectedTimeSlot = selectedTimeSlot;
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 18),
+                        ),
+                        StandardElevatedButton(
+                          backgroundColor: UtilExtendsion.mainColor,
+                          text: "Next".tr(),
+                          onPress: () => submitBooking(),
+                        ),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 24),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

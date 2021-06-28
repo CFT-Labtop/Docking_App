@@ -83,7 +83,7 @@ extension UtilExtendsion on Util {
     }
   }
 
-  static Widget CustomFutureBuild(BuildContext context, AsyncSnapshot<dynamic> snapshot, Widget Function() callBack) {
+  static Widget CustomFutureBuild(BuildContext context, AsyncSnapshot<dynamic> snapshot, Widget Function() callBack, {Widget Function() loadingCallBack}) {
     if (snapshot.hasError) {
       if(snapshot.error == "Http status error [401]"){
         Util.sharedPreferences.clear();
@@ -99,6 +99,8 @@ extension UtilExtendsion on Util {
     } else if (snapshot.connectionState == ConnectionState.done) {
       return callBack();
     } else {
+      if(loadingCallBack != null)
+        return loadingCallBack();
       return Center(child: PlatformCircularProgressIndicator());
     }
   }

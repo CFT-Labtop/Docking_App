@@ -234,8 +234,8 @@ class Request extends BaseRequest {
 
   Future<List<News>> getLatestNews(BuildContext context) async {
     return await _run<List<News>>(context: context, callback: () async{
-      clearToken();
-      _setHeader();
+      // clearToken();
+      // _setHeader();
       Response response = await this.dio.get(this.baseURL + "LatestNews");
       if (response.data == "") return <News>[];
       return (response.data as List<dynamic>)

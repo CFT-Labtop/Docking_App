@@ -1,4 +1,6 @@
+import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
+import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Widgets/IntroductionSwiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_basecomponent/Widgets/StandardOutlinedButton.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class FirstPage extends StatefulWidget {
   @override
@@ -13,7 +16,8 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-  
+  Future futureBuilder;
+  List<News> newsList = [];
   Widget header() {
     return FractionallySizedBox(
       widthFactor: 1,
@@ -23,7 +27,10 @@ class _FirstPageState extends State<FirstPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/logo.png", height: Util.responsiveSize(context, 80),),
+            Image.asset(
+              "assets/logo.png",
+              height: Util.responsiveSize(context, 80),
+            ),
             SizedBox(
               height: Util.responsiveSize(context, 10),
             ),
@@ -31,9 +38,9 @@ class _FirstPageState extends State<FirstPage> {
               "Dock Booking System",
               textAlign: TextAlign.center,
               style: TextStyle(
-              fontSize: Util.responsiveSize(context, 25.0),
-              fontWeight: FontWeight.bold,
-              color: UtilExtendsion.mainColor),
+                  fontSize: Util.responsiveSize(context, 25.0),
+                  fontWeight: FontWeight.bold,
+                  color: UtilExtendsion.mainColor),
             ).tr(),
           ],
         ),
@@ -42,20 +49,26 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   @override
+  void initState() {
+    futureBuilder = getNews();
+    super.initState();
+  }
+
+  Future<void> getNews() async {
+    newsList = await Request().getLatestNews(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
-              colors: [
-                Color(0xff94050c),
-                Color(0xfff13e4a)
-              ],
-            )
-          ),
+              gradient: LinearGradient(
+            begin: Alignment.centerRight,
+            end: Alignment.centerLeft,
+            colors: [Color(0xff94050c), Color(0xfff13e4a)],
+          )),
           child: SafeArea(
             bottom: false,
             child: Column(
@@ -68,37 +81,44 @@ class _FirstPageState extends State<FirstPage> {
                   Text(
                     "Ready to get stuff done?",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context,20)),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Util.responsiveSize(context, 20)),
                   ).tr(),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      child: IntroductionSwiper(listComponents: [
-                        SwiperComponent(
-                            "Introduction Script".tr(), Icons.aod_outlined),
-                        SwiperComponent("Introduction Script".tr(),
-                            Icons.account_circle_outlined),
-                        SwiperComponent("Introduction Script".tr(),
-                            Icons.add_comment_outlined)
-                      ]),
-                    ),
-                  ),
+                  FutureBuilder(
+                      future: futureBuilder,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
+                          return Expanded(
+                            flex: 2,
+                            child: Container(
+                              child: IntroductionSwiper(listComponents: List<SwiperComponent>.generate(newsList.length, (index) => SwiperComponent(newsList[index])),),
+                            ),
+                          );
+                        },loadingCallBack: (){
+                          return Expanded(flex: 2, child: Center(child: PlatformCircularProgressIndicator(),));
+                        });
+                      }),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: Util.responsiveSize(context,Util.responsiveSize(context, 32))),
+                        horizontal: Util.responsiveSize(
+                            context, Util.responsiveSize(context, 32))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         StandardOutlinedButton(
                           text: "Sign Up".tr(),
-                          onPress: (){
-                            FlutterRouter().goToPage(context, Pages("PhoneSignUpPage"));
+                          onPress: () {
+                            FlutterRouter()
+                                .goToPage(context, Pages("PhoneSignUpPage"));
                           },
                         ),
                         StandardOutlinedButton(
                           text: "Sign In".tr(),
-                          onPress: (){
-                            FlutterRouter().goToPage(context, Pages("LoginPage"));
+                          onPress: () {
+                            FlutterRouter()
+                                .goToPage(context, Pages("LoginPage"));
                           },
                         ),
                       ],
@@ -112,28 +132,36 @@ class _FirstPageState extends State<FirstPage> {
                         textAlign: TextAlign.center,
                         text: TextSpan(children: [
                           TextSpan(
-                              text: "By signing up, you agree to our".tr(), style: TextStyle(fontSize: Util.responsiveSize(context, 14))),
+                              text: "By signing up, you agree to our".tr(),
+                              style: TextStyle(
+                                  fontSize: Util.responsiveSize(context, 14))),
                           TextSpan(text: " "),
                           TextSpan(
                             text: "Terms of Service".tr(),
                             style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontSize: Util.responsiveSize(context, 14)
-                            ),
+                                decoration: TextDecoration.underline,
+                                fontSize: Util.responsiveSize(context, 14)),
                           ),
                           TextSpan(text: " "),
-                          TextSpan(text: "and".tr() ,style: TextStyle(fontSize: Util.responsiveSize(context, 14))),
+                          TextSpan(
+                              text: "and".tr(),
+                              style: TextStyle(
+                                  fontSize: Util.responsiveSize(context, 14))),
                           TextSpan(text: " "),
                           TextSpan(
                               text: "Privacy Policy".tr(),
                               style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: Util.responsiveSize(context, 14)
-                              )),
+                                  decoration: TextDecoration.underline,
+                                  fontSize: Util.responsiveSize(context, 14))),
                         ])),
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
-                  Text("Version 0.0.10", style: TextStyle(fontSize: Util.responsiveSize(context, 14), color: Colors.white),),
+                  Text(
+                    "Version 0.0.10",
+                    style: TextStyle(
+                        fontSize: Util.responsiveSize(context, 14),
+                        color: Colors.white),
+                  ),
                   SizedBox(height: Util.responsiveSize(context, 32.0)),
                 ]),
           )),
