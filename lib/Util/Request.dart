@@ -45,7 +45,8 @@ class Request extends BaseRequest {
       {String mobileNumber,
       String countryCode,
       String carType,
-      String license}) async {
+      String license,
+      Locale lang}) async {
     return await _run<Map<String, dynamic>>(context: context, callback: () async {
       clearToken();
       Response response = await this.dio.post(this.baseURL + "Driver", data: {
@@ -53,6 +54,7 @@ class Request extends BaseRequest {
         "countryCode": countryCode,
         "default_Truck_Type": carType ?? null,
         "default_Truck_No": license ?? null,
+        "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
@@ -131,13 +133,13 @@ class Request extends BaseRequest {
     });
   }
 
-  Future<List<dynamic>> getTimeSlot(BuildContext context,int warehouseID) async {
+  Future<List<dynamic>> getTimeSlot(BuildContext context,int warehouseID, String truckType) async {
     return await _run<List<dynamic>>(context: context, callback: () async {
       clearToken();
       _setHeader();
       Response response = await this
           .dio
-          .get(this.baseURL + "Booking/TimeSlot/" + warehouseID.toString());
+          .get(this.baseURL + "Booking/TimeSlot/" + warehouseID.toString() + "/" + truckType);
       return response.data;
     });
   }
@@ -232,11 +234,11 @@ class Request extends BaseRequest {
     });
   }
 
-  Future<List<News>> getLatestNews(BuildContext context) async {
+  Future<List<News>> getLatestNews(BuildContext context,Locale lang) async {
     return await _run<List<News>>(context: context, callback: () async{
-      // clearToken();
+      clearToken();
       // _setHeader();
-      Response response = await this.dio.get(this.baseURL + "LatestNews");
+      Response response = await this.dio.get(this.baseURL + "LatestNews" + "/" + UtilExtendsion.localeToLocaleCode(lang));
       if (response.data == "") return <News>[];
       return (response.data as List<dynamic>)
           .map((f) => News.fromJson(f))

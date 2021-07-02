@@ -6,7 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 class CarTypePullDown extends StatefulWidget {
   final List<PickerItem> truckTypeSelection;
   final String initValue;
-  final Function(String selectedValue, String displayLabel) onSelected;
+  final Future<void> Function(String selectedValue, String displayLabel) onSelected;
   CarTypePullDown({ Key key, this.truckTypeSelection, this.initValue, this.onSelected}) : super(key: key);
 
   @override
@@ -24,10 +24,10 @@ class CarTypePullDownState extends State<CarTypePullDown> {
   }
   @override
   Widget build(BuildContext context) {
-    return StandardPullDown(initValue: widget.initValue ?? null, pickerList: widget.truckTypeSelection, hintText: "Please select your car type".tr(), dialogTitle: "Please select your car type".tr(), onSelected: (value, String displayLabel) { 
+    return StandardPullDown(initValue: widget.initValue ?? null, pickerList: widget.truckTypeSelection, hintText: "Please select your car type".tr(), dialogTitle: "Please select your car type".tr(), onSelected: (value, String displayLabel) async{ 
         selectedValue = value;
         selectedLabel = displayLabel;
-        if(widget.onSelected != null) widget.onSelected(selectedValue, selectedLabel);
+        if(widget.onSelected != null) await widget.onSelected(selectedValue, selectedLabel);
      },);
   }
 }

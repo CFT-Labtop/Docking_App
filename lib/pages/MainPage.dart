@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     List<News> newsList = [];
     try {
       Util.showLoadingDialog(context);
-      newsList = await Request().getLatestNews(context);
+      newsList = await Request().getLatestNews(context, context.locale);
       Navigator.pop(context);
     } catch (error) {
       Navigator.pop(context);
@@ -129,11 +129,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 showLatestNews();
                 break;
               case 3:
-                Util.showConfirmDialog(context, onPress: () {
-                  Request().logout(context);
+                Util.showConfirmDialog(context, onPress: () async{
+                  await Request().logout(context);
                   Util.sharedPreferences.clear();
-                  FlutterRouter()
-                      .goToPage(context, Pages("FirstPage"), clear: true);
+                  FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
                 }, title: "Confirm To Logout?".tr());
                 break;
             }
@@ -187,12 +186,14 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async{
     super.didChangeAppLifecycleState(state);
       if(state == AppLifecycleState.resumed){
+        
         setState(() {
           isLoading = true;
         });
         await Request().renewToken(context);
         setState(() {
           isLoading = false;
+          _pageViewcontroller = new PageController(initialPage: _currentIndex);
         });
       }
   }
@@ -230,6 +231,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               trailingActions: [
                 myPopMenu(),
               ],
+              hasLeading: false
             ),
             bottomNavigationBar: PlatformNavBar(
               currentIndex: _currentIndex,

@@ -188,7 +188,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
             _greyTile(context),
             _remarkField(context),
             Container(
-              height: MediaQuery.of(context).size.height * 0.35,
+              height: MediaQuery.of(context).size.height * 0.3,
               color: Color(0xffDDDDDD),
             ),
             Padding(

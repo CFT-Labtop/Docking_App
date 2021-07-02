@@ -9,6 +9,7 @@ class StandardAppBar extends PreferredSize {
   final Color backgroundColor;
   final Color fontColor;
   final Color backIconColor;
+  final bool hasLeading;
   final List<Widget> trailingActions;
   final void Function() onPress;
 
@@ -24,7 +25,8 @@ class StandardAppBar extends PreferredSize {
       this.height,
       this.backIconColor,
       this.trailingActions,
-      this.onPress});
+      this.onPress,
+      this.hasLeading = true});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class StandardAppBar extends PreferredSize {
           ? Size.fromHeight(Util.responsiveSize(context, this.height))
           : Size.fromHeight(Util.responsiveSize(context, 52)),
       child: PlatformAppBar(
-        leading: Navigator.of(context).canPop() ? Material(
+        leading: hasLeading ? Navigator.of(context).canPop() ? Material(
           color: Colors.transparent,
           child: IconButton(
             icon: Icon(Icons.arrow_back, color: backIconColor ?? Colors.white),
@@ -44,7 +46,7 @@ class StandardAppBar extends PreferredSize {
                 this.onPress();
             },
           ),
-        ): SizedBox(),
+        ): SizedBox(): SizedBox(),
         trailingActions: this.trailingActions ?? [],
         backgroundColor: this.backgroundColor ?? Colors.white,
         title: Text(

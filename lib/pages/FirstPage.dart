@@ -50,12 +50,16 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   void initState() {
-    futureBuilder = getNews();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        futureBuilder = getNews();
+      });
+    });
     super.initState();
   }
 
   Future<void> getNews() async {
-    newsList = await Request().getLatestNews(context);
+    newsList = await Request().getLatestNews(context, context.locale);
   }
 
   @override
@@ -136,7 +140,7 @@ class _FirstPageState extends State<FirstPage> {
                               style: TextStyle(
                                   fontSize: Util.responsiveSize(context, 14))),
                           TextSpan(text: " "),
-                          TextSpan(
+                        TextSpan(
                             text: "Terms of Service".tr(),
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
@@ -157,7 +161,7 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
                   Text(
-                    "Version 0.0.10",
+                    "Version 0.0.12",
                     style: TextStyle(
                         fontSize: Util.responsiveSize(context, 14),
                         color: Colors.white),

@@ -22,7 +22,7 @@ class StandardPullDown extends StatefulWidget {
   final dynamic initValue;
 
   @override
-  _StandardPullDownState createState() => _StandardPullDownState();
+  StandardPullDownState createState() => StandardPullDownState();
   static String getPickerValue(List<PickerItem> pickerList, dynamic value) {
     try {
       Text textWidget = pickerList
@@ -35,16 +35,14 @@ class StandardPullDown extends StatefulWidget {
   }
 }
 
-class _StandardPullDownState extends State<StandardPullDown> {
+class StandardPullDownState extends State<StandardPullDown> {
   dynamic selectedValue;
   int selectedIndex;
   TextEditingController textController = TextEditingController();
 
   @override
   void initState() {
-    selectedValue = widget.initValue;
-    textController.text = getNameByValue(selectedValue);
-    selectedIndex = _findIndexBySelectedValue(selectedValue, widget.pickerList);
+    setValue(widget.initValue);
     super.initState();
   }
 
@@ -83,6 +81,14 @@ class _StandardPullDownState extends State<StandardPullDown> {
     } catch (error) {
       return "";
     }
+  }
+
+  void setValue(dynamic value){
+    setState(() {
+      selectedValue = value;
+      textController.text = getNameByValue(selectedValue);
+      selectedIndex = _findIndexBySelectedValue(selectedValue, widget.pickerList);
+    });
   }
 
   @override

@@ -6,11 +6,11 @@ import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
+import 'package:docking_project/Widgets/VerificationCode.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/Util.dart';
-import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:quiver/async.dart';
 
@@ -28,19 +28,22 @@ class VerficiationPage extends StatefulWidget {
 }
 
 class _VerficiationPageState extends State<VerficiationPage> {
-  int _current = 60;
+  int timeoutSeconds = 500;
+  int _current = 500;
   String _verifiyCode = "";
   StreamSubscription sub;
+  final _verificationCodeKey = GlobalKey<VerificationCodeState>();
+
   void startTimer() {
     if (sub != null) sub.cancel();
     CountdownTimer countDownTimer = new CountdownTimer(
-      new Duration(seconds: 60),
+      new Duration(seconds: timeoutSeconds),
       new Duration(seconds: 1),
     );
     sub = countDownTimer.listen(null);
     sub.onData((duration) {
       setState(() {
-        _current = 60 - duration.elapsed.inSeconds;
+        _current = timeoutSeconds - duration.elapsed.inSeconds;
       });
     });
     sub.onDone(() {
@@ -157,6 +160,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                   height: Util.responsiveSize(context, 32),
                 ),
                 VerificationCode(
+                  key: _verificationCodeKey,
                   textStyle: TextStyle(
                       fontSize: Util.responsiveSize(context, 20),
                       color: UtilExtendsion.mainColor),
@@ -221,6 +225,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " +result["verificationCode"])));
                                     setState(() {
                                       widget.verificationTimeString = result["issueTimeString"];
+                                      _verificationCodeKey.currentState.clearAll();
                                     });
                                     Navigator.pop(context);
                                   } catch (error) {
