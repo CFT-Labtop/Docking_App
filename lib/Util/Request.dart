@@ -83,13 +83,14 @@ class Request extends BaseRequest {
     });
   }
 
-  Future<Map<String, dynamic>> login(BuildContext context, {String countryCode, String tel}) async {
+  Future<Map<String, dynamic>> login(BuildContext context, {String countryCode, String tel, Locale lang}) async {
     return await _run<Map<String, dynamic>>(context: context, callback: () async {
       clearToken();
       Response response =
           await this.dio.post(this.baseURL + "Driver/Login", data: {
         "countryCode": countryCode,
         "tel": tel,
+        "lang":UtilExtendsion.localeToLocaleCode(lang)
       });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
       print("Verifiy Code " + response.data["rstData"]["verificationCode"]);

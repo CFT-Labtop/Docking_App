@@ -28,8 +28,9 @@ class VerficiationPage extends StatefulWidget {
 }
 
 class _VerficiationPageState extends State<VerficiationPage> {
-  int timeoutSeconds = 500;
-  int _current = 500;
+  int timeoutSeconds = 300;
+  int _current = 300;
+  bool isAllowResend = false;
   String _verifiyCode = "";
   StreamSubscription sub;
   final _verificationCodeKey = GlobalKey<VerificationCodeState>();
@@ -44,6 +45,8 @@ class _VerficiationPageState extends State<VerficiationPage> {
     sub.onData((duration) {
       setState(() {
         _current = timeoutSeconds - duration.elapsed.inSeconds;
+        if(_current < 0) _current = 0;
+        if(_current < 240) isAllowResend = true;
       });
     });
     sub.onDone(() {
@@ -204,7 +207,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
                 SizedBox(
                   height: Util.responsiveSize(context, 12),
                 ),
-                _current == 0
+                isAllowResend
                     ? RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(children: [
