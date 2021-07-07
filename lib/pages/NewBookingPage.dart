@@ -48,15 +48,13 @@ class _NewBookingPageState extends State<NewBookingPage> {
   int selectedTimeSlotIndex = -1;
   String selectedTime;
   Future futureBuilder;
+  ValueNotifier<GlobalKey<CarTypePullDownState>> valueNotifier;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        futureBuilder = getInformation();
-      });
-    });
+    futureBuilder = getInformation();
     super.initState();
+    valueNotifier = ValueNotifier(_carTypeKey);
   }
 
   int _getTimeSlotUsageByValue(String value) {
@@ -66,15 +64,14 @@ class _NewBookingPageState extends State<NewBookingPage> {
         .timeSlot_Usage;
   }
 
-
   Future<void> getInformation() async {
     try {
-      this.truckTypeList =
-          await Request().getTrunckType(context, context.locale);
+      this.truckTypeList = await Request()
+          .getTrunckTypeByWarehouseID(context, widget.warehouseID);
       driver = await Request().getDriver(context: context);
-      if(driver.default_Truck_Type != null && driver.default_Truck_Type.isNotEmpty){
+      if (driver.default_Truck_Type != null &&
+          driver.default_Truck_Type.isNotEmpty)
         await _getDateSelection(driver.default_Truck_Type);
-      }
       this.truckTypeSelection =
           UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
       licenseTextController.text = driver.default_Truck_No;
@@ -83,21 +80,23 @@ class _NewBookingPageState extends State<NewBookingPage> {
     }
   }
 
-  Future<void> _getDateSelection(String truckType) async{
-    this.dateList = await Request().getTimeSlot(context, widget.warehouseID, truckType);
-      this.dateSelection = this
-          .dateList
-          .map((e) => new PickerItem(
-              text: Text(DateFormat("yyyy-MM-dd")
-                  .format(DateTime.parse(e["bookingDate"].substring(0, 10)))),
-              value: e["bookingDate"]))
-          .toList();
+  Future<void> _getDateSelection(String truckType) async {
+    this.dateList =
+        await Request().getTimeSlot(context, widget.warehouseID, truckType);
+    this.dateSelection = this
+        .dateList
+        .map((e) => new PickerItem(
+            text: Text(DateFormat("yyyy-MM-dd")
+                .format(DateTime.parse(e["bookingDate"].substring(0, 10)))),
+            value: e["bookingDate"]))
+        .toList();
   }
-  
+
   void getTimeSlot(List<dynamic> dateList) {
     try {
       List<dynamic> list = dateList.firstWhere((element) =>
-          element["bookingDate"] == _dateSelectorKey.currentState.selectedValue)["bookingTimeSlots"];
+          element["bookingDate"] ==
+          _dateSelectorKey.currentState.selectedValue)["bookingTimeSlots"];
       this.timeSlotList = list.map((e) => new TimeSlot.fromJson(e)).toList();
     } catch (error) {
       this.timeSlotList = [];
@@ -119,7 +118,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
         if (_carTypeKey.currentState.selectedValue == null ||
             _carTypeKey.currentState.selectedValue.isEmpty)
           throw "Car Type Cannot Be Empty".tr();
-        if (_dateSelectorKey.currentState.selectedValue == null || _dateSelectorKey.currentState.selectedValue.isEmpty)
+        if (_dateSelectorKey.currentState.selectedValue == null ||
+            _dateSelectorKey.currentState.selectedValue.isEmpty)
           throw "Booking Date Cannot Be Empty".tr();
         if (selectedTime == null || selectedTime.isEmpty)
           throw "Booking Time Slot Cannot Be Empty".tr();
@@ -148,9 +148,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
     }
   }
 
-  void _clearDateSelection(){
+  void _clearDateSelection() {
     setState(() {
-      if(_dateSelectorKey.currentState != null)
+      if (_dateSelectorKey.currentState != null)
         _dateSelectorKey.currentState.setValue(null);
       this.timeSlotList = [];
       selectedTimeSlot = null;
@@ -204,8 +204,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
     );
   }
 
-  bool _isTruckTypeNotNull(){
-    return (_carTypeKey.currentState != null && _carTypeKey.currentState.selectedValue != null && _carTypeKey.currentState.selectedValue.isNotEmpty) || (driver != null && driver.default_Truck_Type != null && driver.default_Truck_Type.isNotEmpty);
+  bool _isTruckTypeValid() {
+    return (_carTypeKey.currentState != null &&
+        _carTypeKey.currentState.isAnswerValid());
   }
 
   @override
@@ -235,14 +236,15 @@ class _NewBookingPageState extends State<NewBookingPage> {
                           height: Util.responsiveSize(context, 32),
                         ),
                         CarTypePullDown(
-                          initValue: driver.default_Truck_Type,
-                          truckTypeSelection: truckTypeSelection,
-                          key: _carTypeKey,
-                          onSelected: (String selectedValue, String displayLabel)async{
-                            await _getDateSelection(_carTypeKey.currentState.selectedValue);
-                            _clearDateSelection();
-                          }
-                        ),
+                            initValue: driver.default_Truck_Type,
+                            truckTypeSelection: truckTypeSelection,
+                            key: _carTypeKey,
+                            onSelected: (String selectedValue,
+                                String displayLabel) async {
+                              await _getDateSelection(
+                                  _carTypeKey.currentState.selectedValue);
+                              _clearDateSelection();
+                            }),
                         SizedBox(
                           height: Util.responsiveSize(context, 24),
                         ),
@@ -258,7 +260,15 @@ class _NewBookingPageState extends State<NewBookingPage> {
                         SizedBox(
                           height: Util.responsiveSize(context, 8),
                         ),
-                        _isTruckTypeNotNull() ? _timeSlotSelectPart() : SizedBox(),
+                        ValueListenableBuilder(
+                          valueListenable: valueNotifier,
+                          builder: (context, GlobalKey<CarTypePullDownState> value, _) {
+                            if(value.currentState != null && value.currentState.isAnswerValid()){
+                              return _timeSlotSelectPart();
+                            }
+                            return SizedBox();
+                          },
+                        ),
                         SizedBox(
                           height: Util.responsiveSize(context, 18),
                         ),

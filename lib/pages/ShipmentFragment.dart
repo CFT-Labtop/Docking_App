@@ -28,31 +28,43 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
   final _formKey = GlobalKey<FormState>();
   List<String> shipmentList = [];
   Future futureBuilder;
-  
 
-  Future<void> getWarehouse() async{
+  Future<void> getWarehouse() async {
     List<Warehouse> warehouseList = await Request().getWarehouse(context);
-    this.warehouseSelection = warehouseList.map((e) => new PickerItem(text: Text(e.warehouse_Name), value: e.warehouse_ID)).toList();
+    this.warehouseSelection = warehouseList
+        .map((e) =>
+            new PickerItem(text: Text(e.warehouse_Name), value: e.warehouse_ID))
+        .toList();
   }
 
   @override
   void initState() {
     futureBuilder = getWarehouse();
     super.initState();
-    
   }
 
-  void addShipment(String shipNo){
-    try{
-      if(shipmentList.firstWhere((element) => element == shipNo, orElse: () => null) != null)
+  void addShipment(String shipNo) {
+    try {
+      if (shipmentList.firstWhere((element) => element == shipNo,
+              orElse: () => null) !=
+          null)
         throw "Duplicated Shipment".tr();
-      else if(shipmentList.length +1 > 50)
+      else if (shipmentList.length + 1 > 50)
         throw "Limited 50 Shipment Per Booking".tr();
-    else
-      shipmentList.add(shipNo);  
-    }catch(error){
+      else
+        shipmentList.add(shipNo);
+    } catch (error) {
       Util.showAlertDialog(context, "", title: error);
     }
+  }
+
+  void _goToQRCodePage() async {
+    Barcode shipmentNo =
+        await FlutterRouter().goToPage(context, Pages("ScanQRCodePage"));
+    if (shipmentNo != null && shipmentNo.code != "" && shipmentNo.code != null)
+      setState(() {
+        addShipment(shipmentNo.code);
+      });
   }
 
   @override
@@ -66,7 +78,11 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
               SizedBox(
                 height: Util.responsiveSize(context, 24),
               ),
-              WarehousePullDown(warehouseSelection: warehouseSelection, key: _warehouseKey,initValue: UtilExtendsion.getPreviouseWarehouse() ?? null,),
+              WarehousePullDown(
+                warehouseSelection: warehouseSelection,
+                key: _warehouseKey,
+                initValue: UtilExtendsion.getPreviouseWarehouse() ?? null,
+              ),
               SizedBox(
                 height: Util.responsiveSize(context, 24),
               ),
@@ -107,7 +123,9 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Flexible(child: Text(shipmentList[index], overflow: TextOverflow.ellipsis)),
+                                Flexible(
+                                    child: Text(shipmentList[index],
+                                        overflow: TextOverflow.ellipsis)),
                                 IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -136,16 +154,13 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                           horizontal: Util.responsiveSize(context, 48),
                           vertical: Util.responsiveSize(context, 12)),
                       onPress: () async {
-                        if (await Permission.camera.request().isGranted) {
-                          Barcode shipmentNo = await FlutterRouter()
-                              .goToPage(context, Pages("ScanQRCodePage"));
-                          if (shipmentNo != null &&
-                              shipmentNo.code != "" &&
-                              shipmentNo.code != null)
-                            setState(() {
-                              addShipment(shipmentNo.code);
-                            });
-                        } else {
+                        PermissionStatus status =
+                            await Permission.camera.status;
+                        if (status.isDenied) {
+                          if (await Permission.camera.request().isGranted) {
+                            _goToQRCodePage();
+                          }
+                        } else if (status.isPermanentlyDenied) {
                           showPlatformDialog(
                               context: context,
                               builder: (_) => PlatformAlertDialog(
@@ -167,7 +182,8 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                                           },
                                         ),
                                       ]));
-                        }
+                        }else if(status.isGranted)
+                          _goToQRCodePage();
                       },
                     ),
                     Row(
@@ -197,9 +213,11 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                                     child: PlatformText("Confirm".tr()),
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      if (manualTextController.text != "" &&manualTextController.text != null)
+                                      if (manualTextController.text != "" &&
+                                          manualTextController.text != null)
                                         setState(() {
-                                          addShipment(manualTextController.text);
+                                          addShipment(
+                                              manualTextController.text);
                                         });
                                       manualTextController.clear();
                                     },
@@ -223,15 +241,22 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
               StandardElevatedButton(
                 backgroundColor: UtilExtendsion.mainColor,
                 text: "Next".tr(),
-                onPress: () async{
-                  try{
+                onPress: () async {
+                  try {
                     Util.showLoadingDialog(context);
-                    if(_warehouseKey.currentState.selectedValue == null)
+                    if (_warehouseKey.currentState.selectedValue == null)
                       throw "Warehouse Cannot Be Empty".tr();
                     Navigator.pop(context);
-                    await FlutterRouter().goToPage(context, Pages("NewBookingPage"), parameters: "/" + _warehouseKey.currentState.selectedValue.toString(), routeSettings: RouteSettings(arguments: this.shipmentList));
-                    setState(() {shipmentList = [];});
-                  }catch(error){
+                    await FlutterRouter().goToPage(
+                        context, Pages("NewBookingPage"),
+                        parameters: "/" +
+                            _warehouseKey.currentState.selectedValue.toString(),
+                        routeSettings:
+                            RouteSettings(arguments: this.shipmentList));
+                    setState(() {
+                      shipmentList = [];
+                    });
+                  } catch (error) {
                     Navigator.pop(context);
                     Util.showAlertDialog(context, error.toString());
                   }

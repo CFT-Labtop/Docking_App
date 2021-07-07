@@ -34,12 +34,12 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
         adapter: PickerDataAdapter(data: [
           new PickerItem(
-              text: Text("Traditional Chinese".tr()),
+              text: Text("繁體中文"),
               value: "Traditional Chinese"),
           new PickerItem(
-              text: Text("Simplified Chinese".tr()),
+              text: Text("简体中文"),
               value: "Simplified Chinese"),
-          new PickerItem(text: Text("English".tr()), value: "English")
+          new PickerItem(text: Text("English"), value: "English")
         ]),
         hideHeader: true,
         title: new Text("Please Select Language".tr()),

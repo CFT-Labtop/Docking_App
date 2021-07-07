@@ -83,6 +83,10 @@ class StandardPullDownState extends State<StandardPullDown> {
     }
   }
 
+  bool isAnswerValid(){
+    return (getNameByValue(selectedValue) != "" );
+  }
+
   void setValue(dynamic value){
     setState(() {
       selectedValue = value;

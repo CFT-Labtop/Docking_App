@@ -47,6 +47,7 @@ class _VerficiationPageState extends State<VerficiationPage> {
         _current = timeoutSeconds - duration.elapsed.inSeconds;
         if(_current < 0) _current = 0;
         if(_current < 240) isAllowResend = true;
+        else isAllowResend = false;
       });
     });
     sub.onDone(() {

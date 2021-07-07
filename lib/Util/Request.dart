@@ -29,6 +29,17 @@ class Request extends BaseRequest {
     });
   }
 
+  Future<List<TruckType>> getTrunckTypeByWarehouseID(BuildContext context, int warehouseID) async {
+    return await _run<List<TruckType>>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.get(this.baseURL + "Master/TruckType/" + warehouseID.toString());
+      return (response.data as List<dynamic>)
+          .map((f) => TruckType.fromJson(f))
+          .toList();
+    });
+  }
+
   Future<List<Warehouse>> getWarehouse(BuildContext context) async {
     return await _run<List<Warehouse>>(context: context, callback: () async {
       clearToken();

@@ -86,8 +86,10 @@ extension UtilExtendsion on Util {
   static Widget CustomFutureBuild(BuildContext context, AsyncSnapshot<dynamic> snapshot, Widget Function() callBack, {Widget Function() loadingCallBack}) {
     if (snapshot.hasError) {
       if(snapshot.error == "Http status error [401]"){
-        Util.sharedPreferences.clear();
-        FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+        Future.delayed(Duration(microseconds: 50), (){
+          Util.sharedPreferences.clear();
+          FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+        });
       }
       return Center(
           child: Text(

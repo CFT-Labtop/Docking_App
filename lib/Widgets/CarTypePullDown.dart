@@ -16,15 +16,20 @@ class CarTypePullDown extends StatefulWidget {
 class CarTypePullDownState extends State<CarTypePullDown> {
   String selectedValue;
   String selectedLabel;
+  final _pulldownKey = GlobalKey<StandardPullDownState>();
   @override
   void initState() {
     selectedValue = widget.initValue;
     selectedLabel = StandardPullDown.getPickerValue(widget.truckTypeSelection, widget.initValue);
     super.initState();
   }
+
+  bool isAnswerValid(){
+    return (_pulldownKey.currentState != null && _pulldownKey.currentState.isAnswerValid());
+  }
   @override
   Widget build(BuildContext context) {
-    return StandardPullDown(initValue: widget.initValue ?? null, pickerList: widget.truckTypeSelection, hintText: "Please select your car type".tr(), dialogTitle: "Please select your car type".tr(), onSelected: (value, String displayLabel) async{ 
+    return StandardPullDown(key: _pulldownKey, initValue: widget.initValue ?? null, pickerList: widget.truckTypeSelection, hintText: "Please select your car type".tr(), dialogTitle: "Please select your car type".tr(), onSelected: (value, String displayLabel) async{ 
         selectedValue = value;
         selectedLabel = displayLabel;
         if(widget.onSelected != null) await widget.onSelected(selectedValue, selectedLabel);

@@ -165,7 +165,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           backgroundColor: UtilExtendsion.mainColor,
           fontColor: Colors.white,
         ),
-        body: ListView(
+        body: Column(
           children: [
             SizedBox(
               height: Util.responsiveSize(context, 18),
@@ -187,12 +187,11 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                 isDivider: false),
             _greyTile(context),
             _remarkField(context),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.3,
-              color: Color(0xffDDDDDD),
+            Expanded(
+              child: _greyTile(context),
             ),
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 12)),
+              padding:  EdgeInsets.only(left: Util.responsiveSize(context, 12), right: Util.responsiveSize(context, 12), bottom: Util.responsiveSize(context, 24)),
               child: StandardElevatedButton(
                 backgroundColor: UtilExtendsion.mainColor,
                 text: "Submit".tr(),
