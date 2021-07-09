@@ -118,8 +118,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
         if (_carTypeKey.currentState.selectedValue == null ||
             _carTypeKey.currentState.selectedValue.isEmpty)
           throw "Car Type Cannot Be Empty".tr();
-        if (_dateSelectorKey.currentState.selectedValue == null ||
-            _dateSelectorKey.currentState.selectedValue.isEmpty)
+        if (!_carTypeKey.currentState.isAnswerValid() || _dateSelectorKey.currentState.selectedValue == null ||
+            _dateSelectorKey.currentState.selectedValue.isEmpty )
           throw "Booking Date Cannot Be Empty".tr();
         if (selectedTime == null || selectedTime.isEmpty)
           throw "Booking Time Slot Cannot Be Empty".tr();
@@ -239,11 +239,16 @@ class _NewBookingPageState extends State<NewBookingPage> {
                             initValue: driver.default_Truck_Type,
                             truckTypeSelection: truckTypeSelection,
                             key: _carTypeKey,
-                            onSelected: (String selectedValue,
-                                String displayLabel) async {
-                              await _getDateSelection(
-                                  _carTypeKey.currentState.selectedValue);
-                              _clearDateSelection();
+                            onSelected: (String selectedValue,String displayLabel) async {
+                              try{
+                                Util.showLoadingDialog(context);
+                                await _getDateSelection(_carTypeKey.currentState.selectedValue);
+                                _clearDateSelection();
+                                Navigator.pop(context);
+                              }catch(error){
+                                Navigator.pop(context);
+                                Util.showAlertDialog(context, error.toString());
+                              }
                             }),
                         SizedBox(
                           height: Util.responsiveSize(context, 24),

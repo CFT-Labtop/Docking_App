@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
@@ -9,6 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:new_version/new_version.dart';
 
 class FirstPage extends StatefulWidget {
   @override
@@ -56,10 +59,20 @@ class _FirstPageState extends State<FirstPage> {
       });
     });
     super.initState();
+    checkForUpdate();
   }
 
   Future<void> getNews() async {
     newsList = await Request().getLatestNews(context, context.locale);
+  }
+
+  Future<void> checkForUpdate() async{
+    //  final newVersion = NewVersion(
+    //   iOSId: 'com.google.Vespa',
+    //   androidId: 'com.google.android.apps.cloudconsole',
+    // );
+    // final status = await newVersion.getVersionStatus();
+    // newVersion.showAlertIfNecessary(context: context);
   }
 
   @override
@@ -161,7 +174,7 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
                   Text(
-                    "Version 0.0.15",
+                    "Version 0.0.16",
                     style: TextStyle(
                         fontSize: Util.responsiveSize(context, 14),
                         color: Colors.white),
