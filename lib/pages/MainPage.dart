@@ -15,6 +15,8 @@ import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:url_launcher/url_launcher.dart';
+
 
 class MainPage extends StatefulWidget {
   final int initIndex;
@@ -129,6 +131,9 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 showLatestNews();
                 break;
               case 3:
+                launch("https://dkmsweb-prod.sunhinggroup.com/support");
+                break;
+              case 4:
                 Util.showConfirmDialog(context, onPress: () async{
                   await Request().logout(context);
                   Util.sharedPreferences.clear();
@@ -167,8 +172,19 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         Text('Latest News'.tr())
                       ],
                     )),
-                PopupMenuItem(
+                  PopupMenuItem(
                     value: 3,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                          child: Icon(Icons.contact_support, color: Colors.black),
+                        ),
+                        Text('Support'.tr())
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 4,
                     child: Row(
                       children: <Widget>[
                         Padding(
@@ -207,6 +223,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     });
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    UtilExtendsion.checkForUpdate(context);
   }
 
   @override

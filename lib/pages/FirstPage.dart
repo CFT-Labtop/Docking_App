@@ -11,7 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:new_version/new_version.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FirstPage extends StatefulWidget {
   @override
@@ -59,21 +59,13 @@ class _FirstPageState extends State<FirstPage> {
       });
     });
     super.initState();
-    checkForUpdate();
+    UtilExtendsion.checkForUpdate(context);
   }
 
   Future<void> getNews() async {
     newsList = await Request().getLatestNews(context, context.locale);
   }
 
-  Future<void> checkForUpdate() async{
-    //  final newVersion = NewVersion(
-    //   iOSId: 'com.google.Vespa',
-    //   androidId: 'com.google.android.apps.cloudconsole',
-    // );
-    // final status = await newVersion.getVersionStatus();
-    // newVersion.showAlertIfNecessary(context: context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,36 +137,41 @@ class _FirstPageState extends State<FirstPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Util.responsiveSize(context, 48.0)),
-                    child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(children: [
+                    child: GestureDetector(
+                      onTap: (){
+                        launch("https://dkmsweb-prod.sunhinggroup.com/TermsAndConditions");
+                      },
+                      child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(children: [
+                            TextSpan(
+                                text: "By signing up, you agree to our".tr(),
+                                style: TextStyle(
+                                    fontSize: Util.responsiveSize(context, 14))),
+                            TextSpan(text: " "),
                           TextSpan(
-                              text: "By signing up, you agree to our".tr(),
-                              style: TextStyle(
-                                  fontSize: Util.responsiveSize(context, 14))),
-                          TextSpan(text: " "),
-                        TextSpan(
-                            text: "Terms of Service".tr(),
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: Util.responsiveSize(context, 14)),
-                          ),
-                          TextSpan(text: " "),
-                          TextSpan(
-                              text: "and".tr(),
-                              style: TextStyle(
-                                  fontSize: Util.responsiveSize(context, 14))),
-                          TextSpan(text: " "),
-                          TextSpan(
-                              text: "Privacy Policy".tr(),
+                              text: "Terms of Service".tr(),
                               style: TextStyle(
                                   decoration: TextDecoration.underline,
-                                  fontSize: Util.responsiveSize(context, 14))),
-                        ])),
+                                  fontSize: Util.responsiveSize(context, 14)),
+                            ),
+                            TextSpan(text: " "),
+                            TextSpan(
+                                text: "and".tr(),
+                                style: TextStyle(
+                                    fontSize: Util.responsiveSize(context, 14))),
+                            TextSpan(text: " "),
+                            TextSpan(
+                                text: "Privacy Policy".tr(),
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: Util.responsiveSize(context, 14))),
+                          ])),
+                    ),
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
                   Text(
-                    "Version 0.0.16",
+                    "Version 0.0.17",
                     style: TextStyle(
                         fontSize: Util.responsiveSize(context, 14),
                         color: Colors.white),

@@ -28,6 +28,11 @@
 	<string>This app needs camera access to scan QR codes</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs photo library access to scan QR codes from image</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	  <string>https</string>
+	  <string>http</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

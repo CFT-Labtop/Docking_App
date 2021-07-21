@@ -10,7 +10,7 @@ class StandardTextFormField extends StatefulWidget {
     this.prefixOnPress,
     this.textInputType,
     this.fontSize,
-    this.fontColor, this.focusNode, this.enable, this.validator,
+    this.fontColor, this.focusNode, this.enable, this.validator, this.textCapitalization,
   })  : _textController = textController,
         super(key: key);
 
@@ -20,6 +20,7 @@ class StandardTextFormField extends StatefulWidget {
   final Color fontColor;
   final Widget prefixWidget;
   final TextInputType textInputType;
+  final TextCapitalization textCapitalization;
   final FocusNode focusNode;
   final bool enable;
   final void Function() prefixOnPress;
@@ -41,6 +42,7 @@ class _StandardTextFormFieldState extends State<StandardTextFormField> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 16)),
       child: TextFormField(
+        textCapitalization: this.widget.textCapitalization ?? TextCapitalization.none,
         style: TextStyle(fontSize: widget.fontSize ?? Util.responsiveSize(context, 14), color: widget.fontColor ?? Colors.black),
         controller: widget._textController,
         focusNode: widget.focusNode ?? _focusNode,

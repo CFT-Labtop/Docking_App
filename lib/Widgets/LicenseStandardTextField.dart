@@ -18,6 +18,7 @@ class _LicenseStandardTextFieldState extends State<LicenseStandardTextField> {
   @override
   Widget build(BuildContext context) {
     return StandardTextFormField(
+        textCapitalization: TextCapitalization.characters,
         textController: widget.textController,
         hintText: "Enter Your Car Licence Number".tr(),
         focusNode: widget.focusNode,

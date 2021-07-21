@@ -65,7 +65,8 @@ class _LoginPageState extends State<LoginPage> {
                           Util.showLoadingDialog(context);
                           Map<String, dynamic> result = await Request().login(context, countryCode: _mobileTextFieldKey.currentState.countryCode, tel: mobileTextController.text);
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + result["verificationCode"])));
+                          if(result.containsKey("verificationCode") && result["verificationCode"] != null)
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + result["verificationCode"])));
                           FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.LOGIN.toString()+ "/" + result["issueTimeString"]);
                         }catch(error){
                           Navigator.pop(context);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
@@ -10,6 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/BaseRequest.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 
 class Request extends BaseRequest {
   static final Request _request = Request._internal();
@@ -68,7 +73,7 @@ class Request extends BaseRequest {
         "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
-      print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
+
       return response.data["rstData"] as Map<String, dynamic>;
     });
   }
@@ -104,7 +109,6 @@ class Request extends BaseRequest {
         "lang":UtilExtendsion.localeToLocaleCode(lang)
       });
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
-      print("Verifiy Code " + response.data["rstData"]["verificationCode"]);
       return response.data["rstData"] as Map<String, dynamic>;
     });
   }
@@ -158,6 +162,13 @@ class Request extends BaseRequest {
 
   Future<T> _run<T>({BuildContext context, @required dynamic callback}) async {
     try {
+      
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      if(connectivityResult == ConnectivityResult.none){
+        Util.showConfirmDialog(context,  title: "Unstable Network".tr(), onPress: (){
+          exit(0);
+        });
+      }
       var response = await callback();
       return response as T;
     } on DioError catch (e) {

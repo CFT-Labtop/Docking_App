@@ -111,7 +111,8 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                                 Util.showLoadingDialog(context);
                                 Map<String, dynamic> result = await Request().driverRegister(context, countryCode: _mobileTextFieldKey.currentState.countryCode, mobileNumber: mobileTextController.text,  license: licenseTextController.text, carType: _carTypeKey.currentState.selectedValue, lang: context.locale);
                                 Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + result["verificationCode"])));
+                                if(result.containsKey("verificationCode") && result["verificationCode"] != null)
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification Code is " + result["verificationCode"])));
                                 FlutterRouter().goToPage(context, Pages("VerificationPage"), parameters: "/" + mobileTextController.text + "/" + _mobileTextFieldKey.currentState.countryCode + "/" + VerificationType.REGISTER.toString()+ "/" + result["issueTimeString"]);
                               }catch(error){
                                 Navigator.pop(context);

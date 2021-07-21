@@ -37,3 +37,12 @@ Verify Page Back Confirmation(Done)
 First Page Latest News(Done)
 Setting Page Submit 後取消focus(Done)
 401 Loading(Done)
+
+Check 網絡 (Done)
+menu加多個button 去 support URL (Done)
+Privacy Link (Done)
+Car License 全部要大階 (Done)
+401 with error message(Done)
+
+Logout 唔洗等response
+Booking color code type
