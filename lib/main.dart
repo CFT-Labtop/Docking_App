@@ -1,4 +1,5 @@
 import 'package:docking_project/Util/Config.dart';
+import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/pages/FirstPage.dart';
@@ -7,7 +8,6 @@ import 'package:docking_project/pages/SplashPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Util/FlutterRouter.dart';
 import 'package:flutter_basecomponent/Util.dart';
 
 Future<void> main() async {
@@ -39,6 +39,7 @@ class RouterPage extends StatelessWidget {
       future: Future.delayed(Duration(seconds: 1)),
       builder: (context, AsyncSnapshot snapshot) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
               title: 'Docking',
               theme: ThemeData(
                 primaryColor: UtilExtendsion.mainColor,

@@ -135,7 +135,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 break;
               case 4:
                 Util.showConfirmDialog(context, onPress: () async{
-                  await Request().logout(context);
+                  Request().logout(context);
                   Util.sharedPreferences.clear();
                   FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
                 }, title: "Confirm To Logout?".tr());

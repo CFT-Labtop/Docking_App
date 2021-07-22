@@ -162,19 +162,25 @@ class Request extends BaseRequest {
 
   Future<T> _run<T>({BuildContext context, @required dynamic callback}) async {
     try {
-      
       var connectivityResult = await (Connectivity().checkConnectivity());
       if(connectivityResult == ConnectivityResult.none){
-        Util.showConfirmDialog(context,  title: "Unstable Network".tr(), onPress: (){
-          exit(0);
-        });
+        throw new Exception("Unstable Network".tr());
       }
       var response = await callback();
       return response as T;
     } on DioError catch (e) {
-        throw e.message;
+      if(e.response.statusCode == 401){
+         Util.showAlertDialog(context, "", title: "Another User Has Been Login".tr(), onPress: (){
+          Util.sharedPreferences.clear();
+          FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+        });
+      }else{
+        Util.showAlertDialog(context, "", title: "Unstable Network".tr());
+      }
+        // throw e.message;
     } catch (e) {
-      throw e;
+      Util.showAlertDialog(context, "", title: "Unstable Network".tr());
+      // throw e;
     }
   }
 

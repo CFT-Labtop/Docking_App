@@ -23,23 +23,23 @@ extension UtilExtendsion on Util {
 
 
   static Future<void> checkForUpdate(BuildContext context) async{
-    //      final newVersion = NewVersion(
-    //   iOSId: 'com.google.Vespa',
-    //   androidId: 'com.google.android.apps.cloudconsole',
-    // );
-    // final status = await newVersion.getVersionStatus();
-    // if(status.canUpdate)
-    //   newVersion.showUpdateDialog(
-    //   context: context, 
-    //   versionStatus: status,
-    //   dialogTitle: "Update Available".tr(),
-    //   dialogText: 'You Can Now Update This App'.tr(),
-    //   updateButtonText: 'Update'.tr(),
-    //   dismissButtonText: 'Dismiss'.tr(),
-    //   dismissAction: () => {
-    //     exit(0)
-    //   },
-    // );
+         final newVersion = NewVersion(
+      iOSId: 'com.cft.docking',
+      androidId: 'com.google.android.apps.cloudconsole',
+    );
+    final status = await newVersion.getVersionStatus();
+    if(status.canUpdate)
+      newVersion.showUpdateDialog(
+      context: context, 
+      versionStatus: status,
+      dialogTitle: "Update Available".tr(),
+      dialogText: 'You Can Now Update This App'.tr(),
+      updateButtonText: 'Update'.tr(),
+      dismissButtonText: 'Dismiss'.tr(),
+      dismissAction: () => {
+        exit(0)
+      },
+    );
   }
 
   static Future<void> initDriver() async {
@@ -109,16 +109,15 @@ extension UtilExtendsion on Util {
 
   static Widget CustomFutureBuild(BuildContext context, AsyncSnapshot<dynamic> snapshot, Widget Function() callBack, {Widget Function() loadingCallBack}) {
     if (snapshot.hasError) {
-      if(snapshot.error == "Http status error [401]"){
-        Util.showAlertDialog(context, "", title: "Another User Has Been Login".tr());
-        Future.delayed(Duration(microseconds: 50), (){
-          Util.sharedPreferences.clear();
-          FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
-        });
-      }
+      // if(snapshot.error == "Http status error [401]"){
+      //   Util.showAlertDialog(context, "", title: "Another User Has Been Login".tr(), onPress: (){
+      //     Util.sharedPreferences.clear();
+      //     FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+      //   });
+      // }
       return Center(
           child: Text(
-        snapshot.error,
+        "Unstable Network".tr(),
         textAlign: TextAlign.center,
         style: TextStyle(
             color: Colors.grey, fontSize: Util.responsiveSize(context, 24)),

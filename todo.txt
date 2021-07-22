@@ -38,11 +38,11 @@ First Page Latest News(Done)
 Setting Page Submit 後取消focus(Done)
 401 Loading(Done)
 
-Check 網絡 (Done)
 menu加多個button 去 support URL (Done)
 Privacy Link (Done)
 Car License 全部要大階 (Done)
-401 with error message(Done)
 
-Logout 唔洗等response
+Logout 唔洗等response (Done)
 Booking color code type
+401 with error message e.g. 用戶驗證過期，請重新登入(Done)
+Check 網絡  e.g.網絡異常 (Done)
