@@ -16,6 +16,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -122,20 +123,25 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     return Material(
       color: Colors.transparent,
       child: PopupMenuButton(
-          onSelected: (value) {
+          onSelected: (value) async {
             switch (value) {
               case 1:
                 showLanguageButton();
                 break;
               case 2:
-                showLatestNews();
+                var connectivityResult = await (Connectivity().checkConnectivity());
+                if(connectivityResult == ConnectivityResult.none){
+                  Util.showAlertDialog(context, "", title: "Unstable Network".tr());
+                }else{
+                  showLatestNews();
+                }
                 break;
               case 3:
                 launch("https://dkmsweb-prod.sunhinggroup.com/support");
                 break;
               case 4:
                 Util.showConfirmDialog(context, onPress: () async{
-                  Request().logout(context);
+                  Request().logout(context, Util.sharedPreferences.getString("Authorization"));
                   Util.sharedPreferences.clear();
                   FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
                 }, title: "Confirm To Logout?".tr());

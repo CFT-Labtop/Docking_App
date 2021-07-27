@@ -22,16 +22,17 @@ class _BookingListFragmentState extends State<BookingListFragment> {
   List<Booking> bookingList = [];
   Future futureBuilder;
 
-  Color convertStatusToColor(String status) {
-    if(status == "Arrived" || status == "已到達" || status == "已到达")
-      return Colors.grey;
-    else if (status == "Booked" || status == "已預約" || status == "已预约")
-      return Colors.green;
-    else if (status == "WIP" || status == "工作中" || status == "工作中")
-      return Colors.orange;
-    else if (status == "Cancelled" || status == "已取消" || status == "已取消")
-      return Colors.red;
-    return Colors.transparent;
+  Color convertStatusToColor(String bookingStatusCode) {
+    switch(bookingStatusCode){
+      case "B000":
+        return Colors.red;
+      case "B100":
+        return Colors.green;
+      case "B200":
+        return Colors.grey;
+      default:
+        return Colors.orange;
+    }
   }
 
   @override
@@ -127,7 +128,7 @@ class _BookingListFragmentState extends State<BookingListFragment> {
                                             decoration: BoxDecoration(
                                                 color: convertStatusToColor(
                                                     bookingList[index]
-                                                        .bookingStatus),
+                                                        .bookingStatusCode),
                                                 borderRadius: BorderRadius.only(
                                                     topLeft:
                                                         Radius.circular(10),

@@ -44,6 +44,7 @@ class Booking{
   String bookingRemark;
   String bookingInternalRemark;
   int timeSlotUsage;
+  String bookingStatusCode;
 
   Booking({
     this.warehouse,
@@ -64,7 +65,8 @@ class Booking{
     this.clientName,
     this.bookingRemark,
     this.bookingInternalRemark,
-    this.timeSlotUsage
+    this.timeSlotUsage,
+    this.bookingStatusCode,
   });
 
   Booking.fromJson(Map json){
@@ -88,6 +90,7 @@ class Booking{
     this.bookingRemark = json ["bookingRemark"] ?? null;
     this.bookingInternalRemark = json ["bookingInternalRemark"] ?? null;
     this.timeSlotUsage = json ["timeSlotUsage"] ?? 0;
+    this.bookingStatusCode = json ["bookingStatusCode"] ?? null;
   }
 
   bool _convertIntToBool(int value){

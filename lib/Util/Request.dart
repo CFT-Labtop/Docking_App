@@ -6,6 +6,7 @@ import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
+import 'package:docking_project/Util/BaseError.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class Request extends BaseRequest {
         "default_Truck_No": license ?? null,
         "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
 
       return response.data["rstData"] as Map<String, dynamic>;
     });
@@ -93,7 +94,7 @@ class Request extends BaseRequest {
         "verificationCode": verificationCode,
         "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       await Util.sharedPreferences
           .setString("Authorization", response.data["rstData"]);
     });
@@ -108,7 +109,7 @@ class Request extends BaseRequest {
         "tel": tel,
         "lang":UtilExtendsion.localeToLocaleCode(lang)
       });
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       return response.data["rstData"] as Map<String, dynamic>;
     });
   }
@@ -128,7 +129,7 @@ class Request extends BaseRequest {
         "default_Truck_No": default_Truck_No,
         "default_Truck_Type": default_Truck_Type
       });
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
     });
   }
 
@@ -137,7 +138,7 @@ class Request extends BaseRequest {
       clearToken();
       _setHeader();
       Response response = await this.dio.get(this.baseURL + "User/username");
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       String driverID = response.data["rstData"];
       response = await this.dio.get(this.baseURL + "Driver/" + driverID);
       return Driver(
@@ -177,8 +178,9 @@ class Request extends BaseRequest {
       }else{
         Util.showAlertDialog(context, "", title: "Unstable Network".tr());
       }
-        // throw e.message;
-    } catch (e) {
+    } on BaseError catch (e) {
+      throw e;
+    }catch (e) {
       Util.showAlertDialog(context, "", title: "Unstable Network".tr());
       // throw e;
     }
@@ -215,7 +217,7 @@ class Request extends BaseRequest {
         "bookingRemark": bookingRemark ?? "",
         "timeSlotUsage": timeSlotUsage
       });
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       return new Booking.fromJson(response.data["rstData"]);
         });
   }
@@ -237,7 +239,7 @@ class Request extends BaseRequest {
       _setHeader();
       Response response =
           await this.dio.delete(this.baseURL + "Booking/" + bookingRef);
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
     });
   }
 
@@ -257,7 +259,7 @@ class Request extends BaseRequest {
       clearToken();
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "User/RenewToken");
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       await Util.sharedPreferences.setString("Authorization", response.data["rstData"]);
       return response.data["rstData"];
     });
@@ -280,17 +282,17 @@ class Request extends BaseRequest {
       clearToken();
       _setHeader();
       Response response = await this.dio.post(this.baseURL + "User/ChangeLanguage", queryParameters: {'lang': UtilExtendsion.localeToLocaleCode(lang)});;
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       await Util.sharedPreferences.setString("Authorization", response.data["rstData"]);
     });
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> logout(BuildContext context, String token) async {
     await _run<void>(context: context, callback: () async {
       clearToken();
-      _setHeader();
+      this.dio.options.headers["Authorization"] = "bearer " + token;
       Response response = await this.dio.post(this.baseURL + "User/Logout");
-      if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
     });
   }
 

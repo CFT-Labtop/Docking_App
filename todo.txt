@@ -43,6 +43,16 @@ Privacy Link (Done)
 Car License 全部要大階 (Done)
 
 Logout 唔洗等response (Done)
-Booking color code type
 401 with error message e.g. 用戶驗證過期，請重新登入(Done)
 Check 網絡  e.g.網絡異常 (Done)
+
+Booking color code type (Done)
+if 網絡異常 -> 唔比去最新消息 (Done)
+Register existed account wrong error (Done)
+No error message 同一日Booking (Done)
+登出網絡異常(Done)
+
+B100 -> green
+B200 -> grey
+B000 -> red
+else -> orange

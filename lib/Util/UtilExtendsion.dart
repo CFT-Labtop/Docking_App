@@ -23,23 +23,23 @@ extension UtilExtendsion on Util {
 
 
   static Future<void> checkForUpdate(BuildContext context) async{
-         final newVersion = NewVersion(
-      iOSId: 'com.cft.docking',
-      androidId: 'com.google.android.apps.cloudconsole',
-    );
-    final status = await newVersion.getVersionStatus();
-    if(status.canUpdate)
-      newVersion.showUpdateDialog(
-      context: context, 
-      versionStatus: status,
-      dialogTitle: "Update Available".tr(),
-      dialogText: 'You Can Now Update This App'.tr(),
-      updateButtonText: 'Update'.tr(),
-      dismissButtonText: 'Dismiss'.tr(),
-      dismissAction: () => {
-        exit(0)
-      },
-    );
+    // final newVersion = NewVersion(
+    //   iOSId: 'com.cft.docking',
+    //   androidId: 'com.cft.docking_project',
+    // );
+    // final status = await newVersion.getVersionStatus();
+    // if(status.canUpdate)
+    //   newVersion.showUpdateDialog(
+    //   context: context, 
+    //   versionStatus: status,
+    //   dialogTitle: "Update Available".tr(),
+    //   dialogText: 'You Can Now Update This App'.tr(),
+    //   updateButtonText: 'Update'.tr(),
+    //   dismissButtonText: 'Dismiss'.tr(),
+    //   dismissAction: () => {
+    //     Navigator.pop(context)
+    //   },
+    // );
   }
 
   static Future<void> initDriver() async {
