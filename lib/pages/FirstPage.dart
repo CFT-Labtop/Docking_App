@@ -171,7 +171,7 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
                   Text(
-                    "Version 0.0.18",
+                    "Version 0.0.19",
                     style: TextStyle(
                         fontSize: Util.responsiveSize(context, 14),
                         color: Colors.white),
