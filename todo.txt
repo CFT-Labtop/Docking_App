@@ -52,7 +52,10 @@ Register existed account wrong error (Done)
 No error message 同一日Booking (Done)
 登出網絡異常(Done)
 
-B100 -> green
-B200 -> grey
-B000 -> red
-else -> orange
+User 多一個field 叫 客戶
+User 多一個field 叫 是否中港車
+Create Booking 要加客戶
+加一個switch (是否落貨) 係 confirm booking page, default 否
+加一個switch (是否中港車) 係 confirm booking page, 
+通知到達前要影相, 5張相, 可以強行唔影相到達
+Whatsapp 查詢
