@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_basecomponent/Util.dart';
 
@@ -232,6 +233,12 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                               });
                             },
                           ),
+                          StandardElevatedButton(backgroundColor: Colors.grey, text: "Testing", onPress: () async{
+                            Util.checkCameraPermission(context, onGranted: ()async {
+                              final ImagePicker _picker = ImagePicker();
+                              final XFile photo = await _picker.pickImage(source: ImageSource.camera);
+                            });
+                          },),
                     SizedBox(
                       height: Util.responsiveSize(context, 24),
                     ),
