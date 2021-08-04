@@ -22,7 +22,7 @@ class ConfirmBookingPage extends StatefulWidget {
 }
 
 class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
-  final TextEditingController textEditingController = TextEditingController();
+  // final TextEditingController textEditingController = TextEditingController();
   Widget _listTile(
       BuildContext context, IconData icon, String label, String value,
       {bool isDivider = true}) {
@@ -83,52 +83,6 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
     );
   }
 
-  Widget _remarkField(BuildContext context) {
-    double size = 18;
-    return Padding(
-      padding:
-          EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, size)),
-      child: Column(
-        children: [
-          SizedBox(
-            height: Util.responsiveSize(context, 8),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.text_fields,
-                    size: Util.responsiveSize(context, size + 8),
-                    color: Colors.grey,
-                  ),
-                  SizedBox(
-                    width: Util.responsiveSize(context, 12),
-                  ),
-                  Text(
-                    "Remark".tr() + ":",
-                    style: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: Util.responsiveSize(context, size)),
-                  ),
-                ],
-              ),
-              Expanded(
-                  child: TextField(
-                      controller: textEditingController,
-                      textAlign: TextAlign.right))
-            ],
-          ),
-          Divider(
-            color: Colors.grey,
-            height: Util.responsiveSize(context, size),
-          )
-        ],
-      ),
-    );
-  }
-
   void _submitForm() async{
     try {
       Util.showLoadingDialog(context);
@@ -143,7 +97,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           bookingDate: widget.booking.bookingDate,
           timeSlotId: widget.booking.timeSlot,
           isChHKTruck: false,
-          bookingRemark: textEditingController.text,
+          bookingRemark: widget.booking.bookingRemark,
           timeSlotUsage: widget.booking.timeSlotUsage);
       UtilExtendsion.setPreviousWarehouse( widget.booking.warehouseID);
       Navigator.pop(context);
@@ -186,7 +140,8 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                     .format(DateTime.parse(widget.booking.bookingDate.substring(0,10))),
                 isDivider: false),
             _greyTile(context),
-            _remarkField(context),
+            // _remarkField(context),
+            _listTile(context, Icons.text_fields, "Remark".tr(),widget.booking.bookingRemark),
             Expanded(
               child: _greyTile(context),
             ),

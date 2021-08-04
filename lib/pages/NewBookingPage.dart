@@ -55,7 +55,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
   void initState() {
     futureBuilder = getInformation();
     super.initState();
-    carTypeValueNotifier = ValueNotifier(_carTypeKey);
+    // carTypeValueNotifier = ValueNotifier(_carTypeKey);
   }
 
   int _getTimeSlotUsageByValue(String value) {
@@ -71,8 +71,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
           .getTrunckTypeByWarehouseID(context, widget.warehouseID);
       driver = await Request().getDriver(context: context);
       if (driver.default_Truck_Type != null &&
-          driver.default_Truck_Type.isNotEmpty)
-        await _getDateSelection(driver.default_Truck_Type);
+          driver.default_Truck_Type.isNotEmpty &&
+          this.truckTypeList.firstWhere((element) => element.truck_Type == driver.default_Truck_Type, orElse: () => null) !=null) 
+            await _getDateSelection(driver.default_Truck_Type);
       this.truckTypeSelection =
           UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
       licenseTextController.text = driver.default_Truck_No;
@@ -119,8 +120,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
         if (_carTypeKey.currentState.selectedValue == null ||
             _carTypeKey.currentState.selectedValue.isEmpty)
           throw "Car Type Cannot Be Empty".tr();
-        if (!_carTypeKey.currentState.isAnswerValid() || _dateSelectorKey.currentState.selectedValue == null ||
-            _dateSelectorKey.currentState.selectedValue.isEmpty )
+        if (!_carTypeKey.currentState.isAnswerValid() ||
+            _dateSelectorKey.currentState.selectedValue == null ||
+            _dateSelectorKey.currentState.selectedValue.isEmpty)
           throw "Booking Date Cannot Be Empty".tr();
         if (selectedTime == null || selectedTime.isEmpty)
           throw "Booking Time Slot Cannot Be Empty".tr();
@@ -139,7 +141,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   bookingDate: _dateSelectorKey.currentState.selectedValue,
                   timeSlot: selectedTime,
                   timeSlotUsage: _getTimeSlotUsageByValue(
-                      _carTypeKey.currentState.selectedValue)),
+                      _carTypeKey.currentState.selectedValue),
+                  bookingRemark: remarkTextController.text),
               "timeSlot": selectedTimeSlot
             }));
       } catch (error) {
@@ -201,14 +204,6 @@ class _NewBookingPageState extends State<NewBookingPage> {
             },
           ),
         ),
-        SizedBox(height: Util.responsiveSize(context, 18),),
-        StandardElevatedButton(
-          backgroundColor: UtilExtendsion.mainColor,
-          text: "Next".tr(),
-          onPress: (){
-
-          },
-        ),
       ],
     );
   }
@@ -218,7 +213,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
         _carTypeKey.currentState.isAnswerValid());
   }
 
-    Widget _remarkField(BuildContext context) {
+  Widget _remarkField(BuildContext context) {
     double size = 18;
     return Padding(
       padding:
@@ -232,15 +227,18 @@ class _NewBookingPageState extends State<NewBookingPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                    "Remark".tr() + ":",
-                    style: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: Util.responsiveSize(context, size)),
-                  ),
-                  SizedBox(
-                    width: Util.responsiveSize(context, 8),
-                  ),
-              Expanded(child: TextField(controller: remarkTextController,))
+                "Remark".tr() + ":",
+                style: TextStyle(
+                    color: Color(0xff888888),
+                    fontSize: Util.responsiveSize(context, size)),
+              ),
+              SizedBox(
+                width: Util.responsiveSize(context, 8),
+              ),
+              Expanded(
+                  child: TextField(
+                controller: remarkTextController,
+              ))
             ],
           ),
         ],
@@ -266,73 +264,71 @@ class _NewBookingPageState extends State<NewBookingPage> {
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.white,
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: Util.responsiveSize(context, 32),
-                        ),
-                        CarTypePullDown(
-                            initValue: driver.default_Truck_Type,
-                            truckTypeSelection: truckTypeSelection,
-                            key: _carTypeKey,
-                            onSelected: (String selectedValue,String displayLabel) async {
-                              try{
-                                Util.showLoadingDialog(context);
-                                await _getDateSelection(_carTypeKey.currentState.selectedValue);
-                                _clearDateSelection();
-                                Navigator.pop(context);
-                                Util.showModalSheet(context, "Booking Date".tr(), (BuildContext context, StateSetter setState){
-                                  return _timeSlotSelectPart(setState);
-                                }, colorTone: UtilExtendsion.mainColor);
-                              }catch(error){
-                                Navigator.pop(context);
-                                Util.showAlertDialog(context, error.toString());
-                              }
-                            }),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 24),
-                        ),
-                        LicenseStandardTextField(
-                          textController: licenseTextController,
-                        ),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 24),
-                        ),
-                        _remarkField(context),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 8),
-                        ),
-                        Divider(
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 8),
-                        ),
-                        // ValueListenableBuilder(
-                        //   valueListenable: carTypeValueNotifier,
-                        //   builder: (context, GlobalKey<CarTypePullDownState> value, _) {
-                        //     if(value.currentState != null && value.currentState.isAnswerValid()){
-                        //       return _timeSlotSelectPart();
-                        //     }
-                        //     return SizedBox();
-                        //   },
-                        // ),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 18),
-                        ),
-                        // StandardElevatedButton(
-                        //   backgroundColor: UtilExtendsion.mainColor,
-                        //   text: "Next".tr(),
-                        //   onPress: () => submitBooking(),
-                        // ),
-                        // SizedBox(
-                        //   height: Util.responsiveSize(context, 24),
-                        // ),
-                      ],
-                    ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: Util.responsiveSize(context, 32),
+                      ),
+                      CarTypePullDown(
+                          initValue: driver.default_Truck_Type,
+                          truckTypeSelection: truckTypeSelection,
+                          key: _carTypeKey,
+                          onSelected: (String selectedValue,
+                              String displayLabel) async {
+                            try {
+                              Util.showLoadingDialog(context);
+                              await _getDateSelection(
+                                  _carTypeKey.currentState.selectedValue);
+                              _clearDateSelection();
+                              Navigator.pop(context);
+                            } catch (error) {
+                              Navigator.pop(context);
+                              Util.showAlertDialog(context, error.toString());
+                            }
+                          }),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 24),
+                      ),
+                      LicenseStandardTextField(
+                        textController: licenseTextController,
+                      ),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 24),
+                      ),
+                      _remarkField(context),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 8),
+                      ),
+                      Expanded(child: SizedBox()),
+                      StandardElevatedButton(
+                        backgroundColor: UtilExtendsion.mainColor,
+                        text: "Next".tr(),
+                        onPress: () {
+                          if (_carTypeKey.currentState.selectedValue == null || _carTypeKey.currentState.selectedValue.isEmpty || !_carTypeKey.currentState.isAnswerValid()) {
+                            Util.showAlertDialog(context, "Car Type Cannot Be Empty".tr());
+                          } else {
+                            Util.showModalSheet(context, "Booking Date".tr(),
+                                (BuildContext context, StateSetter setState) {
+                              return Column(
+                                children: [
+                                  _timeSlotSelectPart(setState),
+                                  StandardElevatedButton(
+                                    backgroundColor: UtilExtendsion.mainColor,
+                                    text: "Next".tr(),
+                                    onPress: () => submitBooking()
+                                  )
+                                ],
+                              );
+                            }, colorTone: UtilExtendsion.mainColor);
+                          }
+                        },
+                      ),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 24),
+                      ),
+                    ],
                   ),
                 ),
               ),
