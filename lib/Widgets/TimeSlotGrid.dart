@@ -37,7 +37,7 @@ class _TimeSlotGridState extends State<TimeSlotGrid> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height/2.8,
+      height: MediaQuery.of(context).size.height/2.4,
       child: AnimationLimiter(
         child: GridView.count(
             crossAxisCount: getRowCount(),

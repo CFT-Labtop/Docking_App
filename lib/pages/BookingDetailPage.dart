@@ -126,6 +126,55 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
+  void _takePhoto(){
+    Util.checkCameraPermission(context, onGranted: ()async {
+      showPlatformModalSheet(
+        context: context,
+        builder: (context){
+          return Material(
+            color: Colors.transparent,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topRight: Radius.circular(20.0), topLeft: Radius.circular(20)),
+                color: Color(0xffEEEEEE),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    height: Util.responsiveSize(context, 56.0),
+                    color: Colors.red,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("A"),
+                        Text("B"),
+                        Text("C"),
+                      ],
+                    ),
+                  ),
+                  // Text("Header"),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Text("data"),
+                        Text("data"),
+                        Text("data")
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            ),
+          );
+        }
+      );
+      // final ImagePicker _picker = ImagePicker();
+      // final XFile photo = await _picker.pickImage(source: ImageSource.camera);
+
+    });
+  }
+
   bool _isArrivedOrWIPOrDeleted(){
     return (widget.booking.bookingStatus == "WIP" || widget.booking.bookingStatus == "工作中" || widget.booking.bookingStatus == "Arrived" || widget.booking.bookingStatus == "已到達" || widget.booking.bookingStatus == "已到达" || widget.booking.bookingStatus == "Cancelled" || widget.booking.bookingStatus == "已取消");
   }
@@ -233,12 +282,9 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                               });
                             },
                           ),
-                          StandardElevatedButton(backgroundColor: Colors.grey, text: "Testing", onPress: () async{
-                            Util.checkCameraPermission(context, onGranted: ()async {
-                              final ImagePicker _picker = ImagePicker();
-                              final XFile photo = await _picker.pickImage(source: ImageSource.camera);
-                            });
-                          },),
+                          // StandardElevatedButton(backgroundColor: Colors.grey, text: "Testing", onPress: () async{
+                          //   _takePhoto();
+                          // },),
                     SizedBox(
                       height: Util.responsiveSize(context, 24),
                     ),

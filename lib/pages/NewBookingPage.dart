@@ -35,6 +35,7 @@ class NewBookingPage extends StatefulWidget {
 
 class _NewBookingPageState extends State<NewBookingPage> {
   final TextEditingController licenseTextController = TextEditingController();
+  final TextEditingController remarkTextController = TextEditingController();
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
   final _dateSelectorKey = GlobalKey<StandardPullDownState>();
   final _formKey = GlobalKey<FormState>();
@@ -48,13 +49,13 @@ class _NewBookingPageState extends State<NewBookingPage> {
   int selectedTimeSlotIndex = -1;
   String selectedTime;
   Future futureBuilder;
-  ValueNotifier<GlobalKey<CarTypePullDownState>> valueNotifier;
+  ValueNotifier<GlobalKey<CarTypePullDownState>> carTypeValueNotifier;
 
   @override
   void initState() {
     futureBuilder = getInformation();
     super.initState();
-    valueNotifier = ValueNotifier(_carTypeKey);
+    carTypeValueNotifier = ValueNotifier(_carTypeKey);
   }
 
   int _getTimeSlotUsageByValue(String value) {
@@ -159,7 +160,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
     });
   }
 
-  Widget _timeSlotSelectPart() {
+  Widget _timeSlotSelectPart(StateSetter setState) {
     return Column(
       children: [
         StandardPullDown(
@@ -200,6 +201,14 @@ class _NewBookingPageState extends State<NewBookingPage> {
             },
           ),
         ),
+        SizedBox(height: Util.responsiveSize(context, 18),),
+        StandardElevatedButton(
+          backgroundColor: UtilExtendsion.mainColor,
+          text: "Next".tr(),
+          onPress: (){
+
+          },
+        ),
       ],
     );
   }
@@ -207,6 +216,36 @@ class _NewBookingPageState extends State<NewBookingPage> {
   bool _isTruckTypeValid() {
     return (_carTypeKey.currentState != null &&
         _carTypeKey.currentState.isAnswerValid());
+  }
+
+    Widget _remarkField(BuildContext context) {
+    double size = 18;
+    return Padding(
+      padding:
+          EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, size)),
+      child: Column(
+        children: [
+          SizedBox(
+            height: Util.responsiveSize(context, 8),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                    "Remark".tr() + ":",
+                    style: TextStyle(
+                        color: Color(0xff888888),
+                        fontSize: Util.responsiveSize(context, size)),
+                  ),
+                  SizedBox(
+                    width: Util.responsiveSize(context, 8),
+                  ),
+              Expanded(child: TextField(controller: remarkTextController,))
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -245,6 +284,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                 await _getDateSelection(_carTypeKey.currentState.selectedValue);
                                 _clearDateSelection();
                                 Navigator.pop(context);
+                                Util.showModalSheet(context, "Booking Date".tr(), (BuildContext context, StateSetter setState){
+                                  return _timeSlotSelectPart(setState);
+                                }, colorTone: UtilExtendsion.mainColor);
                               }catch(error){
                                 Navigator.pop(context);
                                 Util.showAlertDialog(context, error.toString());
@@ -259,32 +301,36 @@ class _NewBookingPageState extends State<NewBookingPage> {
                         SizedBox(
                           height: Util.responsiveSize(context, 24),
                         ),
+                        _remarkField(context),
+                        SizedBox(
+                          height: Util.responsiveSize(context, 8),
+                        ),
                         Divider(
                           color: Colors.black,
                         ),
                         SizedBox(
                           height: Util.responsiveSize(context, 8),
                         ),
-                        ValueListenableBuilder(
-                          valueListenable: valueNotifier,
-                          builder: (context, GlobalKey<CarTypePullDownState> value, _) {
-                            if(value.currentState != null && value.currentState.isAnswerValid()){
-                              return _timeSlotSelectPart();
-                            }
-                            return SizedBox();
-                          },
-                        ),
+                        // ValueListenableBuilder(
+                        //   valueListenable: carTypeValueNotifier,
+                        //   builder: (context, GlobalKey<CarTypePullDownState> value, _) {
+                        //     if(value.currentState != null && value.currentState.isAnswerValid()){
+                        //       return _timeSlotSelectPart();
+                        //     }
+                        //     return SizedBox();
+                        //   },
+                        // ),
                         SizedBox(
                           height: Util.responsiveSize(context, 18),
                         ),
-                        StandardElevatedButton(
-                          backgroundColor: UtilExtendsion.mainColor,
-                          text: "Next".tr(),
-                          onPress: () => submitBooking(),
-                        ),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 24),
-                        ),
+                        // StandardElevatedButton(
+                        //   backgroundColor: UtilExtendsion.mainColor,
+                        //   text: "Next".tr(),
+                        //   onPress: () => submitBooking(),
+                        // ),
+                        // SizedBox(
+                        //   height: Util.responsiveSize(context, 24),
+                        // ),
                       ],
                     ),
                   ),
