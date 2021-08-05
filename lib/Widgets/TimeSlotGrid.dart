@@ -40,7 +40,7 @@ class _TimeSlotGridState extends State<TimeSlotGrid> {
       height: MediaQuery.of(context).size.height/2,
       child: AnimationLimiter(
         child: GridView.count(
-            crossAxisCount: getRowCount(),
+            crossAxisCount: 4,
             crossAxisSpacing: Util.responsiveSize(context, 12),
             mainAxisSpacing: Util.responsiveSize(context, 8),
             children: List.generate(
