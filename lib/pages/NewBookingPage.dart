@@ -316,12 +316,12 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                   _timeSlotSelectPart(setState),
                                   StandardElevatedButton(
                                     backgroundColor: UtilExtendsion.mainColor,
-                                    text: "Next".tr(),
+                                    text: "Confirm".tr(),
                                     onPress: () => submitBooking()
                                   )
                                 ],
                               );
-                            }, colorTone: UtilExtendsion.mainColor);
+                            }, colorTone: UtilExtendsion.mainColor, height: 0.9);
                           }
                         },
                       ),
