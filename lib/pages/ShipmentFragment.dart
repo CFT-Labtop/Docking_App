@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Warehouse.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
@@ -87,7 +88,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                 height: Util.responsiveSize(context, 24),
               ),
               Text(
-                "Please Scan QRCode To Input Shipment",
+                "Please Scan QRCode For Emergency Shipment (HAWB)",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.grey,
@@ -243,21 +244,20 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                 text: "Next".tr(),
                 onPress: () async {
                   try {
-                    Util.showLoadingDialog(context);
                     if (_warehouseKey.currentState.selectedValue == null)
                       throw "Warehouse Cannot Be Empty".tr();
-                    Navigator.pop(context);
+                    // Response response = await Request().getConfig(context);
                     await FlutterRouter().goToPage(
                         context, Pages("NewBookingPage"),
                         parameters: "/" +
-                            _warehouseKey.currentState.selectedValue.toString(),
+                            _warehouseKey.currentState.selectedValue.toString() + "/" + _warehouseKey.currentState.selectedLabel.toString(),
                         routeSettings:
                             RouteSettings(arguments: this.shipmentList));
                     setState(() {
                       shipmentList = [];
                     });
                   } catch (error) {
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                     Util.showAlertDialog(context, error.toString());
                   }
                 },

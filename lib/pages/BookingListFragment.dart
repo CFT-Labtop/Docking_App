@@ -38,6 +38,7 @@ class _BookingListFragmentState extends State<BookingListFragment> {
   @override
   void initState() {
     futureBuilder = getBookingList();
+    // Request().getConfig(context);
     super.initState();
   }
 

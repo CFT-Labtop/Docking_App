@@ -3,13 +3,17 @@ import 'dart:convert';
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TimeSlot.dart';
+import 'package:docking_project/Model/TruckClient.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:docking_project/Widgets/CHHKSwitch.dart';
 import 'package:docking_project/Widgets/CarTypePullDown.dart';
 import 'package:docking_project/Widgets/CarTypeStandardField.dart';
+import 'package:docking_project/Widgets/ClientTypePullDown.dart';
 import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
+import 'package:docking_project/Widgets/LoadTruckSwitch.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:docking_project/Widgets/StandardPullDown.dart';
@@ -24,9 +28,10 @@ import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class NewBookingPage extends StatefulWidget {
   final int warehouseID;
+  final String warehouseName;
   final List<String> shipmentList;
 
-  const NewBookingPage({Key key, this.warehouseID, this.shipmentList})
+  const NewBookingPage({Key key, this.warehouseID, this.shipmentList, this.warehouseName})
       : super(key: key);
 
   @override
@@ -38,10 +43,14 @@ class _NewBookingPageState extends State<NewBookingPage> {
   final TextEditingController remarkTextController = TextEditingController();
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
   final _dateSelectorKey = GlobalKey<StandardPullDownState>();
+  final _chhkKey = GlobalKey<CHHKSwitchState>();
+  final _loadKey = GlobalKey<LoadTruckSwitchState>();
   final _formKey = GlobalKey<FormState>();
   List<PickerItem> truckTypeSelection;
+  List<PickerItem> truckClientSelection;
   List<PickerItem> dateSelection = [];
-  List<TruckType> truckTypeList;
+  List<TruckType> truckTypeList = [];
+  List<TruckClient> truckClientList = [];
   List<dynamic> dateList;
   List<TimeSlot> timeSlotList = [];
   TimeSlot selectedTimeSlot;
@@ -67,15 +76,17 @@ class _NewBookingPageState extends State<NewBookingPage> {
 
   Future<void> getInformation() async {
     try {
-      this.truckTypeList = await Request()
-          .getTrunckTypeByWarehouseID(context, widget.warehouseID);
+      this.truckTypeList = await Request().getTrunckTypeByWarehouseID(context, widget.warehouseID);
+      this.truckClientList = await Request().getTruckClientByWarehouseID(context, widget.warehouseID);
       driver = await Request().getDriver(context: context);
       if (driver.default_Truck_Type != null &&
           driver.default_Truck_Type.isNotEmpty &&
-          this.truckTypeList.firstWhere((element) => element.truck_Type == driver.default_Truck_Type, orElse: () => null) !=null) 
-            await _getDateSelection(driver.default_Truck_Type);
-      this.truckTypeSelection =
-          UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
+          this.truckTypeList.firstWhere(
+                  (element) => element.truck_Type == driver.default_Truck_Type,
+                  orElse: () => null) !=
+              null) await _getDateSelection(driver.default_Truck_Type);
+      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
+      this.truckClientSelection = UtilExtendsion.getTruckClientSelection(this.truckClientList);
       licenseTextController.text = driver.default_Truck_No;
     } catch (e) {
       throw e;
@@ -132,6 +143,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
             routeSettings: RouteSettings(arguments: {
               "booking": new Booking(
                   warehouseID: widget.warehouseID,
+                  warehouse: widget.warehouseName,
                   shipmentList: widget.shipmentList,
                   driverID: driver.driver_ID,
                   driverCountryCode: driver.countryCode,
@@ -140,8 +152,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   truckType: _carTypeKey.currentState.selectedValue,
                   bookingDate: _dateSelectorKey.currentState.selectedValue,
                   timeSlot: selectedTime,
-                  timeSlotUsage: _getTimeSlotUsageByValue(
-                      _carTypeKey.currentState.selectedValue),
+                  timeSlotUsage: _getTimeSlotUsageByValue(_carTypeKey.currentState.selectedValue),
+                  unloading: _loadKey.currentState.value,
+                  isChHKTruck: _chhkKey.currentState.value,
                   bookingRemark: remarkTextController.text),
               "timeSlot": selectedTimeSlot
             }));
@@ -268,65 +281,95 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: Util.responsiveSize(context, 32),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: Util.responsiveSize(context, 32),
+                              ),
+                              CarTypePullDown(
+                                  initValue: driver.default_Truck_Type,
+                                  truckTypeSelection: truckTypeSelection,
+                                  key: _carTypeKey,
+                                  onSelected: (String selectedValue,
+                                      String displayLabel) async {
+                                    try {
+                                      Util.showLoadingDialog(context);
+                                      await _getDateSelection(
+                                          _carTypeKey.currentState.selectedValue);
+                                      _clearDateSelection();
+                                      Navigator.pop(context);
+                                    } catch (error) {
+                                      Navigator.pop(context);
+                                      Util.showAlertDialog(
+                                          context, error.toString());
+                                    }
+                                  }),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              ClientTypePullDown(
+                                  clientTypeSelection: truckClientSelection),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              LicenseStandardTextField(
+                                textController: licenseTextController,
+                              ),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 16),
+                              ),
+                              CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 16),
+                              ),
+                              LoadTruckSwitch(initValue: false, key: _loadKey,),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 16),
+                              ),
+                              _remarkField(context),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 8),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      CarTypePullDown(
-                          initValue: driver.default_Truck_Type,
-                          truckTypeSelection: truckTypeSelection,
-                          key: _carTypeKey,
-                          onSelected: (String selectedValue,
-                              String displayLabel) async {
-                            try {
-                              Util.showLoadingDialog(context);
-                              await _getDateSelection(
-                                  _carTypeKey.currentState.selectedValue);
-                              _clearDateSelection();
-                              Navigator.pop(context);
-                            } catch (error) {
-                              Navigator.pop(context);
-                              Util.showAlertDialog(context, error.toString());
-                            }
-                          }),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
-                      ),
-                      LicenseStandardTextField(
-                        textController: licenseTextController,
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
-                      ),
-                      _remarkField(context),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 8),
-                      ),
-                      Expanded(child: SizedBox()),
-                      StandardElevatedButton(
-                        backgroundColor: UtilExtendsion.mainColor,
-                        text: "Next".tr(),
-                        onPress: () {
-                          if (_carTypeKey.currentState.selectedValue == null || _carTypeKey.currentState.selectedValue.isEmpty || !_carTypeKey.currentState.isAnswerValid()) {
-                            Util.showAlertDialog(context, "Car Type Cannot Be Empty".tr());
-                          } else {
-                            Util.showModalSheet(context, "Booking Date".tr(),
-                                (BuildContext context, StateSetter setState) {
-                              return Column(
-                                children: [
-                                  _timeSlotSelectPart(setState),
-                                  StandardElevatedButton(
-                                    backgroundColor: UtilExtendsion.mainColor,
-                                    text: "Confirm".tr(),
-                                    onPress: () => submitBooking()
-                                  )
-                                ],
-                              );
-                            }, colorTone: UtilExtendsion.mainColor, height: 0.9);
-                          }
-                        },
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
+                      // Expanded(child: SizedBox()),
+                      Column(
+                        children: [
+                          StandardElevatedButton(
+                            backgroundColor: UtilExtendsion.mainColor,
+                            text: "Next".tr(),
+                            onPress: () {
+                              if (_carTypeKey.currentState.selectedValue == null ||
+                                  _carTypeKey.currentState.selectedValue.isEmpty ||
+                                  !_carTypeKey.currentState.isAnswerValid()) {
+                                Util.showAlertDialog(
+                                    context, "Car Type Cannot Be Empty".tr());
+                              } else {
+                                Util.showModalSheet(context, "Booking Date".tr(),
+                                    (BuildContext context, StateSetter setState) {
+                                  return Column(
+                                    children: [
+                                      _timeSlotSelectPart(setState),
+                                      StandardElevatedButton(
+                                          backgroundColor: UtilExtendsion.mainColor,
+                                          text: "Confirm".tr(),
+                                          onPress: () => submitBooking())
+                                    ],
+                                  );
+                                },
+                                    colorTone: UtilExtendsion.mainColor,
+                                    height: 0.9);
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: Util.responsiveSize(context, 24),
+                          ),
+                        ],
                       ),
                     ],
                   ),

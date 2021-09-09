@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Driver.dart';
+import 'package:docking_project/Model/TruckClient.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
@@ -19,6 +20,9 @@ extension UtilExtendsion on Util {
   static const Color mainColor = Color.fromRGBO(202,37,46,1);
   static List<PickerItem> getTruckTypeSelection(List<TruckType> truckTypeList) {
     return truckTypeList.map((e) =>new PickerItem(text: Text(e.typeName), value: e.truck_Type)).toList();
+  }
+  static List<PickerItem> getTruckClientSelection(List<TruckClient> truckClientList) {
+    return truckClientList.map((e) =>new PickerItem(text: Text(e.clientName), value: e.clientName)).toList();
   }
 
 

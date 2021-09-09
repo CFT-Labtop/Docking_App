@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/News.dart';
+import 'package:docking_project/Model/TruckClient.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
 import 'package:docking_project/Util/BaseError.dart';
@@ -46,6 +47,17 @@ class Request extends BaseRequest {
     });
   }
 
+  Future<List<TruckClient>> getTruckClientByWarehouseID(BuildContext context, int warehouseID) async {
+    return await _run<List<TruckClient>>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.get(this.baseURL + "Master/TruckClient/" + warehouseID.toString());
+      return (response.data as List<dynamic>)
+          .map((f) => TruckClient.fromJson(f))
+          .toList();
+    });
+  }
+
   Future<List<Warehouse>> getWarehouse(BuildContext context) async {
     return await _run<List<Warehouse>>(context: context, callback: () async {
       clearToken();
@@ -63,6 +75,7 @@ class Request extends BaseRequest {
       String countryCode,
       String carType,
       String license,
+      bool isChHKTruck,
       Locale lang}) async {
     return await _run<Map<String, dynamic>>(context: context, callback: () async {
       clearToken();
@@ -71,6 +84,7 @@ class Request extends BaseRequest {
         "countryCode": countryCode,
         "default_Truck_Type": carType ?? null,
         "default_Truck_No": license ?? null,
+        "default_Is_CH_HK_Truck": isChHKTruck ?? false,
         "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
@@ -119,7 +133,8 @@ class Request extends BaseRequest {
       {String countryCode,
       String tel,
       String default_Truck_No,
-      String default_Truck_Type}) async {
+      String default_Truck_Type,
+      bool default_Is_CH_HK_Truck}) async {
     await _run<void>(context: context, callback: () async {
       clearToken();
       _setHeader();
@@ -127,7 +142,8 @@ class Request extends BaseRequest {
         "countryCode": countryCode,
         "tel": tel,
         "default_Truck_No": default_Truck_No,
-        "default_Truck_Type": default_Truck_Type
+        "default_Truck_Type": default_Truck_Type,
+        "default_Is_CH_HK_Truck": default_Is_CH_HK_Truck,
       });
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
     });
@@ -146,6 +162,7 @@ class Request extends BaseRequest {
           tel: response.data["tel"],
           default_Truck_No: response.data["default_Truck_No"],
           default_Truck_Type: response.data["default_Truck_Type"],
+          default_Is_CH_HK_Truck: response.data["default_Is_CH_HK_Truck"],
           countryCode: response.data["countryCode"]);
     });
   }
@@ -293,6 +310,16 @@ class Request extends BaseRequest {
       this.dio.options.headers["Authorization"] = "bearer " + token;
       Response response = await this.dio.post(this.baseURL + "User/Logout");
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
+    });
+  }
+
+  Future<Response> getConfig(BuildContext context) async {
+    return await _run<Response>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.get(this.baseURL + "Config");
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
+      return response;
     });
   }
 

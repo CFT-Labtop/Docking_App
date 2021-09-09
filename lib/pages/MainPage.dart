@@ -139,7 +139,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               case 3:
                 launch("https://dkmsweb-prod.sunhinggroup.com/support");
                 break;
-              case 4:
+              case 5:
                 Util.showConfirmDialog(context, onPress: () async{
                   Request().logout(context, Util.sharedPreferences.getString("Authorization"));
                   Util.sharedPreferences.clear();
@@ -189,8 +189,19 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         Text('Support'.tr())
                       ],
                     )),
-                PopupMenuItem(
+                  PopupMenuItem(
                     value: 4,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                          child: Icon(Icons.perm_device_information , color: Colors.black),
+                        ),
+                        Text('About'.tr())
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 5,
                     child: Row(
                       children: <Widget>[
                         Padding(

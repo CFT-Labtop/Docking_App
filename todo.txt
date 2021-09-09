@@ -51,11 +51,29 @@ if 網絡異常 -> 唔比去最新消息 (Done)
 Register existed account wrong error (Done)
 No error message 同一日Booking (Done)
 登出網絡異常(Done)
+刪除 -> 取消 (Done)
 
 User 多一個field 叫 客戶
 User 多一個field 叫 是否中港車
 Create Booking 要加客戶
 加一個switch (是否落貨) 係 confirm booking page, default 否
 加一個switch (是否中港車) 係 confirm booking page, 
-通知到達前要影相, 5張相, 可以強行唔影相到達
 Whatsapp 查詢
+add 關於頁面 check version
+minupdate version api
+Create Booking 要入 shipment list 同 call api
+如有Shipment# 請掃描加入 -> 要拎走如有
+Shipment 要用批量入
+可供選擇時間 -> 到達<<倉名>>埋台時間
+Confirm Page -> submit 成功後要出 Prompt
+QRCode 頁要可以Scroll
+Registration 頁 要可以 Scroll
+QRcode 頁 要加字 from api
+通知到達個Button 放上面
+GPS Location
+Confirm Detail Page -> 走馬燈 click落去要promp
+switch default No
+get timeslot by passing client, trucktype, warehouse
+Booking Confirm 後要 show prompt
+Delete Booking 要有原因
+Create Booking -> 下一步要checking

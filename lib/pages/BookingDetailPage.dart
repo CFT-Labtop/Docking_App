@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
@@ -47,23 +49,44 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
-  Widget _remarkText(){
-    return (widget.booking.bookingRemark != null && widget.booking.bookingRemark.isNotEmpty)? GestureDetector(
-      onTap: (){
-        Util.showAlertDialog(context, widget.booking.bookingRemark, title: "Remark".tr());
-      },
-      child: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 24)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Remark".tr() + ":", style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context, 18),decoration: TextDecoration.underline, ),),
-            SizedBox(width: Util.responsiveSize(context, 12)),
-            Flexible(child: Text(widget.booking.bookingRemark,overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.blue, fontSize: Util.responsiveSize(context, 18),decoration: TextDecoration.underline, ), )),
-          ],
-        ),
-      ),
-    ): SizedBox();
+  Widget _remarkText() {
+    return (widget.booking.bookingRemark != null &&
+            widget.booking.bookingRemark.isNotEmpty)
+        ? GestureDetector(
+            onTap: () {
+              Util.showAlertDialog(context, widget.booking.bookingRemark,
+                  title: "Remark".tr());
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Util.responsiveSize(context, 24)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Remark".tr() + ":",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Util.responsiveSize(context, 18),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  SizedBox(width: Util.responsiveSize(context, 12)),
+                  Flexible(
+                      child: Text(
+                    widget.booking.bookingRemark,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: Util.responsiveSize(context, 18),
+                      decoration: TextDecoration.underline,
+                    ),
+                  )),
+                ],
+              ),
+            ),
+          )
+        : SizedBox();
   }
 
   Widget _myPopMenu() {
@@ -73,7 +96,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           onSelected: (value) {
             switch (value) {
               case 1:
-                Util.showAlertDialog(context, widget.booking.shipmentList.join("\n"),
+                Util.showAlertDialog(
+                    context, widget.booking.shipmentList.join("\n"),
                     title: "Shipment".tr());
                 break;
               case 2:
@@ -81,7 +105,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     title: "Confirm To Delete?".tr(), onPress: () async {
                   try {
                     Util.showLoadingDialog(context);
-                    await Request().deleteBooking(context ,widget.booking.bookingRef);
+                    await Request()
+                        .deleteBooking(context, widget.booking.bookingRef);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Delete Successfully".tr())));
@@ -126,58 +151,36 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
-  void _takePhoto(){
-    Util.checkCameraPermission(context, onGranted: ()async {
-      showPlatformModalSheet(
-        context: context,
-        builder: (context){
-          return Material(
-            color: Colors.transparent,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.8,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topRight: Radius.circular(20.0), topLeft: Radius.circular(20)),
-                color: Color(0xffEEEEEE),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    height: Util.responsiveSize(context, 56.0),
-                    color: Colors.red,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("A"),
-                        Text("B"),
-                        Text("C"),
-                      ],
-                    ),
-                  ),
-                  // Text("Header"),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        Text("data"),
-                        Text("data"),
-                        Text("data")
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ),
-          );
-        }
-      );
-      // final ImagePicker _picker = ImagePicker();
-      // final XFile photo = await _picker.pickImage(source: ImageSource.camera);
-
+  void _takePhoto() {
+    Util.checkCameraPermission(context, onGranted: () async {
+      final ImagePicker _picker = ImagePicker();
+      final XFile photo = await _picker.pickImage(source: ImageSource.camera);
+      Util.showModalSheet(
+          context, "Photo".tr(), (context, setState) => Column(
+            children: [
+              // Image.file(File(_picker.path))
+            ],
+          ),
+          colorTone: UtilExtendsion.mainColor,
+          actions: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.add_a_photo,
+                color: UtilExtendsion.mainColor,
+              )));
     });
   }
 
-  bool _isArrivedOrWIPOrDeleted(){
-    return (widget.booking.bookingStatus == "WIP" || widget.booking.bookingStatus == "工作中" || widget.booking.bookingStatus == "Arrived" || widget.booking.bookingStatus == "已到達" || widget.booking.bookingStatus == "已到达" || widget.booking.bookingStatus == "Cancelled" || widget.booking.bookingStatus == "已取消");
+  bool _isArrivedOrWIPOrDeleted() {
+    return (widget.booking.bookingStatus == "WIP" ||
+        widget.booking.bookingStatus == "工作中" ||
+        widget.booking.bookingStatus == "Arrived" ||
+        widget.booking.bookingStatus == "已到達" ||
+        widget.booking.bookingStatus == "已到达" ||
+        widget.booking.bookingStatus == "Cancelled" ||
+        widget.booking.bookingStatus == "已取消");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,9 +188,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         text: 'Booking Detail'.tr(),
         backgroundColor: UtilExtendsion.mainColor,
         fontColor: Colors.white,
-        trailingActions: [
-          _myPopMenu()
-        ],
+        trailingActions: [_myPopMenu()],
       ),
       body: SafeArea(
           child: Center(
@@ -199,98 +200,107 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
             decoration: BoxDecoration(
                 color: UtilExtendsion.mainColor,
                 borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Wrap(
-              children: [
-                SizedBox(
-                  height: Util.responsiveSize(context, 24),
-                ),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: Util.responsiveSize(context, 12),
-                    ),
-                    _titleText(widget.booking.bookingRef),
-                    _whiteDivider(),
-                    SizedBox(
-                      height: Util.responsiveSize(context, 32),
-                    ),
-                    QrImage(
-                      data: widget.booking.qrCodeString ?? "",
-                      version: QrVersions.auto,
-                      backgroundColor: Colors.white,
-                      size: Util.responsiveSize(context, 200),
-                    ),
-                    SizedBox(
-                      height: Util.responsiveSize(context, 32),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Util.responsiveSize(context, 28)),
-                      child: Column(
-                        children: [
-                          detailTile(Icons.date_range,
-                              widget.booking.displayBookingDate()),
-                          detailTile(Icons.schedule, widget.booking.timeSlot),
-                          detailTile(Icons.store, widget.booking.warehouse.toString()),
-                          detailTile(Icons.car_repair,
-                              widget.booking.showTruckAndLicense()),
-                        ],
+            child: SingleChildScrollView(
+              child: Wrap(
+                children: [
+                  SizedBox(
+                    height: Util.responsiveSize(context, 24),
+                  ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: Util.responsiveSize(context, 12),
                       ),
-                    ),
-                    SizedBox(
-                      height: Util.responsiveSize(context, 24),
-                    ),
-                    _remarkText(),
-                    SizedBox(
-                      height: Util.responsiveSize(context, 12),
-                    ),
-                    Text(
-                      "If You Arrived, Please Click Arrived".tr(),
-                      style: TextStyle(
-                          fontSize: Util.responsiveSize(context, 18),
-                          color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: Util.responsiveSize(context, 12),
-                    ),
-                    _isArrivedOrWIPOrDeleted()
-                        ? StandardElevatedButton(
-                            backgroundColor: Colors.grey,
-                            text: widget.booking.bookingStatus,
-                            onPress: () {},
-                          )
-                        : StandardElevatedButton(
-                            backgroundColor: Colors.green,
-                            text: "Arrive".tr(),
-                            onPress: () async {
-                              Util.showConfirmDialog(context, title: "Confirm To Arrive?".tr(), onPress: () async{
-                                try {
-                                Util.showLoadingDialog(context);
-                                await Request()
-                                    .truckArrive(context, widget.booking.bookingRef);
-                                Navigator.pop(context);
-                                Util.showAlertDialog(context, "",
-                                    title: "Confirm Successfully".tr());
-                                setState(() {
-                                  widget.booking.bookingStatus = "Arrived".tr();
+                      _titleText(widget.booking.bookingRef),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 4),
+                      ),
+                                          _isArrivedOrWIPOrDeleted()
+                          ? StandardElevatedButton(
+                              backgroundColor: Colors.grey,
+                              text: widget.booking.bookingStatus,
+                              onPress: () {},
+                            )
+                          : StandardElevatedButton(
+                              backgroundColor: Colors.green,
+                              text: "Arrive".tr(),
+                              onPress: () async {
+                                Util.showConfirmDialog(context,
+                                    title: "Confirm To Arrive?".tr(),
+                                    onPress: () async {
+                                  try {
+                                    Util.showLoadingDialog(context);
+                                    await Request().truckArrive(
+                                        context, widget.booking.bookingRef);
+                                    Navigator.pop(context);
+                                    Util.showAlertDialog(context, "",
+                                        title: "Confirm Successfully".tr());
+                                    setState(() {
+                                      widget.booking.bookingStatus =
+                                          "Arrived".tr();
+                                    });
+                                  } catch (error) {
+                                    Navigator.pop(context);
+                                    Util.showAlertDialog(
+                                        context, error.toString());
+                                  }
                                 });
-                              } catch (error) {
-                                Navigator.pop(context);
-                                Util.showAlertDialog(context, error.toString());
-                              }
-                              });
-                            },
-                          ),
-                          // StandardElevatedButton(backgroundColor: Colors.grey, text: "Testing", onPress: () async{
-                          //   _takePhoto();
-                          // },),
-                    SizedBox(
-                      height: Util.responsiveSize(context, 24),
-                    ),
-                  ],
-                )
-              ],
+                              },
+                            ),
+                            SizedBox(
+                        height: Util.responsiveSize(context, 4),
+                      ),
+                      _whiteDivider(),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 32),
+                      ),
+                      QrImage(
+                        data: widget.booking.qrCodeString ?? "",
+                        version: QrVersions.auto,
+                        backgroundColor: Colors.white,
+                        size: Util.responsiveSize(context, 200),
+                      ),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 32),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Util.responsiveSize(context, 28)),
+                        child: Column(
+                          children: [
+                            detailTile(Icons.date_range,
+                                widget.booking.displayBookingDate()),
+                            detailTile(Icons.schedule, widget.booking.timeSlot),
+                            detailTile(
+                                Icons.store, widget.booking.warehouse.toString()),
+                            detailTile(Icons.car_repair,widget.booking.showTruckAndLicense()),
+                            widget.booking.clientName != null?  detailTile(Icons.person,widget.booking.clientName): SizedBox(),
+                            detailTile(Icons.directions_car_sharp, widget.booking.isChHKTruck ? "Cross Border Vehicle".tr() : "No CHK License".tr()),
+                            detailTile(Icons.vertical_align_bottom , widget.booking.unloading ? "Unloading".tr() : "No Unloading".tr()),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 24),
+                      ),
+                      _remarkText(),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 12),
+                      ),
+                      Text(
+                        "If You Arrived, Please Click Arrived".tr(),
+                        style: TextStyle(
+                            fontSize: Util.responsiveSize(context, 18),
+                            color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: Util.responsiveSize(context, 24),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
