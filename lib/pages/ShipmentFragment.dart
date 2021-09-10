@@ -193,17 +193,21 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                         StandardElevatedButton(
                           backgroundColor: Colors.grey,
                           text: "Manual Input".tr(),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: Util.responsiveSize(context, 24),
-                              vertical: Util.responsiveSize(context, 12)),
+                          padding: EdgeInsets.symmetric(horizontal: Util.responsiveSize(context, 24), vertical: Util.responsiveSize(context, 12)),
                           onPress: () {
                             showPlatformDialog(
                               context: context,
                               builder: (_) => PlatformAlertDialog(
                                 title: Text("Manual Input".tr()),
-                                content: PlatformTextField(
-                                  controller: manualTextController,
-                                  autofocus: true,
+                                content: Column(
+                                  children: [
+                                    Text("Please Using Enter Key For Multiple Shipment".tr()),
+                                    PlatformTextField(
+                                      controller: manualTextController,
+                                      autofocus: true,
+                                      maxLines: 10
+                                    ),
+                                  ],
                                 ),
                                 actions: <Widget>[
                                   PlatformDialogAction(
@@ -214,12 +218,14 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                                     child: PlatformText("Confirm".tr()),
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      if (manualTextController.text != "" &&
-                                          manualTextController.text != null)
-                                        setState(() {
-                                          addShipment(
-                                              manualTextController.text);
+                                      if (manualTextController.text != "" && manualTextController.text != null){
+                                        List<String> textList = manualTextController.text.split("\n");
+                                        textList.forEach((text) => {
+                                          if (text != "" && text != null)
+                                            addShipment(text)
                                         });
+                                        setState(() {});
+                                      }
                                       manualTextController.clear();
                                     },
                                   ),
@@ -246,7 +252,9 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                   try {
                     if (_warehouseKey.currentState.selectedValue == null)
                       throw "Warehouse Cannot Be Empty".tr();
-                    // Response response = await Request().getConfig(context);
+                    bool isShipmentNeeded = await UtilExtendsion.getIsNeedShipment(context);
+                    if(isShipmentNeeded && this.shipmentList.length == 0)
+                      throw "Please Enter Shipment".tr();
                     await FlutterRouter().goToPage(
                         context, Pages("NewBookingPage"),
                         parameters: "/" +

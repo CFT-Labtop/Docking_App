@@ -32,7 +32,7 @@ class LoadTruckSwitchState extends State<LoadTruckSwitch> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text("Unloading".tr(), style: TextStyle(fontSize: Util.responsiveSize(context, 18)),),
-          BaseSwitch(initValue: widget.initValue, onChange: (bool value){
+          BaseSwitch(initValue: this.value, onChange: (bool value){
             this.value = value;
           },),
         ],

@@ -59,7 +59,7 @@ class _FirstPageState extends State<FirstPage> {
       });
     });
     super.initState();
-    UtilExtendsion.checkForUpdate(context);
+    // UtilExtendsion.checkForUpdate(context);
   }
 
   Future<void> getNews() async {
@@ -171,7 +171,7 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
                   Text(
-                    "Version 1.0.1",
+                    "Version 1.0.2",
                     style: TextStyle(
                         fontSize: Util.responsiveSize(context, 14),
                         color: Colors.white),

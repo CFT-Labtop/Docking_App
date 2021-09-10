@@ -58,10 +58,10 @@ class FlutterRouter extends BaseRouter {
           return NewBookingPage(warehouseID: int.parse(params["warehouse"][0]), shipmentList:shipmentList, warehouseName: params["warehouseName"][0],);
         }));
     this.fluroRouter.define("/" + Pages("ScanQRCodePage").getName(),handler: Handler(handlerFunc: (context, params) => ScanQRCodePage()));
-    this.fluroRouter.define("/" + Pages("ConfirmBookingPage" + "/:truckTypeName").getName(),handler: Handler(handlerFunc: (context, params) {
+    this.fluroRouter.define("/" + Pages("ConfirmBookingPage" + "/:truckTypeName/:clientTypeName").getName(),handler: Handler(handlerFunc: (context, params) {
       // final Booking booking = context.settings.arguments as Booking;
       final Map<String, dynamic> map = context.settings.arguments;
-      return ConfirmBookingPage(booking: map["booking"], truckTypeName: params["truckTypeName"][0],timeSlot: map["timeSlot"],);
+      return ConfirmBookingPage(booking: map["booking"], truckTypeName: params["truckTypeName"][0],timeSlot: map["timeSlot"], clientTypeName: params["clientTypeName"][0],);
     }));
   }
 }

@@ -15,6 +15,7 @@ import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:new_version/new_version.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -139,7 +140,16 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               case 3:
                 launch("https://dkmsweb-prod.sunhinggroup.com/support");
                 break;
+              case 4:
+                final newVersion = NewVersion(iOSId: 'com.cft.docking',androidId: 'com.cft.docking_project',);
+                final status = await newVersion.getVersionStatus();
+                Util.showAlertDialog(context, status.localVersion, title: "Current Version".tr());
+                break;
               case 5:
+                  var whatsappUrl ="whatsapp://send?phone=" + "85261917164";
+                  launch(whatsappUrl);
+              break;
+              case 6:
                 Util.showConfirmDialog(context, onPress: () async{
                   Request().logout(context, Util.sharedPreferences.getString("Authorization"));
                   Util.sharedPreferences.clear();
@@ -200,8 +210,19 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         Text('About'.tr())
                       ],
                     )),
-                PopupMenuItem(
+                  PopupMenuItem(
                     value: 5,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                          child: Icon(Icons.call , color: Colors.black),
+                        ),
+                        Text('Whatsapp Enquiry'.tr())
+                      ],
+                    )),
+                PopupMenuItem(
+                    value: 6,
                     child: Row(
                       children: <Widget>[
                         Padding(

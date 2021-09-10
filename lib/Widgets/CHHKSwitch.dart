@@ -36,7 +36,7 @@ class CHHKSwitchState extends State<CHHKSwitch> {
             "Cross Border Vehicle".tr(),
             style: TextStyle(fontSize: Util.responsiveSize(context, 18)),
           ),
-          BaseSwitch(initValue: widget.initValue, onChange: (bool value){
+          BaseSwitch(initValue: this.value, onChange: (bool value){
             this.value = value;
           },),
         ],

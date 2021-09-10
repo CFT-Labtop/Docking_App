@@ -5,8 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 class ClientTypePullDown extends StatefulWidget {
   final List<PickerItem> clientTypeSelection;
-  final String initValue;
-  final Future<void> Function(String selectedValue, String displayLabel) onSelected;
+  final int initValue;
+  final Future<void> Function(int selectedValue, String displayLabel) onSelected;
   ClientTypePullDown({ Key key, this.clientTypeSelection, this.initValue, this.onSelected}) : super(key: key);
 
   @override
@@ -14,7 +14,7 @@ class ClientTypePullDown extends StatefulWidget {
 }
 
 class ClientTypePullDownState extends State<ClientTypePullDown> {
-  String selectedValue;
+  int selectedValue;
   String selectedLabel;
   final _pulldownKey = GlobalKey<StandardPullDownState>();
   @override

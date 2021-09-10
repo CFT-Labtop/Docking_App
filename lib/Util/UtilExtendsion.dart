@@ -9,6 +9,7 @@ import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -22,17 +23,48 @@ extension UtilExtendsion on Util {
     return truckTypeList.map((e) =>new PickerItem(text: Text(e.typeName), value: e.truck_Type)).toList();
   }
   static List<PickerItem> getTruckClientSelection(List<TruckClient> truckClientList) {
-    return truckClientList.map((e) =>new PickerItem(text: Text(e.clientName), value: e.clientName)).toList();
+    return truckClientList.map((e) =>new PickerItem(text: Text(e.clientName), value: e.clientID)).toList();
+  }
+
+  static Future<bool> getIsNeedShipment(BuildContext context) async{
+    Response response = await Request().getConfig(context);
+    List<Map<String, dynamic>> data = (response.data as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
+    Map<String, dynamic> keyMap = data.firstWhere((element) => element["configKey"] == "MustInputShipmentNo", orElse: () => null);
+    if(keyMap == null)
+      return false;
+    String value = keyMap["configValue"];
+    return value.toLowerCase() == "true" ? true : false;
+  }
+
+  static bool _isCurrentVersionLessThanMinVersion(String localVersion, String minVersion){
+    List<String> localVersionList = localVersion.split(".");
+    List<String> minVersionList = minVersion.split(".");
+    if(int.parse(localVersionList[0]) < int.parse(minVersionList[0]))
+      return true;
+    else if(int.parse(localVersionList[1]) < int.parse(minVersionList[1]))
+      return true;
+    else if (int.parse(localVersionList[2]) < int.parse(minVersionList[2]))
+      return true;
+    return false;
   }
 
 
   static Future<void> checkForUpdate(BuildContext context) async{
-    final newVersion = NewVersion(
-      iOSId: 'com.cft.docking',
-      androidId: 'com.cft.docking_project',
-    );
+    bool isLessThanMinVersion = false;
+    Response response = await Request().getConfigVersion(context);
+    String minVersion = "1.0.0";
+    List<Map<String, dynamic>> data = (response.data as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
+    if(Platform.isIOS){
+      Map<String, dynamic> keyMap = data.firstWhere((element) => element["configKey"] == "IOSMinVersion", orElse: () => null);
+      minVersion = keyMap["configValue"];
+    }else if(Platform.isAndroid){
+      Map<String, dynamic> keyMap = data.firstWhere((element) => element["configKey"] == "AndroidMinVersion", orElse: () => null);
+      minVersion = keyMap["configValue"];
+    }
+    final newVersion = NewVersion(iOSId: 'com.cft.docking',androidId: 'com.cft.docking_project',);
     final status = await newVersion.getVersionStatus();
-    if(status.canUpdate && status.storeVersion != "Varies with device")
+    isLessThanMinVersion = _isCurrentVersionLessThanMinVersion(status.localVersion, minVersion);
+    if(status.canUpdate && status.storeVersion != "Varies with device" && isLessThanMinVersion)
       newVersion.showUpdateDialog(
       context: context, 
       versionStatus: status,
@@ -41,7 +73,7 @@ extension UtilExtendsion on Util {
       updateButtonText: 'Update'.tr(),
       dismissButtonText: 'Dismiss'.tr(),
       dismissAction: () => {
-        Navigator.pop(context)
+        exit(0)
       },
     );
   }

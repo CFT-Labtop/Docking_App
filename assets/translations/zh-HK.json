@@ -121,5 +121,15 @@
     "No CHK License": "沒有中港車牌",
     "No Unloading": "不會卸貨",
     "Please note that, you need to arrive": "請注意，此時間為到達",
-    "before starting time for docking": "埋台的時間"
+    "before starting time for docking": "埋台的時間",
+    "Please Enter Shipment": "請輸入提單編號",
+    "Please Using Enter Key For Multiple Shipment": "請以隔行形式輸入多個提單編號",
+    "Friendly Reminder": "溫馨提示",
+    "Please arrive": "請於預約時間前15分鐘到達",
+    "15 minutes in advance the reservation time slot": "辦理登記手續",
+    "Client Type Cannot Be Empty": "客戶不能空白",
+    "Client Type": "客戶",
+    "Reason of Cancelling Booking": "取消預約原因",
+    "Current Version": "現時版本",
+    "Whatsapp Enquiry": "Whatsapp 查詢"
 }

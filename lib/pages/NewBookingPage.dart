@@ -45,6 +45,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
   final _dateSelectorKey = GlobalKey<StandardPullDownState>();
   final _chhkKey = GlobalKey<CHHKSwitchState>();
   final _loadKey = GlobalKey<LoadTruckSwitchState>();
+  final _clientTypeKey = GlobalKey<ClientTypePullDownState>();
   final _formKey = GlobalKey<FormState>();
   List<PickerItem> truckTypeSelection;
   List<PickerItem> truckClientSelection;
@@ -131,6 +132,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
         if (_carTypeKey.currentState.selectedValue == null ||
             _carTypeKey.currentState.selectedValue.isEmpty)
           throw "Car Type Cannot Be Empty".tr();
+        if (_clientTypeKey.currentState.selectedValue == null ||
+            _clientTypeKey.currentState.selectedValue == 0)
+          throw "Client Type Cannot Be Empty".tr();
         if (!_carTypeKey.currentState.isAnswerValid() ||
             _dateSelectorKey.currentState.selectedValue == null ||
             _dateSelectorKey.currentState.selectedValue.isEmpty)
@@ -139,7 +143,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
           throw "Booking Time Slot Cannot Be Empty".tr();
         Navigator.pop(context);
         FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"),
-            parameters: "/" + _carTypeKey.currentState.selectedLabel,
+            parameters: "/" + _carTypeKey.currentState.selectedLabel+"/" + _clientTypeKey.currentState.selectedLabel,
             routeSettings: RouteSettings(arguments: {
               "booking": new Booking(
                   warehouseID: widget.warehouseID,
@@ -147,6 +151,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   shipmentList: widget.shipmentList,
                   driverID: driver.driver_ID,
                   driverCountryCode: driver.countryCode,
+                  clientID:  _clientTypeKey.currentState.selectedValue,
                   driverTel: driver.tel,
                   truckNo: licenseTextController.text,
                   truckType: _carTypeKey.currentState.selectedValue,
@@ -309,8 +314,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                               SizedBox(
                                 height: Util.responsiveSize(context, 24),
                               ),
-                              ClientTypePullDown(
-                                  clientTypeSelection: truckClientSelection),
+                              ClientTypePullDown(clientTypeSelection: truckClientSelection, key: _clientTypeKey),
                               SizedBox(
                                 height: Util.responsiveSize(context, 24),
                               ),
@@ -343,14 +347,17 @@ class _NewBookingPageState extends State<NewBookingPage> {
                             backgroundColor: UtilExtendsion.mainColor,
                             text: "Next".tr(),
                             onPress: () {
-                              if (_carTypeKey.currentState.selectedValue == null ||
-                                  _carTypeKey.currentState.selectedValue.isEmpty ||
-                                  !_carTypeKey.currentState.isAnswerValid()) {
-                                Util.showAlertDialog(
-                                    context, "Car Type Cannot Be Empty".tr());
-                              } else {
-                                Util.showModalSheet(context, "Booking Date".tr(),
-                                    (BuildContext context, StateSetter setState) {
+                              if (_carTypeKey.currentState.selectedValue == null || _carTypeKey.currentState.selectedValue.isEmpty || !_carTypeKey.currentState.isAnswerValid()) {
+                                Util.showAlertDialog(context, "Car Type Cannot Be Empty".tr());
+                              }
+                              else if(_clientTypeKey.currentState.selectedValue == null || _clientTypeKey.currentState.selectedValue == 0){
+                                Util.showAlertDialog(context, "Client Type Cannot Be Empty".tr());
+                              }
+                              else if(licenseTextController.text == null || licenseTextController.text.isEmpty){
+                                Util.showAlertDialog(context, "License Cannot Be Empty".tr());
+                              }
+                              else {
+                                Util.showModalSheet(context, "Booking Date".tr(),(BuildContext context, StateSetter setState) {
                                   return Column(
                                     children: [
                                       _timeSlotSelectPart(setState),

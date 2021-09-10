@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Util/Request.dart';
+import 'package:docking_project/Widgets/ColumnBuilder.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +94,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     return Material(
       color: Colors.transparent,
       child: PopupMenuButton(
-          onSelected: (value) {
+          onSelected: (value) async {
             switch (value) {
               case 1:
                 Util.showAlertDialog(
@@ -101,21 +102,88 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     title: "Shipment".tr());
                 break;
               case 2:
-                Util.showConfirmDialog(context,
-                    title: "Confirm To Delete?".tr(), onPress: () async {
-                  try {
-                    Util.showLoadingDialog(context);
-                    await Request()
-                        .deleteBooking(context, widget.booking.bookingRef);
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Delete Successfully".tr())));
-                    Navigator.pop(context);
-                  } catch (error) {
-                    Navigator.pop(context);
-                    Util.showAlertDialog(context, error.toString());
-                  }
-                });
+                List<Map<String, dynamic>> cancelReasonList = await Request().getCancelReasons(context);
+                String val = cancelReasonList[0]["msgCode"];
+                String selectedLabel = cancelReasonList[0]["msg"];
+                final TextEditingController textEditingController = TextEditingController();
+                Util.showModalSheet(context, "Confirm To Delete?".tr(), (
+                  BuildContext context,
+                  StateSetter setState,
+                ) {
+                  return Scaffold(
+                    body: SingleChildScrollView(
+                      reverse: true,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Column(
+                          children: [
+                            ColumnBuilder(
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(cancelReasonList[index]["msg"]),
+                                    leading: Radio(
+                                      value: cancelReasonList[index]["msgCode"],
+                                      groupValue: val,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          val = value;
+                                          selectedLabel = cancelReasonList[index]["msg"];
+                                        });
+                                      },
+                                      activeColor: Colors.blue,
+                                    ),
+                                  );
+                                },
+                                itemCount: cancelReasonList.length),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextField(
+                                controller: textEditingController,
+                                maxLines: 5,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Reason of Cancelling Booking'.tr(),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: Util.responsiveSize(context, 12),
+                            ),
+                            StandardElevatedButton(
+                              backgroundColor: Colors.green,
+                              text: "Submit".tr(),
+                              onPress: () async {
+                                try {
+                                  Util.showLoadingDialog(context);
+                                  await Request().deleteBookingWithReason(
+                                      context,
+                                      widget.booking.bookingRef,
+                                      selectedLabel +
+                                          " (" +
+                                          textEditingController.text +
+                                          ")");
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Delete Successfully".tr())));
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                } catch (error) {
+                                  Navigator.pop(context);
+                                  Util.showAlertDialog(
+                                      context, error.toString());
+                                }
+                              },
+                            ),
+                            // Spacer()
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }, height: .7);
                 break;
             }
           },
@@ -156,11 +224,13 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
       final ImagePicker _picker = ImagePicker();
       final XFile photo = await _picker.pickImage(source: ImageSource.camera);
       Util.showModalSheet(
-          context, "Photo".tr(), (context, setState) => Column(
-            children: [
-              // Image.file(File(_picker.path))
-            ],
-          ),
+          context,
+          "Photo".tr(),
+          (context, setState) => Column(
+                children: [
+                  // Image.file(File(_picker.path))
+                ],
+              ),
           colorTone: UtilExtendsion.mainColor,
           actions: IconButton(
               onPressed: () {},
@@ -215,7 +285,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                       SizedBox(
                         height: Util.responsiveSize(context, 4),
                       ),
-                                          _isArrivedOrWIPOrDeleted()
+                      _isArrivedOrWIPOrDeleted()
                           ? StandardElevatedButton(
                               backgroundColor: Colors.grey,
                               text: widget.booking.bookingStatus,
@@ -247,7 +317,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                 });
                               },
                             ),
-                            SizedBox(
+                      SizedBox(
                         height: Util.responsiveSize(context, 4),
                       ),
                       _whiteDivider(),
@@ -271,12 +341,24 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                             detailTile(Icons.date_range,
                                 widget.booking.displayBookingDate()),
                             detailTile(Icons.schedule, widget.booking.timeSlot),
+                            detailTile(Icons.store,
+                                widget.booking.warehouse.toString()),
+                            detailTile(Icons.car_repair,
+                                widget.booking.showTruckAndLicense()),
+                            widget.booking.clientName != null
+                                ? detailTile(
+                                    Icons.person, widget.booking.clientName)
+                                : SizedBox(),
                             detailTile(
-                                Icons.store, widget.booking.warehouse.toString()),
-                            detailTile(Icons.car_repair,widget.booking.showTruckAndLicense()),
-                            widget.booking.clientName != null?  detailTile(Icons.person,widget.booking.clientName): SizedBox(),
-                            detailTile(Icons.directions_car_sharp, widget.booking.isChHKTruck ? "Cross Border Vehicle".tr() : "No CHK License".tr()),
-                            detailTile(Icons.vertical_align_bottom , widget.booking.unloading ? "Unloading".tr() : "No Unloading".tr()),
+                                Icons.directions_car_sharp,
+                                widget.booking.isChHKTruck
+                                    ? "Cross Border Vehicle".tr()
+                                    : "No CHK License".tr()),
+                            detailTile(
+                                Icons.vertical_align_bottom,
+                                widget.booking.unloading
+                                    ? "Unloading".tr()
+                                    : "No Unloading".tr()),
                           ],
                         ),
                       ),
