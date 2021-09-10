@@ -215,6 +215,7 @@ class Request extends BaseRequest {
       String bookingDate,
       String timeSlotId,
       bool isChHKTruck,
+      bool unloading,
       String bookingRemark,
       int timeSlotUsage}) async {
         return await _run<Booking>(context: context, callback: ()async {
@@ -231,6 +232,7 @@ class Request extends BaseRequest {
         "bookingDate": bookingDate,
         "timeSlotId": timeSlotId,
         "isChHKTruck": isChHKTruck,
+        "unloading": unloading,
         "bookingRemark": bookingRemark ?? "",
         "timeSlotUsage": timeSlotUsage
       });
@@ -256,6 +258,19 @@ class Request extends BaseRequest {
       _setHeader();
       Response response =
           await this.dio.delete(this.baseURL + "Booking/" + bookingRef);
+      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
+    });
+  }
+
+  Future<void> deleteBookingWithReason(BuildContext context, String bookingRef, String reason) async {
+    await _run<void>(context: context, callback: ()async {
+      clearToken();
+      _setHeader();
+      Response response =
+          await this.dio.delete(this.baseURL + "Booking", data: {
+            "bookingRef": bookingRef,
+            "cancelReason": reason
+          });
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
     });
   }
@@ -318,10 +333,29 @@ class Request extends BaseRequest {
       clearToken();
       _setHeader();
       Response response = await this.dio.get(this.baseURL + "Config");
-      if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       return response;
     });
   }
+
+  Future<Response> getConfigVersion(BuildContext context) async {
+    return await _run<Response>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.get(this.baseURL + "Config/Version");
+      return response;
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getCancelReasons(BuildContext context) async {
+    return await _run<List<Map<String, dynamic>>>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.get(this.baseURL + "CancelReason");
+      List<Map<String, dynamic>> data = (response.data as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
+      return data;
+    });
+  }
+
 
   void _setHeader() {
     this.dio.options.headers["Authorization"] =

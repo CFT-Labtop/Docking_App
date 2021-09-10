@@ -9,12 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 
 class ConfirmBookingPage extends StatefulWidget {
   final Booking booking;
   final TimeSlot timeSlot;
   final String truckTypeName;
-  const ConfirmBookingPage({Key key, this.booking, this.truckTypeName,  this.timeSlot})
+  final String clientTypeName;
+  const ConfirmBookingPage({Key key, this.booking, this.truckTypeName, this.clientTypeName,  this.timeSlot})
       : super(key: key);
 
   @override
@@ -96,12 +100,20 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           truckType: widget.booking.truckType,
           bookingDate: widget.booking.bookingDate,
           timeSlotId: widget.booking.timeSlot,
-          isChHKTruck: false,
+          isChHKTruck: widget.booking.isChHKTruck,
+          unloading: widget.booking.unloading,
           bookingRemark: widget.booking.bookingRemark,
           timeSlotUsage: widget.booking.timeSlotUsage);
       UtilExtendsion.setPreviousWarehouse( widget.booking.warehouseID);
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking Successfully".tr())));
+      showTopSnackBar(
+        context,
+        CustomSnackBar.success(
+        message:
+          "Please arrive".tr() + " " + widget.booking.warehouse + " " + "15 minutes in advance the reservation time slot".tr(),
+        ),
+      );
       FlutterRouter().goToPage(context, Pages("MainPage"),routeSettings: RouteSettings(arguments: booking), clear: true);
     }catch(error){
       Navigator.pop(context);
@@ -130,6 +142,8 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                     ),
                     _listTile(
                         context, Icons.car_repair, "Car Type".tr(), widget.truckTypeName),
+                    _listTile(
+                        context, Icons.person, "Client Type".tr(), widget.clientTypeName),
                     _listTile(context, Icons.card_travel,"License Number".tr(),
                         widget.booking.truckNo,
                         isDivider: false),
