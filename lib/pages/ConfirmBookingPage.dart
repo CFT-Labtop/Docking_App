@@ -96,6 +96,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           driverID: widget.booking.driverID,
           driverTel: widget.booking.driverTel,
           driverCountryCode: widget.booking.driverCountryCode,
+          clientID: widget.booking.clientID,
           truckNo: widget.booking.truckNo,
           truckType: widget.booking.truckType,
           bookingDate: widget.booking.bookingDate,

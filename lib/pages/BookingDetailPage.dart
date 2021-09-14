@@ -25,6 +25,12 @@ class BookingDetailPage extends StatefulWidget {
 }
 
 class _BookingDetailPageState extends State<BookingDetailPage> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Widget detailTile(IconData icon, String title) {
     return Row(children: [
       Icon(icon, size: Util.responsiveSize(context, 20), color: Colors.white),
@@ -299,8 +305,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     : StandardElevatedButton(
                         backgroundColor: Colors.green,
                         text: "Arrive".tr(),
-                        onPress: () async {
-                          await Util.checkGPSPermission(context,
+                        onPress: () {
+                          Util.checkGPSPermission(context,
                               onGranted: () async {
                             Location location = new Location();
                             LocationData locationData =
@@ -339,11 +345,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                       detailTile(Icons.schedule, widget.booking.timeSlot),
                       detailTile(
                           Icons.store, widget.booking.warehouse.toString()),
-                      detailTile(Icons.car_repair,
-                          widget.booking.showTruckAndLicense()),
-                      widget.booking.clientName != null
-                          ? detailTile(Icons.person, widget.booking.clientName)
-                          : SizedBox(),
+                      detailTile(Icons.car_repair, widget.booking.showTruckAndLicense()),
+                      widget.booking.clientName != null? detailTile(Icons.person, widget.booking.clientName): SizedBox(),
                       detailTile(
                           Icons.directions_car_sharp,
                           widget.booking.isChHKTruck
@@ -392,7 +395,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         trailingActions: [_myPopMenu()],
       ),
       body: SafeArea(
-          child: Center(
+        child: Center(
         child: Padding(
           padding:
               EdgeInsets.symmetric(vertical: Util.responsiveSize(context, 12)),

@@ -74,4 +74,6 @@ get timeslot by passing client, trucktype, warehouse (Done)
 Booking Confirm 後要 show prompt (Done)
 Delete Booking 要有原因 (Done)
 Create Booking -> 下一步要checking (Done)
-Booking Detail -> Booking Message
+Booking Detail -> Booking Message (Done)
+
+入Booking Detail 頁拎Config
