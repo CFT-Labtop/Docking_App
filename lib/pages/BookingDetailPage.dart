@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Widgets/ColumnBuilder.dart';
@@ -8,12 +6,9 @@ import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:badges/badges.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:location/location.dart';
 
 class BookingDetailPage extends StatefulWidget {
@@ -25,9 +20,17 @@ class BookingDetailPage extends StatefulWidget {
 }
 
 class _BookingDetailPageState extends State<BookingDetailPage> {
+  Future futureBuilder;
+  Booking booking;
+
+  Future<void> getBooking() async {
+    this.booking = await Request().getBooking(context, widget.booking.bookingRef);
+  }
 
   @override
   void initState() {
+    this.booking = widget.booking;
+    futureBuilder = getBooking();
     super.initState();
   }
 
@@ -60,11 +63,11 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   }
 
   Widget _remarkText() {
-    return (widget.booking.bookingRemark != null &&
-            widget.booking.bookingRemark.isNotEmpty)
+    return (this.booking.bookingRemark != null &&
+            this.booking.bookingRemark.isNotEmpty)
         ? GestureDetector(
             onTap: () {
-              Util.showAlertDialog(context, widget.booking.bookingRemark,
+              Util.showAlertDialog(context, this.booking.bookingRemark,
                   title: "Remark".tr());
             },
             child: Padding(
@@ -84,7 +87,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   SizedBox(width: Util.responsiveSize(context, 12)),
                   Flexible(
                       child: Text(
-                    widget.booking.bookingRemark,
+                    this.booking.bookingRemark,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.blue,
@@ -107,7 +110,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
             switch (value) {
               case 1:
                 Util.showAlertDialog(
-                    context, widget.booking.shipmentList.join("\n"),
+                    context, this.booking.shipmentList.join("\n"),
                     title: "Shipment".tr());
                 break;
               case 2:
@@ -170,7 +173,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   Util.showLoadingDialog(context);
                                   await Request().deleteBookingWithReason(
                                       context,
-                                      widget.booking.bookingRef,
+                                      this.booking.bookingRef,
                                       selectedLabel +
                                           " (" +
                                           textEditingController.text +
@@ -231,30 +234,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     );
   }
 
-  void _takePhoto() {
-    Util.checkCameraPermission(context, onGranted: () async {
-      final ImagePicker _picker = ImagePicker();
-      final XFile photo = await _picker.pickImage(source: ImageSource.camera);
-      Util.showModalSheet(
-          context,
-          "Photo".tr(),
-          (context, setState) => Column(
-                children: [
-                  // Image.file(File(_picker.path))
-                ],
-              ),
-          colorTone: UtilExtendsion.mainColor,
-          actions: IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.add_a_photo,
-                color: UtilExtendsion.mainColor,
-              )));
-    });
-  }
-
   bool _isArrivedOrWIPOrDeleted() {
-    return widget.booking.bookingStatusCode == "B000" || widget.booking.bookingStatusCode == "B200" || widget.booking.bookingStatusCode == "B700";
+    return this.booking.bookingStatusCode == "B000" ||
+        this.booking.bookingStatusCode == "B200" ||
+        this.booking.bookingStatusCode == "B700";
   }
 
   void arriveTruck() {
@@ -262,11 +245,11 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         onPress: () async {
       try {
         Util.showLoadingDialog(context);
-        await Request().truckArrive(context, widget.booking.bookingRef);
+        await Request().truckArrive(context, this.booking.bookingRef);
         Navigator.pop(context);
         Util.showAlertDialog(context, "", title: "Confirm Successfully".tr());
         setState(() {
-          widget.booking.bookingStatusCode = "B200".tr();
+          this.booking.bookingStatusCode = "B200".tr();
         });
       } catch (error) {
         Navigator.pop(context);
@@ -292,29 +275,30 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                 SizedBox(
                   height: Util.responsiveSize(context, 12),
                 ),
-                _titleText(widget.booking.bookingRef),
+                _titleText(this.booking.bookingRef),
                 SizedBox(
                   height: Util.responsiveSize(context, 4),
                 ),
                 _isArrivedOrWIPOrDeleted()
                     ? StandardElevatedButton(
                         backgroundColor: Colors.grey,
-                        text: widget.booking.bookingStatus,
+                        text: this.booking.bookingStatus,
                         onPress: () {},
                       )
                     : StandardElevatedButton(
                         backgroundColor: Colors.green,
                         text: "Arrive".tr(),
                         onPress: () {
-                          Util.checkGPSPermission(context,
-                              onGranted: () async {
+                          Util.showLoadingDialog(context);
+                          Util.checkGPSPermission(context, onGranted: () async {
                             Location location = new Location();
-                            LocationData locationData =
-                                await location.getLocation();
-                            widget.booking.latitude = locationData.latitude;
-                            widget.booking.longitude = locationData.longitude;
+                            LocationData locationData = await location.getLocation();
+                            this.booking.latitude = locationData.latitude;
+                            this.booking.longitude = locationData.longitude;
+                            Navigator.pop(context);
                             arriveTruck();
-                          }, onFailed: (){
+                          }, onFailed: () {
+                            Navigator.pop(context);
                             arriveTruck();
                           });
                         },
@@ -327,7 +311,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   height: Util.responsiveSize(context, 32),
                 ),
                 QrImage(
-                  data: widget.booking.qrCodeString ?? "",
+                  data: this.booking.qrCodeString ?? "",
                   version: QrVersions.auto,
                   backgroundColor: Colors.white,
                   size: Util.responsiveSize(context, 200),
@@ -341,20 +325,23 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   child: Column(
                     children: [
                       detailTile(Icons.date_range,
-                          widget.booking.displayBookingDate()),
-                      detailTile(Icons.schedule, widget.booking.timeSlot),
+                          this.booking.displayBookingDate()),
+                      detailTile(Icons.schedule, this.booking.timeSlot),
                       detailTile(
-                          Icons.store, widget.booking.warehouse.toString()),
-                      detailTile(Icons.car_repair, widget.booking.showTruckAndLicense()),
-                      widget.booking.clientName != null? detailTile(Icons.person, widget.booking.clientName): SizedBox(),
+                          Icons.store, this.booking.warehouse.toString()),
+                      detailTile(Icons.car_repair,
+                          this.booking.showTruckAndLicense()),
+                      this.booking.clientName != null
+                          ? detailTile(Icons.person, this.booking.clientName)
+                          : SizedBox(),
                       detailTile(
                           Icons.directions_car_sharp,
-                          widget.booking.isChHKTruck
+                          this.booking.isChHKTruck
                               ? "Cross Border Vehicle".tr()
                               : "No CHK License".tr()),
                       detailTile(
                           Icons.vertical_align_bottom,
-                          widget.booking.unloading
+                          this.booking.unloading
                               ? "Unloading".tr()
                               : "No Unloading".tr()),
                     ],
@@ -395,27 +382,35 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         trailingActions: [_myPopMenu()],
       ),
       body: SafeArea(
-        child: Center(
-        child: Padding(
-          padding:
-              EdgeInsets.symmetric(vertical: Util.responsiveSize(context, 12)),
-          child: widget.booking.bookingMsg != null
-              ? GestureDetector(
-                  onTap: () {
-                    Util.showAlertDialog(context, widget.booking.bookingMsg,
-                        title: "Alert".tr());
-                  },
-                  child: Badge(
-                      badgeColor: Colors.blue,
-                      animationType: BadgeAnimationType.scale,
-                      badgeContent: Icon(
-                        Icons.add_alert,
-                        color: Colors.white,
-                      ),
-                      child: _boxContent()),
-                )
-              : _boxContent(),
-        ),
+        child: FutureBuilder(
+        future: futureBuilder,
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: Util.responsiveSize(context, 12)),
+                child: this.booking.bookingMsg != null
+                    ? GestureDetector(
+                        onTap: () {
+                          Util.showAlertDialog(
+                              context, this.booking.bookingMsg,
+                              title: "Alert".tr());
+                        },
+                        child: Badge(
+                            badgeColor: Colors.blue,
+                            animationType: BadgeAnimationType.scale,
+                            badgeContent: Icon(
+                              Icons.add_alert,
+                              color: Colors.white,
+                            ),
+                            child: _boxContent()),
+                      )
+                    : _boxContent(),
+              ),
+            );
+          });
+        },
       )),
     );
   }

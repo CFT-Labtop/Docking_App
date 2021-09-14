@@ -247,10 +247,17 @@ class Request extends BaseRequest {
     return await _run<List<Booking>>(context: context, callback: () async{
       clearToken();
       _setHeader();
-      Response response = await this.dio.get(this.baseURL + "Booking/",
-          queryParameters: {"driverID": driverID});
+      Response response = await this.dio.get(this.baseURL + "Booking/",queryParameters: {"driverID": driverID});
       if (response.data == "") return <Booking>[];
       return (response.data as List<dynamic>).map((f) => Booking.fromJson(f)).toList();
+    });
+  }
+
+  Future<Booking> getBooking(BuildContext context, String bookingRef) async {
+    return await _run<Booking>(context: context, callback: () async{
+      Response response = await this.dio.get(this.baseURL + "Booking/" + bookingRef);
+      if (response.data == "") return null;
+      return Booking.fromJson(response.data);
     });
   }
 
