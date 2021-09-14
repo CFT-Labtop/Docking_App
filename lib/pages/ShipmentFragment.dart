@@ -155,8 +155,7 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                           horizontal: Util.responsiveSize(context, 48),
                           vertical: Util.responsiveSize(context, 12)),
                       onPress: () async {
-                        PermissionStatus status =
-                            await Permission.camera.status;
+                        PermissionStatus status =await Permission.camera.status;
                         if (status.isDenied) {
                           if (await Permission.camera.request().isGranted) {
                             _goToQRCodePage();

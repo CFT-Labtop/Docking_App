@@ -12,6 +12,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_basecomponent/Util.dart';
+import 'package:badges/badges.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:location/location.dart';
 
 class BookingDetailPage extends StatefulWidget {
   final Booking booking;
@@ -102,10 +105,12 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     title: "Shipment".tr());
                 break;
               case 2:
-                List<Map<String, dynamic>> cancelReasonList = await Request().getCancelReasons(context);
+                List<Map<String, dynamic>> cancelReasonList =
+                    await Request().getCancelReasons(context);
                 String val = cancelReasonList[0]["msgCode"];
                 String selectedLabel = cancelReasonList[0]["msg"];
-                final TextEditingController textEditingController = TextEditingController();
+                final TextEditingController textEditingController =
+                    TextEditingController();
                 Util.showModalSheet(context, "Confirm To Delete?".tr(), (
                   BuildContext context,
                   StateSetter setState,
@@ -128,7 +133,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                       onChanged: (value) {
                                         setState(() {
                                           val = value;
-                                          selectedLabel = cancelReasonList[index]["msg"];
+                                          selectedLabel =
+                                              cancelReasonList[index]["msg"];
                                         });
                                       },
                                       activeColor: Colors.blue,
@@ -251,6 +257,137 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         widget.booking.bookingStatus == "已取消");
   }
 
+  void arriveTruck() {
+    Util.showConfirmDialog(context, title: "Confirm To Arrive?".tr(),
+        onPress: () async {
+      try {
+        Util.showLoadingDialog(context);
+        await Request().truckArrive(context, widget.booking.bookingRef);
+        Navigator.pop(context);
+        Util.showAlertDialog(context, "", title: "Confirm Successfully".tr());
+        setState(() {
+          widget.booking.bookingStatus = "Arrived".tr();
+        });
+      } catch (error) {
+        Navigator.pop(context);
+        Util.showAlertDialog(context, error.toString());
+      }
+    });
+  }
+
+  Widget _boxContent() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
+      decoration: BoxDecoration(
+          color: UtilExtendsion.mainColor,
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      child: SingleChildScrollView(
+        child: Wrap(
+          children: [
+            SizedBox(
+              height: Util.responsiveSize(context, 24),
+            ),
+            Column(
+              children: [
+                SizedBox(
+                  height: Util.responsiveSize(context, 12),
+                ),
+                _titleText(widget.booking.bookingRef),
+                SizedBox(
+                  height: Util.responsiveSize(context, 4),
+                ),
+                _isArrivedOrWIPOrDeleted()
+                    ? StandardElevatedButton(
+                        backgroundColor: Colors.grey,
+                        text: widget.booking.bookingStatus,
+                        onPress: () {},
+                      )
+                    : StandardElevatedButton(
+                        backgroundColor: Colors.green,
+                        text: "Arrive".tr(),
+                        onPress: () async {
+                          await Util.checkGPSPermission(context,
+                              onGranted: () async {
+                            Location location = new Location();
+                            LocationData locationData =
+                                await location.getLocation();
+                            widget.booking.latitude = locationData.latitude;
+                            widget.booking.longitude = locationData.longitude;
+                            arriveTruck();
+                          }, onFailed: (){
+                            arriveTruck();
+                          });
+                        },
+                      ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 4),
+                ),
+                _whiteDivider(),
+                SizedBox(
+                  height: Util.responsiveSize(context, 32),
+                ),
+                QrImage(
+                  data: widget.booking.qrCodeString ?? "",
+                  version: QrVersions.auto,
+                  backgroundColor: Colors.white,
+                  size: Util.responsiveSize(context, 200),
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 32),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: Util.responsiveSize(context, 28)),
+                  child: Column(
+                    children: [
+                      detailTile(Icons.date_range,
+                          widget.booking.displayBookingDate()),
+                      detailTile(Icons.schedule, widget.booking.timeSlot),
+                      detailTile(
+                          Icons.store, widget.booking.warehouse.toString()),
+                      detailTile(Icons.car_repair,
+                          widget.booking.showTruckAndLicense()),
+                      widget.booking.clientName != null
+                          ? detailTile(Icons.person, widget.booking.clientName)
+                          : SizedBox(),
+                      detailTile(
+                          Icons.directions_car_sharp,
+                          widget.booking.isChHKTruck
+                              ? "Cross Border Vehicle".tr()
+                              : "No CHK License".tr()),
+                      detailTile(
+                          Icons.vertical_align_bottom,
+                          widget.booking.unloading
+                              ? "Unloading".tr()
+                              : "No Unloading".tr()),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 24),
+                ),
+                _remarkText(),
+                SizedBox(
+                  height: Util.responsiveSize(context, 12),
+                ),
+                Text(
+                  "If You Arrived, Please Click Arrived".tr(),
+                  style: TextStyle(
+                      fontSize: Util.responsiveSize(context, 18),
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: Util.responsiveSize(context, 24),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -265,126 +402,22 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         child: Padding(
           padding:
               EdgeInsets.symmetric(vertical: Util.responsiveSize(context, 12)),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            decoration: BoxDecoration(
-                color: UtilExtendsion.mainColor,
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: SingleChildScrollView(
-              child: Wrap(
-                children: [
-                  SizedBox(
-                    height: Util.responsiveSize(context, 24),
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: Util.responsiveSize(context, 12),
+          child: widget.booking.bookingMsg != null
+              ? GestureDetector(
+                  onTap: () {
+                    Util.showAlertDialog(context, widget.booking.bookingMsg,
+                        title: "Alert".tr());
+                  },
+                  child: Badge(
+                      badgeColor: Colors.blue,
+                      animationType: BadgeAnimationType.scale,
+                      badgeContent: Icon(
+                        Icons.add_alert,
+                        color: Colors.white,
                       ),
-                      _titleText(widget.booking.bookingRef),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 4),
-                      ),
-                      _isArrivedOrWIPOrDeleted()
-                          ? StandardElevatedButton(
-                              backgroundColor: Colors.grey,
-                              text: widget.booking.bookingStatus,
-                              onPress: () {},
-                            )
-                          : StandardElevatedButton(
-                              backgroundColor: Colors.green,
-                              text: "Arrive".tr(),
-                              onPress: () async {
-                                Util.showConfirmDialog(context,
-                                    title: "Confirm To Arrive?".tr(),
-                                    onPress: () async {
-                                  try {
-                                    Util.showLoadingDialog(context);
-                                    await Request().truckArrive(
-                                        context, widget.booking.bookingRef);
-                                    Navigator.pop(context);
-                                    Util.showAlertDialog(context, "",
-                                        title: "Confirm Successfully".tr());
-                                    setState(() {
-                                      widget.booking.bookingStatus =
-                                          "Arrived".tr();
-                                    });
-                                  } catch (error) {
-                                    Navigator.pop(context);
-                                    Util.showAlertDialog(
-                                        context, error.toString());
-                                  }
-                                });
-                              },
-                            ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 4),
-                      ),
-                      _whiteDivider(),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 32),
-                      ),
-                      QrImage(
-                        data: widget.booking.qrCodeString ?? "",
-                        version: QrVersions.auto,
-                        backgroundColor: Colors.white,
-                        size: Util.responsiveSize(context, 200),
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 32),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: Util.responsiveSize(context, 28)),
-                        child: Column(
-                          children: [
-                            detailTile(Icons.date_range,
-                                widget.booking.displayBookingDate()),
-                            detailTile(Icons.schedule, widget.booking.timeSlot),
-                            detailTile(Icons.store,
-                                widget.booking.warehouse.toString()),
-                            detailTile(Icons.car_repair,
-                                widget.booking.showTruckAndLicense()),
-                            widget.booking.clientName != null
-                                ? detailTile(
-                                    Icons.person, widget.booking.clientName)
-                                : SizedBox(),
-                            detailTile(
-                                Icons.directions_car_sharp,
-                                widget.booking.isChHKTruck
-                                    ? "Cross Border Vehicle".tr()
-                                    : "No CHK License".tr()),
-                            detailTile(
-                                Icons.vertical_align_bottom,
-                                widget.booking.unloading
-                                    ? "Unloading".tr()
-                                    : "No Unloading".tr()),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
-                      ),
-                      _remarkText(),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 12),
-                      ),
-                      Text(
-                        "If You Arrived, Please Click Arrived".tr(),
-                        style: TextStyle(
-                            fontSize: Util.responsiveSize(context, 18),
-                            color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        height: Util.responsiveSize(context, 24),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
+                      child: _boxContent()),
+                )
+              : _boxContent(),
         ),
       )),
     );
