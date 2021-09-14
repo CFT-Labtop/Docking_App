@@ -17,8 +17,7 @@ class BookingListFragment extends StatefulWidget {
 }
 
 class _BookingListFragmentState extends State<BookingListFragment> {
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<Booking> bookingList = [];
   Future futureBuilder;
 
@@ -27,8 +26,10 @@ class _BookingListFragmentState extends State<BookingListFragment> {
       case "B000":
         return Colors.red;
       case "B100":
-        return Colors.green;
+        return Colors.blue;
       case "B200":
+        return Colors.green;
+      case "B700":
         return Colors.grey;
       default:
         return Colors.orange;

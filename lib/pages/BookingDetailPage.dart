@@ -248,13 +248,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   }
 
   bool _isArrivedOrWIPOrDeleted() {
-    return (widget.booking.bookingStatus == "WIP" ||
-        widget.booking.bookingStatus == "工作中" ||
-        widget.booking.bookingStatus == "Arrived" ||
-        widget.booking.bookingStatus == "已到達" ||
-        widget.booking.bookingStatus == "已到达" ||
-        widget.booking.bookingStatus == "Cancelled" ||
-        widget.booking.bookingStatus == "已取消");
+    return widget.booking.bookingStatusCode == "B000" || widget.booking.bookingStatusCode == "B200" || widget.booking.bookingStatusCode == "B700";
   }
 
   void arriveTruck() {
@@ -266,7 +260,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         Navigator.pop(context);
         Util.showAlertDialog(context, "", title: "Confirm Successfully".tr());
         setState(() {
-          widget.booking.bookingStatus = "Arrived".tr();
+          widget.booking.bookingStatusCode = "B200".tr();
         });
       } catch (error) {
         Navigator.pop(context);

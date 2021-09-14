@@ -48,6 +48,12 @@ extension UtilExtendsion on Util {
     return false;
   }
 
+  static Future<Map<String, dynamic>> getConfigItem(BuildContext context, String configKey) async{
+    Response response = await Request().getConfig(context);
+    List<Map<String, dynamic>> data = (response.data as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
+    Map<String, dynamic> keyMap = data.firstWhere((element) => element["configKey"] == configKey, orElse: () => null);
+    return keyMap;
+  }
 
   static Future<void> checkForUpdate(BuildContext context) async{
     bool isLessThanMinVersion = false;

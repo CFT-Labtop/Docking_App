@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
@@ -19,7 +20,6 @@ import 'package:new_version/new_version.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-
 class MainPage extends StatefulWidget {
   final int initIndex;
   const MainPage({Key key, this.initIndex = 1}) : super(key: key);
@@ -32,17 +32,14 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   int _currentIndex = 1;
   PageController _pageViewcontroller = new PageController();
   bool isLoading = false;
+  String whatsappContactPhone = null;
 
   void showLanguageButton() {
     new Picker(
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
         adapter: PickerDataAdapter(data: [
-          new PickerItem(
-              text: Text("繁體中文"),
-              value: "Traditional Chinese"),
-          new PickerItem(
-              text: Text("简体中文"),
-              value: "Simplified Chinese"),
+          new PickerItem(text: Text("繁體中文"), value: "Traditional Chinese"),
+          new PickerItem(text: Text("简体中文"), value: "Simplified Chinese"),
           new PickerItem(text: Text("English"), value: "English")
         ]),
         hideHeader: true,
@@ -130,10 +127,12 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 showLanguageButton();
                 break;
               case 2:
-                var connectivityResult = await (Connectivity().checkConnectivity());
-                if(connectivityResult == ConnectivityResult.none){
-                  Util.showAlertDialog(context, "", title: "Unstable Network".tr());
-                }else{
+                var connectivityResult =
+                    await (Connectivity().checkConnectivity());
+                if (connectivityResult == ConnectivityResult.none) {
+                  Util.showAlertDialog(context, "",
+                      title: "Unstable Network".tr());
+                } else {
                   showLatestNews();
                 }
                 break;
@@ -141,19 +140,25 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 launch("https://dkmsweb-prod.sunhinggroup.com/support");
                 break;
               case 4:
-                final newVersion = NewVersion(iOSId: 'com.cft.docking',androidId: 'com.cft.docking_project',);
+                final newVersion = NewVersion(
+                  iOSId: 'com.cft.docking',
+                  androidId: 'com.cft.docking_project',
+                );
                 final status = await newVersion.getVersionStatus();
-                Util.showAlertDialog(context, status.localVersion, title: "Current Version".tr());
+                Util.showAlertDialog(context, status.localVersion,
+                    title: "Current Version".tr());
                 break;
               case 5:
-                  var whatsappUrl ="whatsapp://send?phone=" + "85261917164";
-                  launch(whatsappUrl);
-              break;
+                var whatsappUrl = "whatsapp://send?phone=" + this.whatsappContactPhone;
+                launch(whatsappUrl);
+                break;
               case 6:
-                Util.showConfirmDialog(context, onPress: () async{
-                  Request().logout(context, Util.sharedPreferences.getString("Authorization"));
+                Util.showConfirmDialog(context, onPress: () async {
+                  Request().logout(context,
+                      Util.sharedPreferences.getString("Authorization"));
                   Util.sharedPreferences.clear();
-                  FlutterRouter().goToPage(context, Pages("FirstPage"), clear: true);
+                  FlutterRouter()
+                      .goToPage(context, Pages("FirstPage"), clear: true);
                 }, title: "Confirm To Logout?".tr());
                 break;
             }
@@ -162,100 +167,167 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
             Icons.menu,
             color: Colors.white,
           ),
-          itemBuilder: (context) => [
-                PopupMenuItem(
-                    value: 1,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(
-                            Icons.language,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Text('Language'.tr())
-                      ],
-                    )),
-                PopupMenuItem(
-                    value: 2,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.tungsten, color: Colors.black),
-                        ),
-                        Text('Latest News'.tr())
-                      ],
-                    )),
-                  PopupMenuItem(
-                    value: 3,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.contact_support, color: Colors.black),
-                        ),
-                        Text('Support'.tr())
-                      ],
-                    )),
-                  PopupMenuItem(
-                    value: 4,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.perm_device_information , color: Colors.black),
-                        ),
-                        Text('About'.tr())
-                      ],
-                    )),
-                  PopupMenuItem(
-                    value: 5,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.call , color: Colors.black),
-                        ),
-                        Text('Whatsapp Enquiry'.tr())
-                      ],
-                    )),
-                PopupMenuItem(
-                    value: 6,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                          child: Icon(Icons.logout, color: Colors.black),
-                        ),
-                        Text('Logout'.tr())
-                      ],
-                    )),
-              ]),
+          itemBuilder: (context) => getPopItem()),
     );
   }
 
+  List<PopupMenuEntry<dynamic>> getPopItem() {
+    if(this.whatsappContactPhone != null && this.whatsappContactPhone.isNotEmpty)
+      return [
+        PopupMenuItem(
+            value: 1,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(
+                    Icons.language,
+                    color: Colors.black,
+                  ),
+                ),
+                Text('Language'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 2,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.tungsten, color: Colors.black),
+                ),
+                Text('Latest News'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 3,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.contact_support, color: Colors.black),
+                ),
+                Text('Support'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 4,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.perm_device_information, color: Colors.black),
+                ),
+                Text('About'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 5,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.call, color: Colors.black),
+                ),
+                Text('Whatsapp Enquiry'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 6,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.logout, color: Colors.black),
+                ),
+                Text('Logout'.tr())
+              ],
+            )),
+      ];
+    else
+      return [
+        PopupMenuItem(
+            value: 1,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(
+                    Icons.language,
+                    color: Colors.black,
+                  ),
+                ),
+                Text('Language'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 2,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.tungsten, color: Colors.black),
+                ),
+                Text('Latest News'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 3,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.contact_support, color: Colors.black),
+                ),
+                Text('Support'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 4,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.perm_device_information, color: Colors.black),
+                ),
+                Text('About'.tr())
+              ],
+            )),
+        PopupMenuItem(
+            value: 6,
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                  child: Icon(Icons.logout, color: Colors.black),
+                ),
+                Text('Logout'.tr())
+              ],
+            )),
+      ];
+  }
+
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async{
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-      if(state == AppLifecycleState.resumed){
-        
-        setState(() {
-          isLoading = true;
-        });
-        await Request().renewToken(context);
-        setState(() {
-          isLoading = false;
-          _pageViewcontroller = new PageController(initialPage: _currentIndex);
-        });
-      }
+    if (state == AppLifecycleState.resumed) {
+      setState(() {
+        isLoading = true;
+      });
+      await Request().renewToken(context);
+      setState(() {
+        isLoading = false;
+        _pageViewcontroller = new PageController(initialPage: _currentIndex);
+      });
+    }
   }
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Request().renewToken(context);
+      Map<String, dynamic> whatsappMobileConfig = await UtilExtendsion.getConfigItem(context,"ContactPhoneNo");
+      this.whatsappContactPhone = whatsappMobileConfig["configValue"];
       _currentIndex = widget.initIndex;
       _pageViewcontroller.jumpToPage(widget.initIndex);
     });
@@ -280,14 +352,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
           )
         : Scaffold(
             appBar: StandardAppBar(
-              text: "Dock Booking System".tr(),
-              fontColor: Colors.white,
-              backgroundColor: UtilExtendsion.mainColor,
-              trailingActions: [
-                myPopMenu(),
-              ],
-              hasLeading: false
-            ),
+                text: "Dock Booking System".tr(),
+                fontColor: Colors.white,
+                backgroundColor: UtilExtendsion.mainColor,
+                trailingActions: [
+                  myPopMenu(),
+                ],
+                hasLeading: false),
             bottomNavigationBar: PlatformNavBar(
               currentIndex: _currentIndex,
               itemChanged: (index) => setState(
