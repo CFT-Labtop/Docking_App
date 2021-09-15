@@ -22,9 +22,12 @@ class BookingDetailPage extends StatefulWidget {
 class _BookingDetailPageState extends State<BookingDetailPage> {
   Future futureBuilder;
   Booking booking;
+  bool isNeedGPS = false;
 
   Future<void> getBooking() async {
     this.booking = await Request().getBooking(context, widget.booking.bookingRef);
+    Map<String, dynamic> isNeedGPSConfig = await UtilExtendsion.getConfigItem(context,"TruckArriveIncludeLocation");
+    this.isNeedGPS = isNeedGPSConfig["configValue"] == "False" ? false: true;
   }
 
   @override
@@ -289,18 +292,21 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                         backgroundColor: Colors.green,
                         text: "Arrive".tr(),
                         onPress: () {
-                          Util.showLoadingDialog(context);
-                          Util.checkGPSPermission(context, onGranted: () async {
-                            Location location = new Location();
-                            LocationData locationData = await location.getLocation();
-                            this.booking.latitude = locationData.latitude;
-                            this.booking.longitude = locationData.longitude;
-                            Navigator.pop(context);
+                          if(this.isNeedGPS){
+                            Util.showLoadingDialog(context);
+                            Util.checkGPSPermission(context, onGranted: () async {
+                              Location location = new Location();
+                              LocationData locationData = await location.getLocation();
+                              this.booking.latitude = locationData.latitude;
+                              this.booking.longitude = locationData.longitude;
+                              Navigator.pop(context);
+                              arriveTruck();
+                            }, onFailed: () {
+                              Navigator.pop(context);
+                              arriveTruck();
+                            });
+                          }else
                             arriveTruck();
-                          }, onFailed: () {
-                            Navigator.pop(context);
-                            arriveTruck();
-                          });
                         },
                       ),
                 SizedBox(

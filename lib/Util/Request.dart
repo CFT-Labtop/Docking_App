@@ -348,8 +348,8 @@ class Request extends BaseRequest {
 
   Future<Response> getConfigVersion(BuildContext context) async {
     return await _run<Response>(context: context, callback: () async {
-      clearToken();
-      _setHeader();
+      // clearToken();
+      // _setHeader();
       Response response = await this.dio.get(this.baseURL + "Config/Version");
       return response;
     });
