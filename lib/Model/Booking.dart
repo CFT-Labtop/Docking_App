@@ -1,28 +1,4 @@
-// class Booking{
-//   final DateTime bookingTime;
-//   final String warehouse;
-//   final String license;
-//   final String carType;
-//   final BookingStatus status;
-
-//   const Booking({
-//     this.bookingTime,
-//     this.warehouse,
-//     this.license,
-//     this.carType,
-//     this.status,
-//   });
-
-// }
- 
-// enum BookingStatus{
-//   ARRIVED,
-//   PENDING,
-//   EXPIRED
-// }
-
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class Booking{
   String warehouse;
@@ -145,7 +121,8 @@ class Booking{
   }
 
   String showTruckAndLicense(){
-    return this.truckType +"(" +this.truckNo +")";
+    String prefix = this.truckTypeName ?? this.truckType;
+    return prefix+"(" +this.truckNo +")";
   }
 
 }
