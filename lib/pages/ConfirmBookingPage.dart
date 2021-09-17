@@ -18,7 +18,8 @@ class ConfirmBookingPage extends StatefulWidget {
   final TimeSlot timeSlot;
   final String truckTypeName;
   final String clientTypeName;
-  const ConfirmBookingPage({Key key, this.booking, this.truckTypeName, this.clientTypeName,  this.timeSlot})
+  final String truckCompanyName;
+  const ConfirmBookingPage({Key key, this.booking, this.truckTypeName, this.clientTypeName, this.truckCompanyName, this.timeSlot})
       : super(key: key);
 
   @override
@@ -97,6 +98,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           driverTel: widget.booking.driverTel,
           driverCountryCode: widget.booking.driverCountryCode,
           clientID: widget.booking.clientID,
+          companyID: widget.booking.truckCompanyID,
           truckNo: widget.booking.truckNo,
           truckType: widget.booking.truckType,
           bookingDate: widget.booking.bookingDate,
@@ -145,6 +147,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                         context, Icons.car_repair, "Car Type".tr(), widget.truckTypeName),
                     _listTile(
                         context, Icons.person, "Client Type".tr(), widget.clientTypeName),
+                    _listTile(context, Icons.workspaces, "Truck Company".tr(), widget.truckCompanyName),
                     _listTile(context, Icons.card_travel,"License Number".tr(),
                         widget.booking.truckNo,
                         isDivider: false),

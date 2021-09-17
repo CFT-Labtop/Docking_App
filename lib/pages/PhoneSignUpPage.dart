@@ -1,23 +1,22 @@
 import 'package:docking_project/Enum/VerificationType.dart';
+import 'package:docking_project/Model/TruckClient.dart';
+import 'package:docking_project/Model/TruckCompany.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/CHHKSwitch.dart';
 import 'package:docking_project/Widgets/CarTypePullDown.dart';
-import 'package:docking_project/Widgets/CarTypeStandardField.dart';
 import 'package:docking_project/Widgets/ClientTypePullDown.dart';
 import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
 import 'package:docking_project/Widgets/MobileStandardTextField.dart';
 import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
-import 'package:docking_project/Widgets/StandardPullDown.dart';
-import 'package:docking_project/Widgets/StandardTextFormField.dart';
+import 'package:docking_project/Widgets/TruckCompanyPullDown.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:flutter_picker/Picker.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class PhoneSignUpPage extends StatefulWidget {
@@ -32,7 +31,11 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
   final _chhkTypeKey = GlobalKey<CHHKSwitchState>();
   final _mobileTextFieldKey = GlobalKey<MobileStandardTextFieldState>();
+  final _truckCompanyKey = GlobalKey<TruckCompanyPullDownState>();
+  final _truckClientKey = GlobalKey<ClientTypePullDownState>();
   List<PickerItem> truckTypeSelection = [];
+  List<PickerItem> truckCompanySelection = [];
+  List<PickerItem> truckClientSelection = [];
   bool isCHHK = false;
 
   @override
@@ -44,10 +47,12 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
 
   Future<void> getTruckType() async {
     try {
-      List<TruckType> truckTypeList =
-          await Request().getTrunckType(context, context.locale);
-      this.truckTypeSelection =
-          UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      List<TruckType> truckTypeList =await Request().getTrunckType(context, context.locale);
+      List<TruckCompany> truckCompanyList = await Request().getTruckCompany(context, context.locale);
+      List<TruckClient> truckClientList = await Request().getTruckClient(context, context.locale);
+      this.truckTypeSelection =UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      this.truckCompanySelection =UtilExtendsion.getTruckCompanySelection(truckCompanyList);
+      this.truckClientSelection =UtilExtendsion.getTruckClientSelection(truckClientList);
     } catch (e) {
       throw e;
     }
@@ -61,7 +66,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
         backgroundColor: UtilExtendsion.mainColor,
         fontColor: Colors.white,
       ),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: FutureBuilder(
         future: getTruckType(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -77,6 +82,7 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                       children: [
                         Expanded(
                           child: SingleChildScrollView(
+                            // reverse: true,
                             child: Column(
                               children: [
                                 SizedBox(
@@ -118,18 +124,23 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                                 SizedBox(
                                   height: Util.responsiveSize(context, 24),
                                 ),
-                                // ClientTypePullDown(
-                                //     clientTypeSelection: truckTypeSelection),
-                                // SizedBox(
-                                //   height: Util.responsiveSize(context, 24),
-                                // ),
-                                LicenseStandardTextField(
-                                  textController: licenseTextController,
+                                ClientTypePullDown(clientTypeSelection: truckClientSelection, key: _truckClientKey,),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                TruckCompanyPullDown(truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                  child: LicenseStandardTextField(
+                                    textController: licenseTextController,
+                                  ),
                                 ),
                                 SizedBox(
                                   height: Util.responsiveSize(context, 18),
                                 ),
-                                
                                 CHHKSwitch(
                                   initValue: false,
                                   key: _chhkTypeKey,
@@ -152,16 +163,15 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                                     Util.showLoadingDialog(context);
                                     Map<String, dynamic> result =
                                         await Request().driverRegister(context,
-                                            countryCode: _mobileTextFieldKey
-                                                .currentState.countryCode,
-                                            mobileNumber:
-                                                mobileTextController.text,
+                                            countryCode: _mobileTextFieldKey.currentState.countryCode,
+                                            mobileNumber:mobileTextController.text,
                                             license: licenseTextController.text,
-                                            carType: _carTypeKey
-                                                .currentState.selectedValue,
+                                            carType: _carTypeKey.currentState.selectedValue,
                                             lang: context.locale,
-                                            isChHKTruck: _chhkTypeKey.currentState.value
-                                            );
+                                            isChHKTruck: _chhkTypeKey.currentState.value,
+                                            clientID: _truckClientKey.currentState.selectedValue,
+                                            companyID: _truckCompanyKey.currentState.selectedValue
+                                          );
                                     Navigator.pop(context);
                                     if (result
                                             .containsKey("verificationCode") &&

@@ -132,5 +132,8 @@
     "Reason of Cancelling Booking": "取消預約原因",
     "Current Version": "現時版本",
     "Whatsapp Enquiry": "Whatsapp 查詢",
-    "Alert": "提示"
+    "Alert": "提示",
+    "Please Select Your Truck Company": "請選擇車類",
+    "Truck Company": "車類",
+    "Truck Company Cannot Be Empty": "車類不能空白"
 }

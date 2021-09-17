@@ -4,6 +4,7 @@ import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/TimeSlot.dart';
 import 'package:docking_project/Model/TruckClient.dart';
+import 'package:docking_project/Model/TruckCompany.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
@@ -18,6 +19,7 @@ import 'package:docking_project/Widgets/StandardAppBar.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:docking_project/Widgets/StandardPullDown.dart';
 import 'package:docking_project/Widgets/TimeSlotGrid.dart';
+import 'package:docking_project/Widgets/TruckCompanyPullDown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,7 +33,8 @@ class NewBookingPage extends StatefulWidget {
   final String warehouseName;
   final List<String> shipmentList;
 
-  const NewBookingPage({Key key, this.warehouseID, this.shipmentList, this.warehouseName})
+  const NewBookingPage(
+      {Key key, this.warehouseID, this.shipmentList, this.warehouseName})
       : super(key: key);
 
   @override
@@ -46,12 +49,15 @@ class _NewBookingPageState extends State<NewBookingPage> {
   final _chhkKey = GlobalKey<CHHKSwitchState>();
   final _loadKey = GlobalKey<LoadTruckSwitchState>();
   final _clientTypeKey = GlobalKey<ClientTypePullDownState>();
+  final _truckCompanyKey = GlobalKey<TruckCompanyPullDownState>();
   final _formKey = GlobalKey<FormState>();
   List<PickerItem> truckTypeSelection;
   List<PickerItem> truckClientSelection;
+  List<PickerItem> truckCompanySelection;
   List<PickerItem> dateSelection = [];
   List<TruckType> truckTypeList = [];
   List<TruckClient> truckClientList = [];
+  List<TruckCompany> truckCompanyList = [];
   List<dynamic> dateList;
   List<TimeSlot> timeSlotList = [];
   TimeSlot selectedTimeSlot;
@@ -77,8 +83,12 @@ class _NewBookingPageState extends State<NewBookingPage> {
 
   Future<void> getInformation() async {
     try {
-      this.truckTypeList = await Request().getTrunckTypeByWarehouseID(context, widget.warehouseID);
-      this.truckClientList = await Request().getTruckClientByWarehouseID(context, widget.warehouseID);
+      this.truckTypeList = await Request()
+          .getTrunckTypeByWarehouseID(context, widget.warehouseID);
+      this.truckClientList = await Request()
+          .getTruckClientByWarehouseID(context, widget.warehouseID);
+      this.truckCompanyList = await Request()
+          .getTruckCompanyByWarehouseID(context, widget.warehouseID);
       driver = await Request().getDriver(context: context);
       if (driver.default_Truck_Type != null &&
           driver.default_Truck_Type.isNotEmpty &&
@@ -86,8 +96,12 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   (element) => element.truck_Type == driver.default_Truck_Type,
                   orElse: () => null) !=
               null) await _getDateSelection(driver.default_Truck_Type);
-      this.truckTypeSelection = UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
-      this.truckClientSelection = UtilExtendsion.getTruckClientSelection(this.truckClientList);
+      this.truckTypeSelection =
+          UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
+      this.truckClientSelection =
+          UtilExtendsion.getTruckClientSelection(this.truckClientList);
+      this.truckCompanySelection =
+          UtilExtendsion.getTruckCompanySelection(this.truckCompanyList);
       licenseTextController.text = driver.default_Truck_No;
     } catch (e) {
       throw e;
@@ -135,15 +149,24 @@ class _NewBookingPageState extends State<NewBookingPage> {
         if (_clientTypeKey.currentState.selectedValue == null ||
             _clientTypeKey.currentState.selectedValue == 0)
           throw "Client Type Cannot Be Empty".tr();
+        if (_truckCompanyKey.currentState.selectedValue == null ||
+            _clientTypeKey.currentState.selectedValue == 0)
+          throw "Truck Company Cannot Be Empty".tr();
         if (!_carTypeKey.currentState.isAnswerValid() ||
             _dateSelectorKey.currentState.selectedValue == null ||
             _dateSelectorKey.currentState.selectedValue.isEmpty)
           throw "Booking Date Cannot Be Empty".tr();
+        
         if (selectedTime == null || selectedTime.isEmpty)
           throw "Booking Time Slot Cannot Be Empty".tr();
         Navigator.pop(context);
         FlutterRouter().goToPage(context, Pages("ConfirmBookingPage"),
-            parameters: "/" + _carTypeKey.currentState.selectedLabel+"/" + _clientTypeKey.currentState.selectedLabel,
+            parameters: "/" +
+                _carTypeKey.currentState.selectedLabel +
+                "/" +
+                _clientTypeKey.currentState.selectedLabel+
+                "/" +
+                _truckCompanyKey.currentState.selectedLabel,
             routeSettings: RouteSettings(arguments: {
               "booking": new Booking(
                   warehouseID: widget.warehouseID,
@@ -151,7 +174,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   shipmentList: widget.shipmentList,
                   driverID: driver.driver_ID,
                   driverCountryCode: driver.countryCode,
-                  clientID:  _clientTypeKey.currentState.selectedValue,
+                  clientID: _clientTypeKey.currentState.selectedValue,
+                  truckCompanyID: _truckCompanyKey.currentState.selectedValue,
                   driverTel: driver.tel,
                   truckNo: licenseTextController.text,
                   truckType: _carTypeKey.currentState.selectedValue,
@@ -301,8 +325,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                       String displayLabel) async {
                                     try {
                                       Util.showLoadingDialog(context);
-                                      await _getDateSelection(
-                                          _carTypeKey.currentState.selectedValue);
+                                      await _getDateSelection(_carTypeKey
+                                          .currentState.selectedValue);
                                       _clearDateSelection();
                                       Navigator.pop(context);
                                     } catch (error) {
@@ -314,7 +338,18 @@ class _NewBookingPageState extends State<NewBookingPage> {
                               SizedBox(
                                 height: Util.responsiveSize(context, 24),
                               ),
-                              ClientTypePullDown(clientTypeSelection: truckClientSelection, key: _clientTypeKey),
+                              ClientTypePullDown(
+                                  initValue: driver.default_Client_ID,
+                                  clientTypeSelection: truckClientSelection,
+                                  key: _clientTypeKey),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              TruckCompanyPullDown(
+                                initValue: driver.default_Company_ID,
+                                truckCompanySelection: truckCompanySelection,
+                                key: _truckCompanyKey,
+                              ),
                               SizedBox(
                                 height: Util.responsiveSize(context, 24),
                               ),
@@ -324,11 +359,17 @@ class _NewBookingPageState extends State<NewBookingPage> {
                               SizedBox(
                                 height: Util.responsiveSize(context, 16),
                               ),
-                              CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
+                              CHHKSwitch(
+                                initValue: driver.default_Is_CH_HK_Truck,
+                                key: _chhkKey,
+                              ),
                               SizedBox(
                                 height: Util.responsiveSize(context, 16),
                               ),
-                              LoadTruckSwitch(initValue: false, key: _loadKey,),
+                              LoadTruckSwitch(
+                                initValue: false,
+                                key: _loadKey,
+                              ),
                               SizedBox(
                                 height: Util.responsiveSize(context, 16),
                               ),
@@ -347,22 +388,34 @@ class _NewBookingPageState extends State<NewBookingPage> {
                             backgroundColor: UtilExtendsion.mainColor,
                             text: "Next".tr(),
                             onPress: () {
-                              if (_carTypeKey.currentState.selectedValue == null || _carTypeKey.currentState.selectedValue.isEmpty || !_carTypeKey.currentState.isAnswerValid()) {
-                                Util.showAlertDialog(context, "Car Type Cannot Be Empty".tr());
+                              if (_carTypeKey
+                                          .currentState.selectedValue ==
+                                      null ||
+                                  _carTypeKey
+                                      .currentState.selectedValue.isEmpty ||
+                                  !_carTypeKey.currentState.isAnswerValid()) {
+                                Util.showAlertDialog(
+                                    context, "Car Type Cannot Be Empty".tr());
+                              } else if (_clientTypeKey.currentState.selectedValue ==null ||_clientTypeKey.currentState.selectedValue ==0) {
+                                Util.showAlertDialog(context,"Client Type Cannot Be Empty".tr());
+                              } else if (_truckCompanyKey.currentState.selectedValue ==null ||_truckCompanyKey.currentState.selectedValue ==0) {
+                                Util.showAlertDialog(context,"Truck Company Cannot Be Empty".tr());
                               }
-                              else if(_clientTypeKey.currentState.selectedValue == null || _clientTypeKey.currentState.selectedValue == 0){
-                                Util.showAlertDialog(context, "Client Type Cannot Be Empty".tr());
-                              }
-                              else if(licenseTextController.text == null || licenseTextController.text.isEmpty){
-                                Util.showAlertDialog(context, "License Cannot Be Empty".tr());
-                              }
-                              else {
-                                Util.showModalSheet(context, "Booking Date".tr(),(BuildContext context, StateSetter setState) {
+                               else if (licenseTextController.text == null ||
+                                  licenseTextController.text.isEmpty) {
+                                Util.showAlertDialog(
+                                    context, "License Cannot Be Empty".tr());
+                              } else {
+                                Util.showModalSheet(
+                                    context, "Booking Date".tr(),
+                                    (BuildContext context,
+                                        StateSetter setState) {
                                   return Column(
                                     children: [
                                       _timeSlotSelectPart(setState),
                                       StandardElevatedButton(
-                                          backgroundColor: UtilExtendsion.mainColor,
+                                          backgroundColor:
+                                              UtilExtendsion.mainColor,
                                           text: "Confirm".tr(),
                                           onPress: () => submitBooking())
                                     ],

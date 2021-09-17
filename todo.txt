@@ -76,4 +76,5 @@ Delete Booking 要有原因 (Done)
 Create Booking -> 下一步要checking (Done)
 Booking Detail -> Booking Message (Done)
 
-入Booking Detail 頁拎Config
+要加 Truck Company 同埋 default Truck client
+Logout 有時會用戶驗證過期

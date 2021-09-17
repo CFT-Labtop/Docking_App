@@ -5,6 +5,7 @@ import 'package:docking_project/Model/Booking.dart';
 import 'package:docking_project/Model/Driver.dart';
 import 'package:docking_project/Model/News.dart';
 import 'package:docking_project/Model/TruckClient.dart';
+import 'package:docking_project/Model/TruckCompany.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Model/Warehouse.dart';
 import 'package:docking_project/Util/BaseError.dart';
@@ -24,6 +25,26 @@ class Request extends BaseRequest {
   factory Request() => _request;
   factory Request.initialize(String baseUrl) {
     return _request.init(baseUrl, _request) as Request;
+  }
+
+  Future<List<TruckClient>> getTruckClient(BuildContext context, Locale lang) async {
+    return await _run<List<TruckClient>>(context: context, callback: () async {
+      clearToken();
+      Response response = await this.dio.get(this.baseURL + "Master/TruckClient", queryParameters: {"lang": UtilExtendsion.localeToLocaleCode(lang)} );
+      return (response.data as List<dynamic>)
+          .map((f) => TruckClient.fromJson(f))
+          .toList();
+    });
+  }
+
+  Future<List<TruckCompany>> getTruckCompany(BuildContext context, Locale lang) async {
+    return await _run<List<TruckCompany>>(context: context, callback: () async {
+      clearToken();
+      Response response = await this.dio.get(this.baseURL + "Master/TruckCompany", queryParameters: {"lang": UtilExtendsion.localeToLocaleCode(lang)} );
+      return (response.data as List<dynamic>)
+          .map((f) => TruckCompany.fromJson(f))
+          .toList();
+    });
   }
 
   Future<List<TruckType>> getTrunckType(BuildContext context, Locale lang) async {
@@ -58,6 +79,17 @@ class Request extends BaseRequest {
     });
   }
 
+  Future<List<TruckCompany>> getTruckCompanyByWarehouseID(BuildContext context, int warehouseID) async {
+    return await _run<List<TruckCompany>>(context: context, callback: () async {
+      clearToken();
+      _setHeader();
+      Response response = await this.dio.get(this.baseURL + "Master/TruckCompany/" + warehouseID.toString());
+      return (response.data as List<dynamic>)
+          .map((f) => TruckCompany.fromJson(f))
+          .toList();
+    });
+  }
+
   Future<List<Warehouse>> getWarehouse(BuildContext context) async {
     return await _run<List<Warehouse>>(context: context, callback: () async {
       clearToken();
@@ -76,6 +108,8 @@ class Request extends BaseRequest {
       String carType,
       String license,
       bool isChHKTruck,
+      int clientID,
+      int companyID,
       Locale lang}) async {
     return await _run<Map<String, dynamic>>(context: context, callback: () async {
       clearToken();
@@ -85,6 +119,8 @@ class Request extends BaseRequest {
         "default_Truck_Type": carType ?? null,
         "default_Truck_No": license ?? null,
         "default_Is_CH_HK_Truck": isChHKTruck ?? false,
+        "default_Client_ID": clientID ?? null,
+        "default_Company_ID": companyID ?? null,
         "lang": UtilExtendsion.localeToLocaleCode(lang)
       });
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
@@ -134,16 +170,21 @@ class Request extends BaseRequest {
       String tel,
       String default_Truck_No,
       String default_Truck_Type,
-      bool default_Is_CH_HK_Truck}) async {
+      String default_,
+      bool default_Is_CH_HK_Truck,
+      int default_Client_ID,
+      int default_Company_ID}) async {
     await _run<void>(context: context, callback: () async {
       clearToken();
       _setHeader();
       Response response = await this.dio.put(this.baseURL + "Driver", data: {
         "countryCode": countryCode,
         "tel": tel,
-        "default_Truck_No": default_Truck_No,
-        "default_Truck_Type": default_Truck_Type,
-        "default_Is_CH_HK_Truck": default_Is_CH_HK_Truck,
+        "default_Truck_No": default_Truck_No ?? null,
+        "default_Truck_Type": default_Truck_Type ?? null,
+        "default_Is_CH_HK_Truck": default_Is_CH_HK_Truck ?? null,
+        "default_Client_ID": default_Client_ID ?? null,
+        "default_Company_ID": default_Company_ID ?? null,
       });
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
     });
@@ -156,14 +197,16 @@ class Request extends BaseRequest {
       Response response = await this.dio.get(this.baseURL + "User/username");
       if (response.data["rstCode"] != 0) throw BaseError(response.data["rstMsg"]);
       String driverID = response.data["rstData"];
-      response = await this.dio.get(this.baseURL + "Driver/" + driverID);
+      Response driverResponse = await this.dio.get(this.baseURL + "Driver/" + driverID);
       return Driver(
-          driver_ID: response.data["driver_ID"],
-          tel: response.data["tel"],
-          default_Truck_No: response.data["default_Truck_No"],
-          default_Truck_Type: response.data["default_Truck_Type"],
-          default_Is_CH_HK_Truck: response.data["default_Is_CH_HK_Truck"],
-          countryCode: response.data["countryCode"]);
+          driver_ID: driverResponse.data["driver_ID"],
+          tel: driverResponse.data["tel"],
+          default_Truck_No: driverResponse.data["default_Truck_No"],
+          default_Truck_Type: driverResponse.data["default_Truck_Type"],
+          default_Is_CH_HK_Truck: driverResponse.data["default_Is_CH_HK_Truck"],
+          default_Client_ID: driverResponse.data["default_Client_ID"],
+          default_Company_ID: driverResponse.data["default_Company_ID"],
+          countryCode: driverResponse.data["countryCode"]);
     });
   }
 
@@ -215,6 +258,7 @@ class Request extends BaseRequest {
       String bookingDate,
       String timeSlotId,
       int clientID,
+      int companyID,
       bool isChHKTruck,
       bool unloading,
       String bookingRemark,
@@ -233,6 +277,7 @@ class Request extends BaseRequest {
         "bookingDate": bookingDate,
         "timeSlotId": timeSlotId,
         "clientID": clientID,
+        "companyID": companyID,
         "isChHKTruck": isChHKTruck,
         "unloading": unloading,
         "bookingRemark": bookingRemark ?? "",

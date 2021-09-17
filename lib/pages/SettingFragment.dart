@@ -1,4 +1,6 @@
 import 'package:docking_project/Model/Driver.dart';
+import 'package:docking_project/Model/TruckClient.dart';
+import 'package:docking_project/Model/TruckCompany.dart';
 import 'package:docking_project/Model/TruckType.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
@@ -8,6 +10,7 @@ import 'package:docking_project/Widgets/ClientTypePullDown.dart';
 import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
 import 'package:docking_project/Widgets/MobileStandardTextField.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
+import 'package:docking_project/Widgets/TruckCompanyPullDown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -25,7 +28,11 @@ class _SettingFragmentState extends State<SettingFragment> {
   final TextEditingController licenseTextController = TextEditingController();
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
   final _chhkKey = GlobalKey<CHHKSwitchState>();
+  final _truckCompanyKey = GlobalKey<TruckCompanyPullDownState>();
+  final _truckClientKey = GlobalKey<ClientTypePullDownState>();
   List<PickerItem> truckTypeSelection;
+  List<PickerItem> truckCompanySelection = [];
+  List<PickerItem> truckClientSelection = [];
   Driver driver;
   Future futureBuilder;
   FocusNode _focusNode = new FocusNode();
@@ -33,10 +40,12 @@ class _SettingFragmentState extends State<SettingFragment> {
 
   Future<void> getInformation() async {
     try {
-      List<TruckType> truckTypeList =
-          await Request().getTrunckType(context, context.locale);
-      this.truckTypeSelection =
-          UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      List<TruckType> truckTypeList =await Request().getTrunckType(context, context.locale);
+      List<TruckCompany> truckCompanyList = await Request().getTruckCompany(context, context.locale);
+      List<TruckClient> truckClientList = await Request().getTruckClient(context, context.locale);
+      this.truckTypeSelection =UtilExtendsion.getTruckTypeSelection(truckTypeList);
+      this.truckCompanySelection =UtilExtendsion.getTruckCompanySelection(truckCompanyList);
+      this.truckClientSelection =UtilExtendsion.getTruckClientSelection(truckClientList);
       driver = await Request().getDriver(context: context);
       mobileTextController.text = driver.tel;
       licenseTextController.text = driver.default_Truck_No;
@@ -119,10 +128,14 @@ class _SettingFragmentState extends State<SettingFragment> {
                             SizedBox(
                               height: Util.responsiveSize(context, 24),
                             ),
-                            // ClientTypePullDown(clientTypeSelection: truckTypeSelection),
-                            // SizedBox(
-                            //   height: Util.responsiveSize(context, 24),
-                            // ),
+                            ClientTypePullDown(initValue: driver.default_Client_ID, clientTypeSelection: truckClientSelection, key: _truckClientKey,),
+                            SizedBox(
+                              height: Util.responsiveSize(context, 24),
+                            ),
+                            TruckCompanyPullDown(initValue: driver.default_Company_ID, truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
+                            SizedBox(
+                              height: Util.responsiveSize(context, 24),
+                            ),
                             LicenseStandardTextField(
                               textController: licenseTextController,
                               focusNode: _focusNode,
@@ -131,9 +144,6 @@ class _SettingFragmentState extends State<SettingFragment> {
                               height: Util.responsiveSize(context, 24),
                             ),
                             CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
-                            // Expanded(
-                            //   child: SizedBox(),
-                            // ),
                           ],
                         ),
                       ),
@@ -152,7 +162,9 @@ class _SettingFragmentState extends State<SettingFragment> {
                                       countryCode: driver.countryCode,
                                       default_Truck_No: licenseTextController.text,
                                       default_Truck_Type: _carTypeKey.currentState.selectedValue,
-                                      default_Is_CH_HK_Truck: _chhkKey.currentState.value);
+                                      default_Is_CH_HK_Truck: _chhkKey.currentState.value,
+                                      default_Client_ID: _truckClientKey.currentState.selectedValue,
+                                      default_Company_ID: _truckCompanyKey.currentState.selectedValue);
                                   await UtilExtendsion.initDriver();
                                   await getInformation();
                                   Navigator.pop(context);

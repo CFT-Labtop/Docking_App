@@ -340,6 +340,9 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                       this.booking.clientName != null
                           ? detailTile(Icons.person, this.booking.clientName)
                           : SizedBox(),
+                      this.booking.truckCompanyName!= null
+                          ? detailTile(Icons.workspaces, this.booking.truckCompanyName)
+                          : SizedBox(),
                       detailTile(
                           Icons.directions_car_sharp,
                           this.booking.isChHKTruck
