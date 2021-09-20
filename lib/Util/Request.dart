@@ -210,13 +210,13 @@ class Request extends BaseRequest {
     });
   }
 
-  Future<List<dynamic>> getTimeSlot(BuildContext context,int warehouseID, String truckType) async {
+  Future<List<dynamic>> getTimeSlot(BuildContext context,int warehouseID, String truckType, int clientID) async {
     return await _run<List<dynamic>>(context: context, callback: () async {
       clearToken();
       _setHeader();
       Response response = await this
           .dio
-          .get(this.baseURL + "Booking/TimeSlot/" + warehouseID.toString() + "/" + truckType);
+          .get(this.baseURL + "Booking/TimeSlot/" + warehouseID.toString() + "/" + truckType + "/" + clientID.toString());
       return response.data;
     });
   }

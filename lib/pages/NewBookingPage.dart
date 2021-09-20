@@ -90,12 +90,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
       this.truckCompanyList = await Request()
           .getTruckCompanyByWarehouseID(context, widget.warehouseID);
       driver = await Request().getDriver(context: context);
-      if (driver.default_Truck_Type != null &&
-          driver.default_Truck_Type.isNotEmpty &&
-          this.truckTypeList.firstWhere(
-                  (element) => element.truck_Type == driver.default_Truck_Type,
-                  orElse: () => null) !=
-              null) await _getDateSelection(driver.default_Truck_Type);
+      // if (driver.default_Truck_Type != null && driver.default_Truck_Type.isNotEmpty && this.truckTypeList.firstWhere((element) => element.truck_Type == driver.default_Truck_Type, orElse: () => null) != null) await _getDateSelection(driver.default_Truck_Type);
       this.truckTypeSelection =
           UtilExtendsion.getTruckTypeSelection(this.truckTypeList);
       this.truckClientSelection =
@@ -108,9 +103,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
     }
   }
 
-  Future<void> _getDateSelection(String truckType) async {
+  Future<void> _getDateSelection(String truckType, int clientID) async {
     this.dateList =
-        await Request().getTimeSlot(context, widget.warehouseID, truckType);
+        await Request().getTimeSlot(context, widget.warehouseID, truckType, clientID);
     this.dateSelection = this
         .dateList
         .map((e) => new PickerItem(
@@ -325,8 +320,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                       String displayLabel) async {
                                     try {
                                       Util.showLoadingDialog(context);
-                                      await _getDateSelection(_carTypeKey
-                                          .currentState.selectedValue);
+                                      await _getDateSelection(_carTypeKey.currentState.selectedValue, _clientTypeKey.currentState.selectedValue);
                                       _clearDateSelection();
                                       Navigator.pop(context);
                                     } catch (error) {
@@ -387,16 +381,11 @@ class _NewBookingPageState extends State<NewBookingPage> {
                           StandardElevatedButton(
                             backgroundColor: UtilExtendsion.mainColor,
                             text: "Next".tr(),
-                            onPress: () {
-                              if (_carTypeKey
-                                          .currentState.selectedValue ==
-                                      null ||
-                                  _carTypeKey
-                                      .currentState.selectedValue.isEmpty ||
-                                  !_carTypeKey.currentState.isAnswerValid()) {
+                            onPress: () async{
+                              if (_carTypeKey.currentState.selectedValue ==null || _carTypeKey.currentState.selectedValue.isEmpty || !_carTypeKey.currentState.isAnswerValid()) {
                                 Util.showAlertDialog(
                                     context, "Car Type Cannot Be Empty".tr());
-                              } else if (_clientTypeKey.currentState.selectedValue ==null ||_clientTypeKey.currentState.selectedValue ==0) {
+                              } else if (_clientTypeKey.currentState.selectedValue ==null ||_clientTypeKey.currentState.selectedValue ==0 || !_clientTypeKey.currentState.isAnswerValid()) {
                                 Util.showAlertDialog(context,"Client Type Cannot Be Empty".tr());
                               } else if (_truckCompanyKey.currentState.selectedValue ==null ||_truckCompanyKey.currentState.selectedValue ==0) {
                                 Util.showAlertDialog(context,"Truck Company Cannot Be Empty".tr());
@@ -406,6 +395,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                 Util.showAlertDialog(
                                     context, "License Cannot Be Empty".tr());
                               } else {
+                                Util.showLoadingDialog(context);
+                                await this._getDateSelection(_carTypeKey.currentState.selectedValue, _clientTypeKey.currentState.selectedValue);
+                                Navigator.pop(context);
                                 Util.showModalSheet(
                                     context, "Booking Date".tr(),
                                     (BuildContext context,
