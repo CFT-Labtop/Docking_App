@@ -253,6 +253,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         Util.showAlertDialog(context, "", title: "Confirm Successfully".tr());
         setState(() {
           this.booking.bookingStatusCode = "B200".tr();
+          this.booking.bookingStatus = "Arrived".tr();
         });
       } catch (error) {
         Navigator.pop(context);
