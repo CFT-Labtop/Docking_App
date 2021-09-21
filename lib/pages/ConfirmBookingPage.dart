@@ -61,10 +61,12 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                   ),
                 ],
               ),
-              Text(value,
+              Flexible(
+                child: Text(value,
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: Util.responsiveSize(context, size))),
+                      fontSize: Util.responsiveSize(context, size)))
+              ),
             ],
           ),
           isDivider

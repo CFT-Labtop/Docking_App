@@ -43,10 +43,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
       SizedBox(
         width: Util.responsiveSize(context, 8),
       ),
-      Text(
+      Flexible(
+        child: Text(
         title,
-        style: TextStyle(
-            color: Colors.white, fontSize: Util.responsiveSize(context, 20)),
+        style: TextStyle(color: Colors.white, fontSize: Util.responsiveSize(context, 20)),)
       ),
     ]);
   }
@@ -121,8 +121,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     await Request().getCancelReasons(context);
                 String val = cancelReasonList[0]["msgCode"];
                 String selectedLabel = cancelReasonList[0]["msg"];
-                final TextEditingController textEditingController =
-                    TextEditingController();
+                final TextEditingController textEditingController = TextEditingController();
                 Util.showModalSheet(context, "Confirm To Delete?".tr(), (
                   BuildContext context,
                   StateSetter setState,

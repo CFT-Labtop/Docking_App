@@ -55,13 +55,14 @@ class StandardPullDownState extends State<StandardPullDown> {
 
   showPickerArray(BuildContext context) {
     new Picker(
+      itemExtent: Util.responsiveSize(context, 38),
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
         adapter: PickerDataAdapter(data: widget.pickerList),
         hideHeader: true,
         selecteds: [selectedIndex],
         title: new Text(widget.dialogTitle ?? "Please Select".tr()),
         textStyle: TextStyle(
-            color: Colors.black, fontSize: Util.responsiveSize(context, 19)),
+            color: Colors.red, fontSize: Util.responsiveSize(context, 9)),
         cancelText: "Cancel".tr(),
         confirmText: "Confirm".tr(),
         onConfirm: (Picker picker, List value) {
@@ -99,6 +100,7 @@ class StandardPullDownState extends State<StandardPullDown> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
           showPickerArray(context);
         },
         child: StandardTextFormField(

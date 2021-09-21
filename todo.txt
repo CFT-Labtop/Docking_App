@@ -78,3 +78,11 @@ Booking Detail -> Booking Message (Done)
 
 要加 Truck Company 同埋 default Truck client
 Logout 有時會用戶驗證過期
+
+NewBooking -> textfield always focus (Done)
+Booking Detail -> 太長要wrap (Done)
+PullDown 字太大會睇唔消 (Done)
+細機 dialog 會睇唔到 (Done)
+下一步時要check car license (Done)
+下一步要清timeslots (Done)
+Confirm Booking Page -> remark 太長show唔晒 (Done)

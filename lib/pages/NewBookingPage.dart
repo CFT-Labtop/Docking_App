@@ -104,8 +104,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
   }
 
   Future<void> _getDateSelection(String truckType, int clientID) async {
-    this.dateList =
-        await Request().getTimeSlot(context, widget.warehouseID, truckType, clientID);
+    this.dateList = await Request()
+        .getTimeSlot(context, widget.warehouseID, truckType, clientID);
     this.dateSelection = this
         .dateList
         .map((e) => new PickerItem(
@@ -151,7 +151,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
             _dateSelectorKey.currentState.selectedValue == null ||
             _dateSelectorKey.currentState.selectedValue.isEmpty)
           throw "Booking Date Cannot Be Empty".tr();
-        
+
         if (selectedTime == null || selectedTime.isEmpty)
           throw "Booking Time Slot Cannot Be Empty".tr();
         Navigator.pop(context);
@@ -159,7 +159,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
             parameters: "/" +
                 _carTypeKey.currentState.selectedLabel +
                 "/" +
-                _clientTypeKey.currentState.selectedLabel+
+                _clientTypeKey.currentState.selectedLabel +
                 "/" +
                 _truckCompanyKey.currentState.selectedLabel,
             routeSettings: RouteSettings(arguments: {
@@ -176,7 +176,8 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   truckType: _carTypeKey.currentState.selectedValue,
                   bookingDate: _dateSelectorKey.currentState.selectedValue,
                   timeSlot: selectedTime,
-                  timeSlotUsage: _getTimeSlotUsageByValue(_carTypeKey.currentState.selectedValue),
+                  timeSlotUsage: _getTimeSlotUsageByValue(
+                      _carTypeKey.currentState.selectedValue),
                   unloading: _loadKey.currentState.value,
                   isChHKTruck: _chhkKey.currentState.value,
                   bookingRemark: remarkTextController.text),
@@ -191,8 +192,7 @@ class _NewBookingPageState extends State<NewBookingPage> {
 
   void _clearDateSelection() {
     setState(() {
-      if (_dateSelectorKey.currentState != null)
-        _dateSelectorKey.currentState.setValue(null);
+      if (_dateSelectorKey.currentState != null)_dateSelectorKey.currentState.setValue(null);
       this.timeSlotList = [];
       selectedTimeSlot = null;
       selectedTimeSlotIndex = -1;
@@ -266,14 +266,17 @@ class _NewBookingPageState extends State<NewBookingPage> {
               Text(
                 "Remark".tr() + ":",
                 style: TextStyle(
-                    color: Color(0xff888888),
-                    fontSize: Util.responsiveSize(context, size)),
+                  color: Color(0xff888888),
+                  fontSize: Util.responsiveSize(context, size),
+                ),
               ),
               SizedBox(
                 width: Util.responsiveSize(context, 8),
               ),
               Expanded(
                   child: TextField(
+                minLines: 1,
+                maxLines: 5,
                 controller: remarkTextController,
               ))
             ],
@@ -296,7 +299,10 @@ class _NewBookingPageState extends State<NewBookingPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
             return GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              onTap: () {
+                print("ASDAS");
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -320,7 +326,11 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                       String displayLabel) async {
                                     try {
                                       Util.showLoadingDialog(context);
-                                      await _getDateSelection(_carTypeKey.currentState.selectedValue, _clientTypeKey.currentState.selectedValue);
+                                      await _getDateSelection(
+                                          _carTypeKey
+                                              .currentState.selectedValue,
+                                          _clientTypeKey
+                                              .currentState.selectedValue);
                                       _clearDateSelection();
                                       Navigator.pop(context);
                                     } catch (error) {
@@ -381,40 +391,65 @@ class _NewBookingPageState extends State<NewBookingPage> {
                           StandardElevatedButton(
                             backgroundColor: UtilExtendsion.mainColor,
                             text: "Next".tr(),
-                            onPress: () async{
-                              if (_carTypeKey.currentState.selectedValue ==null || _carTypeKey.currentState.selectedValue.isEmpty || !_carTypeKey.currentState.isAnswerValid()) {
-                                Util.showAlertDialog(
-                                    context, "Car Type Cannot Be Empty".tr());
-                              } else if (_clientTypeKey.currentState.selectedValue ==null ||_clientTypeKey.currentState.selectedValue ==0 || !_clientTypeKey.currentState.isAnswerValid()) {
-                                Util.showAlertDialog(context,"Client Type Cannot Be Empty".tr());
-                              } else if (_truckCompanyKey.currentState.selectedValue ==null ||_truckCompanyKey.currentState.selectedValue ==0) {
-                                Util.showAlertDialog(context,"Truck Company Cannot Be Empty".tr());
-                              }
-                               else if (licenseTextController.text == null ||
-                                  licenseTextController.text.isEmpty) {
-                                Util.showAlertDialog(
-                                    context, "License Cannot Be Empty".tr());
-                              } else {
-                                Util.showLoadingDialog(context);
-                                await this._getDateSelection(_carTypeKey.currentState.selectedValue, _clientTypeKey.currentState.selectedValue);
-                                Navigator.pop(context);
-                                Util.showModalSheet(
-                                    context, "Booking Date".tr(),
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return Column(
-                                    children: [
-                                      _timeSlotSelectPart(setState),
-                                      StandardElevatedButton(
-                                          backgroundColor:
-                                              UtilExtendsion.mainColor,
-                                          text: "Confirm".tr(),
-                                          onPress: () => submitBooking())
-                                    ],
-                                  );
-                                },
-                                    colorTone: UtilExtendsion.mainColor,
-                                    height: 0.9);
+                            onPress: () async {
+                              _clearDateSelection();
+                              if (_formKey.currentState.validate()) {
+                                if (_carTypeKey
+                                            .currentState.selectedValue ==
+                                        null ||
+                                    _carTypeKey
+                                        .currentState.selectedValue.isEmpty ||
+                                    !_carTypeKey.currentState.isAnswerValid()) {
+                                  Util.showAlertDialog(
+                                      context, "Car Type Cannot Be Empty".tr());
+                                } else if (_clientTypeKey
+                                            .currentState.selectedValue ==
+                                        null ||
+                                    _clientTypeKey.currentState.selectedValue ==
+                                        0 ||
+                                    !_clientTypeKey.currentState
+                                        .isAnswerValid()) {
+                                  Util.showAlertDialog(context,
+                                      "Client Type Cannot Be Empty".tr());
+                                } else if (_truckCompanyKey
+                                            .currentState.selectedValue ==
+                                        null ||
+                                    _truckCompanyKey
+                                            .currentState.selectedValue ==
+                                        0) {
+                                  Util.showAlertDialog(context,
+                                      "Truck Company Cannot Be Empty".tr());
+                                } else if (licenseTextController.text == null ||
+                                    licenseTextController.text.isEmpty) {
+                                  Util.showAlertDialog(
+                                      context, "License Cannot Be Empty".tr());
+                                } else {
+                                  Util.showLoadingDialog(context);
+                                  await this._getDateSelection(
+                                      _carTypeKey.currentState.selectedValue,
+                                      _clientTypeKey
+                                          .currentState.selectedValue);
+                                  Navigator.pop(context);
+                                  Util.showModalSheet(
+                                      context, "Booking Date".tr(),
+                                      (BuildContext context,
+                                          StateSetter setState) {
+                                    return SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          _timeSlotSelectPart(setState),
+                                          StandardElevatedButton(
+                                              backgroundColor:
+                                                  UtilExtendsion.mainColor,
+                                              text: "Confirm".tr(),
+                                              onPress: () => submitBooking())
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                      colorTone: UtilExtendsion.mainColor,
+                                      height: 0.9);
+                                }
                               }
                             },
                           ),

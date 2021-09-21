@@ -1,10 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:docking_project/Model/Warehouse.dart';
 import 'package:docking_project/Util/FlutterRouter.dart';
 import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/StandardElevatedButton.dart';
-import 'package:docking_project/Widgets/StandardPullDown.dart';
 import 'package:docking_project/Widgets/WarehousePullDown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
@@ -198,15 +196,17 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                               context: context,
                               builder: (_) => PlatformAlertDialog(
                                 title: Text("Manual Input".tr()),
-                                content: Column(
-                                  children: [
-                                    Text("Please Using Enter Key For Multiple Shipment".tr()),
-                                    PlatformTextField(
-                                      controller: manualTextController,
-                                      autofocus: true,
-                                      maxLines: 10
-                                    ),
-                                  ],
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Text("Please Using Enter Key For Multiple Shipment".tr()),
+                                      PlatformTextField(
+                                        controller: manualTextController,
+                                        autofocus: true,
+                                        maxLines: 10
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 actions: <Widget>[
                                   PlatformDialogAction(
