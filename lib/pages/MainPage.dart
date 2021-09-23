@@ -325,6 +325,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      UtilExtendsion.checkForUpdate(context);
       await Request().renewToken(context);
       Map<String, dynamic> whatsappMobileConfig = await UtilExtendsion.getConfigItem(context,"ContactPhoneNo");
       this.whatsappContactPhone = whatsappMobileConfig["configValue"];
@@ -333,7 +334,6 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     });
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    UtilExtendsion.checkForUpdate(context);
   }
 
   @override
