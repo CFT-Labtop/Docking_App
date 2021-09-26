@@ -312,76 +312,78 @@ class _NewBookingPageState extends State<NewBookingPage> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: Util.responsiveSize(context, 32),
-                              ),
-                              CarTypePullDown(
-                                  initValue: driver.default_Truck_Type,
-                                  truckTypeSelection: truckTypeSelection,
-                                  key: _carTypeKey,
-                                  onSelected: (String selectedValue,
-                                      String displayLabel) async {
-                                    try {
-                                      Util.showLoadingDialog(context);
-                                      await _getDateSelection(
-                                          _carTypeKey
-                                              .currentState.selectedValue,
-                                          _clientTypeKey
-                                              .currentState.selectedValue);
-                                      _clearDateSelection();
-                                      Navigator.pop(context);
-                                    } catch (error) {
-                                      Navigator.pop(context);
-                                      Util.showAlertDialog(
-                                          context, error.toString());
-                                    }
-                                  }),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              ClientTypePullDown(
-                                  initValue: driver.default_Client_ID,
-                                  clientTypeSelection: truckClientSelection,
-                                  key: _clientTypeKey),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              TruckCompanyPullDown(
-                                initValue: driver.default_Company_ID,
-                                truckCompanySelection: truckCompanySelection,
-                                key: _truckCompanyKey,
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              LicenseStandardTextField(
-                                textController: licenseTextController,
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 16),
-                              ),
-                              CHHKSwitch(
-                                initValue: driver.default_Is_CH_HK_Truck,
-                                key: _chhkKey,
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 16),
-                              ),
-                              LoadTruckSwitch(
-                                initValue: false,
-                                key: _loadKey,
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 16),
-                              ),
-                              _remarkField(context),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 8),
-                              ),
-                            ],
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 32),
+                                ),
+                                CarTypePullDown(
+                                    initValue: driver.default_Truck_Type,
+                                    truckTypeSelection: truckTypeSelection,
+                                    key: _carTypeKey,
+                                    onSelected: (String selectedValue,
+                                        String displayLabel) async {
+                                      try {
+                                        Util.showLoadingDialog(context);
+                                        await _getDateSelection(
+                                            _carTypeKey
+                                                .currentState.selectedValue,
+                                            _clientTypeKey
+                                                .currentState.selectedValue);
+                                        _clearDateSelection();
+                                        Navigator.pop(context);
+                                      } catch (error) {
+                                        Navigator.pop(context);
+                                        Util.showAlertDialog(
+                                            context, error.toString());
+                                      }
+                                    }),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                ClientTypePullDown(
+                                    initValue: driver.default_Client_ID,
+                                    clientTypeSelection: truckClientSelection,
+                                    key: _clientTypeKey),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                TruckCompanyPullDown(
+                                  initValue: driver.default_Company_ID,
+                                  truckCompanySelection: truckCompanySelection,
+                                  key: _truckCompanyKey,
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                LicenseStandardTextField(
+                                  textController: licenseTextController,
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 16),
+                                ),
+                                CHHKSwitch(
+                                  initValue: driver.default_Is_CH_HK_Truck,
+                                  key: _chhkKey,
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 16),
+                                ),
+                                LoadTruckSwitch(
+                                  initValue: false,
+                                  key: _loadKey,
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 16),
+                                ),
+                                _remarkField(context),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 8),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -434,16 +436,18 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                       context, "Booking Date".tr(),
                                       (BuildContext context,
                                           StateSetter setState) {
-                                    return SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          _timeSlotSelectPart(setState),
-                                          StandardElevatedButton(
-                                              backgroundColor:
-                                                  UtilExtendsion.mainColor,
-                                              text: "Confirm".tr(),
-                                              onPress: () => submitBooking())
-                                        ],
+                                    return Scrollbar(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            _timeSlotSelectPart(setState),
+                                            StandardElevatedButton(
+                                                backgroundColor:
+                                                    UtilExtendsion.mainColor,
+                                                text: "Confirm".tr(),
+                                                onPress: () => submitBooking())
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },

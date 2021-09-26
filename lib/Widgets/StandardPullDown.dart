@@ -55,7 +55,7 @@ class StandardPullDownState extends State<StandardPullDown> {
 
   showPickerArray(BuildContext context) {
     new Picker(
-      itemExtent: Util.responsiveSize(context, 38),
+      itemExtent: Util.responsiveSize(context, 50),
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
         adapter: PickerDataAdapter(data: widget.pickerList),
         hideHeader: true,

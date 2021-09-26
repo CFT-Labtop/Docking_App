@@ -307,25 +307,25 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       ];
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      setState(() {
-        isLoading = true;
-      });
-      await Request().renewToken(context);
-      setState(() {
-        isLoading = false;
-        _pageViewcontroller = new PageController(initialPage: _currentIndex);
-      });
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) async {
+  //   super.didChangeAppLifecycleState(state);
+  //   if (state == AppLifecycleState.resumed) {
+  //     setState(() {
+  //       isLoading = true;
+  //     });
+  //     await Request().renewToken(context);
+  //     setState(() {
+  //       isLoading = false;
+  //       _pageViewcontroller = new PageController(initialPage: _currentIndex);
+  //     });
+  //   }
+  // }
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      UtilExtendsion.checkForUpdate(context);
+      await UtilExtendsion.checkForUpdate(context);
       await Request().renewToken(context);
       Map<String, dynamic> whatsappMobileConfig = await UtilExtendsion.getConfigItem(context,"ContactPhoneNo");
       this.whatsappContactPhone = whatsappMobileConfig["configValue"];

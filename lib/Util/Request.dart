@@ -329,13 +329,13 @@ class Request extends BaseRequest {
     });
   }
 
-  Future<void> truckArrive(BuildContext context, String bookingRef) async {
+  Future<void> truckArrive(BuildContext context, String bookingRef, double latitude, double longitude) async {
     await _run<void>(context: context, callback: () async{
       clearToken();
       _setHeader();
       Response response = await this
           .dio
-          .put(this.baseURL + "Booking/TruckArrive/" + bookingRef);
+          .put(this.baseURL + "Booking/TruckArrive", data: {"bookingRef": bookingRef ,"latitude": latitude, "longitude": longitude});
       if (response.data["rstCode"] != 0) throw response.data["rstMsg"];
     });
   }

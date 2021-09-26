@@ -86,3 +86,11 @@ PullDown 字太大會睇唔消 (Done)
 下一步時要check car license (Done)
 下一步要清timeslots (Done)
 Confirm Booking Page -> remark 太長show唔晒 (Done)
+
+Pull Down d 字再大d (Done)
+華為機 update 問題
+取消 Booking Page 要show scroll Bar (Done)
+取消 Booking Page -> 如果無原因就拎走"()" (Done)
+handle好submit Booking 無網問題
+Arrived ->轉api (Done)
+Detail Booking -> Pull Down Refresh (Done)

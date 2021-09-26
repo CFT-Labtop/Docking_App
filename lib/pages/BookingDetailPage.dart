@@ -6,6 +6,7 @@ import 'package:docking_project/Widgets/StandardElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:badges/badges.dart';
@@ -23,6 +24,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   Future futureBuilder;
   Booking booking;
   bool isNeedGPS = false;
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   Future<void> getBooking() async {
     this.booking = await Request().getBooking(context, widget.booking.bookingRef);
@@ -127,80 +129,83 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   StateSetter setState,
                 ) {
                   return Scaffold(
-                    body: SingleChildScrollView(
-                      reverse: true,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: Column(
-                          children: [
-                            ColumnBuilder(
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(cancelReasonList[index]["msg"]),
-                                    leading: Radio(
-                                      value: cancelReasonList[index]["msgCode"],
-                                      groupValue: val,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          val = value;
-                                          selectedLabel =
-                                              cancelReasonList[index]["msg"];
-                                        });
-                                      },
-                                      activeColor: Colors.blue,
-                                    ),
-                                  );
-                                },
-                                itemCount: cancelReasonList.length),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextField(
-                                controller: textEditingController,
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Reason of Cancelling Booking'.tr(),
+                    body: Scrollbar(
+                      child: SingleChildScrollView(
+                        reverse: true,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: Column(
+                            children: [
+                              ColumnBuilder(
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(cancelReasonList[index]["msg"]),
+                                      leading: Radio(
+                                        value: cancelReasonList[index]["msgCode"],
+                                        groupValue: val,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            val = value;
+                                            selectedLabel =
+                                                cancelReasonList[index]["msg"];
+                                          });
+                                        },
+                                        activeColor: Colors.blue,
+                                      ),
+                                    );
+                                  },
+                                  itemCount: cancelReasonList.length),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: textEditingController,
+                                  maxLines: 5,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Reason of Cancelling Booking'.tr(),
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 12),
-                            ),
-                            StandardElevatedButton(
-                              backgroundColor: Colors.green,
-                              text: "Submit".tr(),
-                              onPress: () async {
-                                try {
-                                  Util.showLoadingDialog(context);
-                                  await Request().deleteBookingWithReason(
-                                      context,
-                                      this.booking.bookingRef,
-                                      selectedLabel +
-                                          " (" +
-                                          textEditingController.text +
-                                          ")");
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              "Delete Successfully".tr())));
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                } catch (error) {
-                                  Navigator.pop(context);
-                                  Util.showAlertDialog(
-                                      context, error.toString());
-                                }
-                              },
-                            ),
-                            // Spacer()
-                          ],
+                              SizedBox(
+                                height: Util.responsiveSize(context, 12),
+                              ),
+                              StandardElevatedButton(
+                                backgroundColor: Colors.green,
+                                text: "Submit".tr(),
+                                onPress: () async {
+                                  try {
+                                    String submitMessage = textEditingController.text.isEmpty || textEditingController.text == null ? selectedLabel : selectedLabel +
+                                            " (" +
+                                            textEditingController.text +
+                                            ")";
+                                    Util.showLoadingDialog(context);
+                                    await Request().deleteBookingWithReason(
+                                        context,
+                                        this.booking.bookingRef,
+                                        submitMessage);
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "Delete Successfully".tr())));
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  } catch (error) {
+                                    Navigator.pop(context);
+                                    Util.showAlertDialog(
+                                        context, error.toString());
+                                  }
+                                },
+                              ),
+                              // Spacer()
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   );
-                }, height: .7);
+                }, height: .8);
                 break;
             }
           },
@@ -247,13 +252,15 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         onPress: () async {
       try {
         Util.showLoadingDialog(context);
-        await Request().truckArrive(context, this.booking.bookingRef);
+        await Request().truckArrive(context, this.booking.bookingRef, this.booking.latitude, this.booking.longitude);
+        await getBooking();
         Navigator.pop(context);
         Util.showAlertDialog(context, "", title: "Confirm Successfully".tr());
-        setState(() {
-          this.booking.bookingStatusCode = "B200".tr();
-          this.booking.bookingStatus = "Arrived".tr();
-        });
+        // setState(() {
+        //   this.booking.bookingStatusCode = "B200".tr();
+        //   this.booking.bookingStatus = "Arrived".tr();
+        // });
+        setState(() {});
       } catch (error) {
         Navigator.pop(context);
         Util.showAlertDialog(context, error.toString());
@@ -267,115 +274,117 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
       decoration: BoxDecoration(
           color: UtilExtendsion.mainColor,
           borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: SingleChildScrollView(
-        child: Wrap(
-          children: [
-            SizedBox(
-              height: Util.responsiveSize(context, 24),
-            ),
-            Column(
-              children: [
-                SizedBox(
-                  height: Util.responsiveSize(context, 12),
-                ),
-                _titleText(this.booking.bookingRef),
-                SizedBox(
-                  height: Util.responsiveSize(context, 4),
-                ),
-                _isArrivedOrWIPOrDeleted()
-                    ? StandardElevatedButton(
-                        backgroundColor: Colors.grey,
-                        text: this.booking.bookingStatus,
-                        onPress: () {},
-                      )
-                    : StandardElevatedButton(
-                        backgroundColor: Colors.green,
-                        text: "Arrive".tr(),
-                        onPress: () {
-                          if(this.isNeedGPS){
-                            Util.showLoadingDialog(context);
-                            Util.checkGPSPermission(context, onGranted: () async {
-                              Location location = new Location();
-                              LocationData locationData = await location.getLocation();
-                              this.booking.latitude = locationData.latitude;
-                              this.booking.longitude = locationData.longitude;
-                              Navigator.pop(context);
-                              arriveTruck();
-                            }, onFailed: () {
-                              Navigator.pop(context);
-                              arriveTruck();
-                            });
-                          }else
-                            arriveTruck();
-                        },
-                      ),
-                SizedBox(
-                  height: Util.responsiveSize(context, 4),
-                ),
-                _whiteDivider(),
-                SizedBox(
-                  height: Util.responsiveSize(context, 32),
-                ),
-                QrImage(
-                  data: this.booking.qrCodeString ?? "",
-                  version: QrVersions.auto,
-                  backgroundColor: Colors.white,
-                  size: Util.responsiveSize(context, 200),
-                ),
-                SizedBox(
-                  height: Util.responsiveSize(context, 32),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Util.responsiveSize(context, 28)),
-                  child: Column(
-                    children: [
-                      detailTile(Icons.date_range,
-                          this.booking.displayBookingDate()),
-                      detailTile(Icons.schedule, this.booking.timeSlot),
-                      detailTile(
-                          Icons.store, this.booking.warehouse.toString()),
-                      detailTile(Icons.car_repair,
-                          this.booking.showTruckAndLicense()),
-                      this.booking.clientName != null
-                          ? detailTile(Icons.person, this.booking.clientName)
-                          : SizedBox(),
-                      this.booking.truckCompanyName!= null
-                          ? detailTile(Icons.workspaces, this.booking.truckCompanyName)
-                          : SizedBox(),
-                      detailTile(
-                          Icons.directions_car_sharp,
-                          this.booking.isChHKTruck
-                              ? "Cross Border Vehicle".tr()
-                              : "No CHK License".tr()),
-                      detailTile(
-                          Icons.vertical_align_bottom,
-                          this.booking.unloading
-                              ? "Unloading".tr()
-                              : "No Unloading".tr()),
-                    ],
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          child: Wrap(
+            children: [
+              SizedBox(
+                height: Util.responsiveSize(context, 24),
+              ),
+              Column(
+                children: [
+                  SizedBox(
+                    height: Util.responsiveSize(context, 12),
                   ),
-                ),
-                SizedBox(
-                  height: Util.responsiveSize(context, 24),
-                ),
-                _remarkText(),
-                SizedBox(
-                  height: Util.responsiveSize(context, 12),
-                ),
-                Text(
-                  "If You Arrived, Please Click Arrived".tr(),
-                  style: TextStyle(
-                      fontSize: Util.responsiveSize(context, 18),
-                      color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: Util.responsiveSize(context, 24),
-                ),
-              ],
-            )
-          ],
+                  _titleText(this.booking.bookingRef),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 4),
+                  ),
+                  _isArrivedOrWIPOrDeleted()
+                      ? StandardElevatedButton(
+                          backgroundColor: Colors.grey,
+                          text: this.booking.bookingStatus,
+                          onPress: () {},
+                        )
+                      : StandardElevatedButton(
+                          backgroundColor: Colors.green,
+                          text: "Arrive".tr(),
+                          onPress: () {
+                            if(this.isNeedGPS){
+                              Util.showLoadingDialog(context);
+                              Util.checkGPSPermission(context, onGranted: () async {
+                                Location location = new Location();
+                                LocationData locationData = await location.getLocation();
+                                this.booking.latitude = locationData.latitude;
+                                this.booking.longitude = locationData.longitude;
+                                Navigator.pop(context);
+                                arriveTruck();
+                              }, onFailed: () {
+                                Navigator.pop(context);
+                                arriveTruck();
+                              });
+                            }else
+                              arriveTruck();
+                          },
+                        ),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 4),
+                  ),
+                  _whiteDivider(),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 32),
+                  ),
+                  QrImage(
+                    data: this.booking.qrCodeString ?? "",
+                    version: QrVersions.auto,
+                    backgroundColor: Colors.white,
+                    size: Util.responsiveSize(context, 200),
+                  ),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 32),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Util.responsiveSize(context, 28)),
+                    child: Column(
+                      children: [
+                        detailTile(Icons.date_range,
+                            this.booking.displayBookingDate()),
+                        detailTile(Icons.schedule, this.booking.timeSlot),
+                        detailTile(
+                            Icons.store, this.booking.warehouse.toString()),
+                        detailTile(Icons.car_repair,
+                            this.booking.showTruckAndLicense()),
+                        this.booking.clientName != null
+                            ? detailTile(Icons.person, this.booking.clientName)
+                            : SizedBox(),
+                        this.booking.truckCompanyName!= null
+                            ? detailTile(Icons.workspaces, this.booking.truckCompanyName)
+                            : SizedBox(),
+                        detailTile(
+                            Icons.directions_car_sharp,
+                            this.booking.isChHKTruck
+                                ? "Cross Border Vehicle".tr()
+                                : "No CHK License".tr()),
+                        detailTile(
+                            Icons.vertical_align_bottom,
+                            this.booking.unloading
+                                ? "Unloading".tr()
+                                : "No Unloading".tr()),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 24),
+                  ),
+                  _remarkText(),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 12),
+                  ),
+                  Text(
+                    "If You Arrived, Please Click Arrived".tr(),
+                    style: TextStyle(
+                        fontSize: Util.responsiveSize(context, 18),
+                        color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: Util.responsiveSize(context, 24),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -394,31 +403,41 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         child: FutureBuilder(
         future: futureBuilder,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
-            return Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Util.responsiveSize(context, 12)),
-                child: this.booking.bookingMsg != null
-                    ? GestureDetector(
-                        onTap: () {
-                          Util.showAlertDialog(
-                              context, this.booking.bookingMsg,
-                              title: "Alert".tr());
-                        },
-                        child: Badge(
-                            badgeColor: Colors.blue,
-                            animationType: BadgeAnimationType.scale,
-                            badgeContent: Icon(
-                              Icons.add_alert,
-                              color: Colors.white,
-                            ),
-                            child: _boxContent()),
-                      )
-                    : _boxContent(),
-              ),
-            );
-          });
+          return SmartRefresher(
+            header: WaterDropMaterialHeader(),
+            controller: _refreshController,
+            onRefresh: () async {
+              await getBooking();
+                setState(() {
+                  _refreshController.refreshCompleted();
+                });
+            },
+            child: UtilExtendsion.CustomFutureBuild(context, snapshot, () {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: Util.responsiveSize(context, 12)),
+                  child: this.booking.bookingMsg != null
+                      ? GestureDetector(
+                          onTap: () {
+                            Util.showAlertDialog(
+                                context, this.booking.bookingMsg,
+                                title: "Alert".tr());
+                          },
+                          child: Badge(
+                              badgeColor: Colors.blue,
+                              animationType: BadgeAnimationType.scale,
+                              badgeContent: Icon(
+                                Icons.add_alert,
+                                color: Colors.white,
+                              ),
+                              child: _boxContent()),
+                        )
+                      : _boxContent(),
+                ),
+              );
+            }),
+          );
         },
       )),
     );

@@ -85,66 +85,68 @@ class _SettingFragmentState extends State<SettingFragment> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            Text(
-                              "Read Only".tr(),
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: Util.responsiveSize(context, 18)),
-                            ),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            MobileStandardTextField(
-                              mobileTextController: mobileTextController,
-                              enable: false,
-                              initialPrefix: driver.countryCode,
-                            ),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            Text(
-                              "Default Car - Optional".tr(),
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: Util.responsiveSize(context, 18)),
-                            ),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 12),
-                            ),
-                            CarTypePullDown(
-                              initValue: driver.default_Truck_Type,
-                              truckTypeSelection: truckTypeSelection,
-                              key: _carTypeKey,
-                              onSelected: (String selectedValue, String selectedLabel) {
-                                _focusNode.requestFocus();
-                              },
-                            ),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            ClientTypePullDown(initValue: driver.default_Client_ID, clientTypeSelection: truckClientSelection, key: _truckClientKey,),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            TruckCompanyPullDown(initValue: driver.default_Company_ID, truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            LicenseStandardTextField(
-                              textController: licenseTextController,
-                              focusNode: _focusNode,
-                            ),
-                            SizedBox(
-                              height: Util.responsiveSize(context, 24),
-                            ),
-                            CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
-                          ],
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              Text(
+                                "Read Only".tr(),
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: Util.responsiveSize(context, 18)),
+                              ),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              MobileStandardTextField(
+                                mobileTextController: mobileTextController,
+                                enable: false,
+                                initialPrefix: driver.countryCode,
+                              ),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              Text(
+                                "Default Car - Optional".tr(),
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: Util.responsiveSize(context, 18)),
+                              ),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 12),
+                              ),
+                              CarTypePullDown(
+                                initValue: driver.default_Truck_Type,
+                                truckTypeSelection: truckTypeSelection,
+                                key: _carTypeKey,
+                                onSelected: (String selectedValue, String selectedLabel) {
+                                  _focusNode.requestFocus();
+                                },
+                              ),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              ClientTypePullDown(initValue: driver.default_Client_ID, clientTypeSelection: truckClientSelection, key: _truckClientKey,),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              TruckCompanyPullDown(initValue: driver.default_Company_ID, truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              LicenseStandardTextField(
+                                textController: licenseTextController,
+                                focusNode: _focusNode,
+                              ),
+                              SizedBox(
+                                height: Util.responsiveSize(context, 24),
+                              ),
+                              CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
+                            ],
+                          ),
                         ),
                       ),
                     ),

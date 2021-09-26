@@ -196,16 +196,18 @@ class _ShipmentFragmentState extends State<ShipmentFragment> {
                               context: context,
                               builder: (_) => PlatformAlertDialog(
                                 title: Text("Manual Input".tr()),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      Text("Please Using Enter Key For Multiple Shipment".tr()),
-                                      PlatformTextField(
-                                        controller: manualTextController,
-                                        autofocus: true,
-                                        maxLines: 10
-                                      ),
-                                    ],
+                                content: Scrollbar(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        Text("Please Using Enter Key For Multiple Shipment".tr()),
+                                        PlatformTextField(
+                                          controller: manualTextController,
+                                          autofocus: true,
+                                          maxLines: 10
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 actions: <Widget>[

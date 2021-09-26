@@ -81,74 +81,76 @@ class _PhoneSignUpPageState extends State<PhoneSignUpPage> {
                     child: Column(
                       children: [
                         Expanded(
-                          child: SingleChildScrollView(
-                            // reverse: true,
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 40.0),
-                                ),
-                                Text(
-                                  "Enter Your Phone Number and Licence Number"
-                                      .tr(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize:
-                                          Util.responsiveSize(context, 28)),
-                                ),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 24.0),
-                                ),
-                                MobileStandardTextField(
-                                  key: _mobileTextFieldKey,
-                                  mobileTextController: mobileTextController,
-                                  onPress: (String countryCode) {},
-                                ),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 24.0),
-                                ),
-                                Text(
-                                  "Default Car - Optional".tr(),
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize:
-                                          Util.responsiveSize(context, 18)),
-                                ),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 12),
-                                ),
-                                CarTypePullDown(
-                                  truckTypeSelection: truckTypeSelection,
-                                  key: _carTypeKey,
-                                ),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 24),
-                                ),
-                                ClientTypePullDown(clientTypeSelection: truckClientSelection, key: _truckClientKey,),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 24),
-                                ),
-                                TruckCompanyPullDown(truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 24),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                                  child: LicenseStandardTextField(
-                                    textController: licenseTextController,
+                          child: Scrollbar(
+                            child: SingleChildScrollView(
+                              // reverse: true,
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 40.0),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 18),
-                                ),
-                                CHHKSwitch(
-                                  initValue: false,
-                                  key: _chhkTypeKey,
-                                ),
-                                SizedBox(
-                                  height: Util.responsiveSize(context, 32),
-                                ),
-                              ],
+                                  Text(
+                                    "Enter Your Phone Number and Licence Number"
+                                        .tr(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize:
+                                            Util.responsiveSize(context, 28)),
+                                  ),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 24.0),
+                                  ),
+                                  MobileStandardTextField(
+                                    key: _mobileTextFieldKey,
+                                    mobileTextController: mobileTextController,
+                                    onPress: (String countryCode) {},
+                                  ),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 24.0),
+                                  ),
+                                  Text(
+                                    "Default Car - Optional".tr(),
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize:
+                                            Util.responsiveSize(context, 18)),
+                                  ),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 12),
+                                  ),
+                                  CarTypePullDown(
+                                    truckTypeSelection: truckTypeSelection,
+                                    key: _carTypeKey,
+                                  ),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 24),
+                                  ),
+                                  ClientTypePullDown(clientTypeSelection: truckClientSelection, key: _truckClientKey,),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 24),
+                                  ),
+                                  TruckCompanyPullDown(truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 24),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                    child: LicenseStandardTextField(
+                                      textController: licenseTextController,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 18),
+                                  ),
+                                  CHHKSwitch(
+                                    initValue: false,
+                                    key: _chhkTypeKey,
+                                  ),
+                                  SizedBox(
+                                    height: Util.responsiveSize(context, 32),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

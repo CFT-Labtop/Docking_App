@@ -202,19 +202,21 @@ class VerificationCodeState extends State<VerificationCode> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _buildListWidget(),
-            ),
-            widget.clearAll != null
-                ? _clearAllWidget(widget.clearAll)
-                : Container(),
-          ],
-        ));
+    return Scrollbar(
+      child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _buildListWidget(),
+              ),
+              widget.clearAll != null
+                  ? _clearAllWidget(widget.clearAll)
+                  : Container(),
+            ],
+          )),
+    );
   }
 
   Widget _clearAllWidget(child) {

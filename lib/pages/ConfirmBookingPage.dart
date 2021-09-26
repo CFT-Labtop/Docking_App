@@ -139,37 +139,39 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
         body: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: Util.responsiveSize(context, 18),
-                    ),
-                    _listTile(
-                        context, Icons.car_repair, "Car Type".tr(), widget.truckTypeName),
-                    _listTile(
-                        context, Icons.person, "Client Type".tr(), widget.clientTypeName),
-                    _listTile(context, Icons.workspaces, "Truck Company".tr(), widget.truckCompanyName),
-                    _listTile(context, Icons.card_travel,"License Number".tr(),
-                        widget.booking.truckNo,
-                        isDivider: false),
-                    _greyTile(context),
-                    _listTile(context, Icons.schedule, "Start Time".tr(),widget.timeSlot.startTime.substring(0,5)),
-                    _listTile(context, Icons.schedule_sharp, "End Time".tr(),widget.timeSlot.endTime.substring(0,5)),
-                    _listTile(
-                        context,
-                        Icons.date_range,
-                        "Booking Date".tr(),
-                        new DateFormat('yyyy-MM-dd')
-                            .format(DateTime.parse(widget.booking.bookingDate.substring(0,10))),
-                        isDivider: false),
-                    _greyTile(context),
-                    _listTile(context, Icons.directions_car_sharp, "Cross Border Vehicle".tr(),widget.booking.isChHKTruck ? "Yes".tr() : "No".tr()),
-                    _listTile(context, Icons.vertical_align_bottom, "Unloading".tr(),widget.booking.unloading ? "Yes".tr() : "No".tr(), isDivider: false),
-                    _greyTile(context),
-                    _listTile(context, Icons.text_fields, "Remark".tr(),widget.booking.bookingRemark),
-                    Text("Please note that, you need to arrive".tr() + " " + widget.booking.warehouse + " " + "before starting time for docking".tr(), style: TextStyle(color: Colors.red),)
-                  ],
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: Util.responsiveSize(context, 18),
+                      ),
+                      _listTile(
+                          context, Icons.car_repair, "Car Type".tr(), widget.truckTypeName),
+                      _listTile(
+                          context, Icons.person, "Client Type".tr(), widget.clientTypeName),
+                      _listTile(context, Icons.workspaces, "Truck Company".tr(), widget.truckCompanyName),
+                      _listTile(context, Icons.card_travel,"License Number".tr(),
+                          widget.booking.truckNo,
+                          isDivider: false),
+                      _greyTile(context),
+                      _listTile(context, Icons.schedule, "Start Time".tr(),widget.timeSlot.startTime.substring(0,5)),
+                      _listTile(context, Icons.schedule_sharp, "End Time".tr(),widget.timeSlot.endTime.substring(0,5)),
+                      _listTile(
+                          context,
+                          Icons.date_range,
+                          "Booking Date".tr(),
+                          new DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(widget.booking.bookingDate.substring(0,10))),
+                          isDivider: false),
+                      _greyTile(context),
+                      _listTile(context, Icons.directions_car_sharp, "Cross Border Vehicle".tr(),widget.booking.isChHKTruck ? "Yes".tr() : "No".tr()),
+                      _listTile(context, Icons.vertical_align_bottom, "Unloading".tr(),widget.booking.unloading ? "Yes".tr() : "No".tr(), isDivider: false),
+                      _greyTile(context),
+                      _listTile(context, Icons.text_fields, "Remark".tr(),widget.booking.bookingRemark),
+                      Text("Please note that, you need to arrive".tr() + " " + widget.booking.warehouse + " " + "before starting time for docking".tr(), style: TextStyle(color: Colors.red),)
+                    ],
+                  ),
                 ),
               ),
             ),
