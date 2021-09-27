@@ -108,7 +108,7 @@
     "Error": "錯誤",
     "Dismiss": "取消",
     "Confirm To Arrive?": "確認到達?",
-    "Update Available": "有新的更新",
+    "Version Update": "版本更新",
     "You Can Now Update This App": "你可以更新應用程式",
     "Update": "更新",
     "Support": "支援",
@@ -117,8 +117,8 @@
     "Photo": "相片",
     "About": "關於",
     "Please select client type": "請選擇客戶",
-    "Cross Border Vehicle": "中港車牌",
-    "Unloading": "卸貨",
+    "Cross Border Vehicle": "中港車",
+    "Unloading": "代卸",
     "No CHK License": "沒有中港車牌",
     "No Unloading": "不會卸貨",
     "Please note that, you need to arrive": "請注意，此時間為到達",
@@ -136,5 +136,6 @@
     "Alert": "提示",
     "Please Select Your Truck Company": "請選擇車類",
     "Truck Company": "車類",
-    "Truck Company Cannot Be Empty": "車類不能空白"
+    "Truck Company Cannot Be Empty": "車類不能空白",
+    "An update of this app is required to continue.": "您必須更新此應用程式才能繼續使用"
 }

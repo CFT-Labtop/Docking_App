@@ -89,7 +89,7 @@ extension UtilExtendsion on Util {
   //   );
   // }
 
-  static Future<void> checkForUpdate(BuildContext context) async{
+  static Future<bool> checkForUpdate(BuildContext context, bool isShowDialog) async{
     bool isLessThanMinVersion = false;
     Response response = await Request().getConfigVersion(context);
     String minVersion = "1.0.0";
@@ -104,20 +104,23 @@ extension UtilExtendsion on Util {
     final newVersion = NewVersion(iOSId: 'com.cft.docking',androidId: 'com.cft.docking_project',);
     final status = await newVersion.getVersionStatus();
     isLessThanMinVersion = _isCurrentVersionLessThanMinVersion(status.localVersion, minVersion);
-    if(isLessThanMinVersion)
-    showPlatformDialog(
-        context: context,
-        builder: (_) => PlatformAlertDialog(
-              title: Text("Update Available".tr()).tr(),
-              actions: <Widget>[
-                PlatformDialogAction(
-                  child: PlatformText('Confirm'.tr()),
-                  onPressed: () {
-                    launch("https://dkmsweb-prod.sunhinggroup.com/support");
-                  },
-                ),
-              ],
-            ));
+    // isLessThanMinVersion = _isCurrentVersionLessThanMinVersion(status.localVersion, "2.0.0");
+    if(isLessThanMinVersion && isShowDialog)
+      showPlatformDialog(
+          context: context,
+          builder: (_) => PlatformAlertDialog(
+                title: Text("Version Update".tr()).tr(),
+                content: Text("An update of this app is required to continue.").tr(),
+                actions: <Widget>[
+                  PlatformDialogAction(
+                    child: PlatformText('Confirm'.tr()),
+                    onPressed: () {
+                      launch("https://dkmsweb-prod.sunhinggroup.com/support");
+                    },
+                  ),
+                ],
+              ));
+    return isLessThanMinVersion;
     // if(status.canUpdate && status.storeVersion != "Varies with device" && isLessThanMinVersion)
     //   newVersion.showUpdateDialog(
     //   context: context, 

@@ -18,6 +18,7 @@ class CarTypePullDownState extends State<CarTypePullDown> {
   String selectedLabel;
   final _pulldownKey = GlobalKey<StandardPullDownState>();
   @override
+  
   void initState() {
     selectedValue = widget.initValue;
     selectedLabel = StandardPullDown.getPickerValue(widget.truckTypeSelection, widget.initValue);
@@ -27,6 +28,10 @@ class CarTypePullDownState extends State<CarTypePullDown> {
   bool isAnswerValid(){
     return (_pulldownKey.currentState != null && _pulldownKey.currentState.isAnswerValid());
   }
+  void refreshUI(value){
+    _pulldownKey.currentState.textController.text = value;
+  }
+  
   @override
   Widget build(BuildContext context) {
     return StandardPullDown(key: _pulldownKey, initValue: widget.initValue ?? null, pickerList: widget.truckTypeSelection, hintText: "Please select your car type".tr(), dialogTitle: "Please select your car type".tr(), onSelected: (value, String displayLabel) async{ 

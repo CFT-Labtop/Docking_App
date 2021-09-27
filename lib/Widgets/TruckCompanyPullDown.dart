@@ -27,6 +27,9 @@ class TruckCompanyPullDownState extends State<TruckCompanyPullDown> {
   bool isAnswerValid(){
     return (_pulldownKey.currentState != null && _pulldownKey.currentState.isAnswerValid());
   }
+  void refreshUI(value){
+    _pulldownKey.currentState.textController.text = value;
+  }
   @override
   Widget build(BuildContext context) {
     return StandardPullDown(key: _pulldownKey, initValue: widget.initValue ?? null, pickerList: widget.truckCompanySelection, hintText: "Please Select Your Truck Company".tr(), dialogTitle: "Please Select Your Truck Company".tr(), onSelected: (value, String displayLabel) async{ 

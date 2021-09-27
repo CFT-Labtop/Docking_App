@@ -34,9 +34,11 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   bool isLoading = false;
   String whatsappContactPhone = null;
   GlobalKey<BookingListFragmentState> _bookingListKey = GlobalKey<BookingListFragmentState>();
+  GlobalKey<SettingFragmentState> _settingKey = GlobalKey<SettingFragmentState>();
 
   void showLanguageButton() {
     new Picker(
+        itemExtent: Util.responsiveSize(context, 50),
         columnPadding: EdgeInsets.symmetric(horizontal: 0),
         adapter: PickerDataAdapter(data: [
           new PickerItem(text: Text("繁體中文"), value: "Traditional Chinese"),
@@ -65,9 +67,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               await Request().changeLanguage(context, Locale('zh', 'HK'));
               break;
           }
+          if(_currentIndex == 1)
+            await _bookingListKey.currentState.refreshPage();
+          else if (_currentIndex == 2){
+            await _settingKey.currentState.refreshPage();
+          }
           Navigator.pop(context);
           setState(() {});
-          _bookingListKey.currentState.refreshPage();
         }).showDialog(context);
   }
 
@@ -329,7 +335,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await UtilExtendsion.checkForUpdate(context);
+      // await UtilExtendsion.checkForUpdate(context);
       await Request().renewToken(context);
       Map<String, dynamic> whatsappMobileConfig = await UtilExtendsion.getConfigItem(context,"ContactPhoneNo");
       this.whatsappContactPhone = whatsappMobileConfig["configValue"];
@@ -410,7 +416,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               children: [
                 ShipmentFragment(),
                 BookingListFragment(key: _bookingListKey,),
-                SettingFragment()
+                SettingFragment(key: _settingKey)
               ],
             )),
           );

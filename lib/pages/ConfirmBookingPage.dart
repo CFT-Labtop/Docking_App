@@ -155,6 +155,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                           widget.booking.truckNo,
                           isDivider: false),
                       _greyTile(context),
+                      Text("Please note that, you need to arrive".tr() + " " + widget.booking.warehouse + " " + "before starting time for docking".tr(), style: TextStyle(color: Colors.red), textAlign: TextAlign.center,),
                       _listTile(context, Icons.schedule, "Start Time".tr(),widget.timeSlot.startTime.substring(0,5)),
                       _listTile(context, Icons.schedule_sharp, "End Time".tr(),widget.timeSlot.endTime.substring(0,5)),
                       _listTile(
@@ -169,7 +170,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
                       _listTile(context, Icons.vertical_align_bottom, "Unloading".tr(),widget.booking.unloading ? "Yes".tr() : "No".tr(), isDivider: false),
                       _greyTile(context),
                       _listTile(context, Icons.text_fields, "Remark".tr(),widget.booking.bookingRemark),
-                      Text("Please note that, you need to arrive".tr() + " " + widget.booking.warehouse + " " + "before starting time for docking".tr(), style: TextStyle(color: Colors.red),)
+                      // Text("Please note that, you need to arrive".tr() + " " + widget.booking.warehouse + " " + "before starting time for docking".tr(), style: TextStyle(color: Colors.red),)
                     ],
                   ),
                 ),

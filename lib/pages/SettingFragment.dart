@@ -15,15 +15,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/Picker.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SettingFragment extends StatefulWidget {
   const SettingFragment({Key key}) : super(key: key);
 
   @override
-  _SettingFragmentState createState() => _SettingFragmentState();
+  SettingFragmentState createState() => SettingFragmentState();
 }
 
-class _SettingFragmentState extends State<SettingFragment> {
+class SettingFragmentState extends State<SettingFragment> {
   final TextEditingController mobileTextController = TextEditingController();
   final TextEditingController licenseTextController = TextEditingController();
   final _carTypeKey = GlobalKey<CarTypePullDownState>();
@@ -37,6 +38,7 @@ class _SettingFragmentState extends State<SettingFragment> {
   Future futureBuilder;
   FocusNode _focusNode = new FocusNode();
   final _formKey = GlobalKey<FormState>();
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   Future<void> getInformation() async {
     try {
@@ -70,6 +72,21 @@ class _SettingFragmentState extends State<SettingFragment> {
     super.initState();
   }
 
+  Future<void> refreshPage() async{
+    List<TruckType> truckTypeList =await Request().getTrunckType(context, context.locale);
+    List<TruckCompany> truckCompanyList = await Request().getTruckCompany(context, context.locale);
+    List<TruckClient> truckClientList = await Request().getTruckClient(context, context.locale);
+    this.truckTypeSelection =UtilExtendsion.getTruckTypeSelection(truckTypeList);
+    this.truckCompanySelection =UtilExtendsion.getTruckCompanySelection(truckCompanyList);
+    this.truckClientSelection =UtilExtendsion.getTruckClientSelection(truckClientList);
+    TruckType carType = truckTypeList.firstWhere((element) => element.truck_Type == _carTypeKey.currentState.selectedValue, orElse: () => null);
+    _carTypeKey.currentState.refreshUI(carType != null ? carType.typeName : "");
+    TruckClient truckClient = truckClientList.firstWhere((element) => element.clientID == _truckClientKey.currentState.selectedValue, orElse: () => null);
+    _truckClientKey.currentState.refreshUI(truckClient != null ? truckClient.clientName : "");
+    TruckCompany truckCompany = truckCompanyList.firstWhere((element) => element.companyID == _truckClientKey.currentState.selectedValue, orElse: () => null);
+    _truckCompanyKey.currentState.refreshUI(truckCompany != null ? truckCompany.companyName : "");
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -78,113 +95,123 @@ class _SettingFragmentState extends State<SettingFragment> {
         return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
           return GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: Container(
-              color: Colors.white,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              Text(
-                                "Read Only".tr(),
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: Util.responsiveSize(context, 18)),
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              MobileStandardTextField(
-                                mobileTextController: mobileTextController,
-                                enable: false,
-                                initialPrefix: driver.countryCode,
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              Text(
-                                "Default Car - Optional".tr(),
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: Util.responsiveSize(context, 18)),
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 12),
-                              ),
-                              CarTypePullDown(
-                                initValue: driver.default_Truck_Type,
-                                truckTypeSelection: truckTypeSelection,
-                                key: _carTypeKey,
-                                onSelected: (String selectedValue, String selectedLabel) {
-                                  _focusNode.requestFocus();
-                                },
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              ClientTypePullDown(initValue: driver.default_Client_ID, clientTypeSelection: truckClientSelection, key: _truckClientKey,),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              TruckCompanyPullDown(initValue: driver.default_Company_ID, truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              LicenseStandardTextField(
-                                textController: licenseTextController,
-                                focusNode: _focusNode,
-                              ),
-                              SizedBox(
-                                height: Util.responsiveSize(context, 24),
-                              ),
-                              CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
-                            ],
+            child: SmartRefresher(
+              header: WaterDropMaterialHeader(),
+              controller: _refreshController,
+              onRefresh: () async {
+                await getInformation();
+                setState(() {
+                  _refreshController.refreshCompleted();
+                });
+              },
+              child: Container(
+                color: Colors.white,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                Text(
+                                  "Read Only".tr(),
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: Util.responsiveSize(context, 18)),
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                MobileStandardTextField(
+                                  mobileTextController: mobileTextController,
+                                  enable: false,
+                                  initialPrefix: driver.countryCode,
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                Text(
+                                  "Default Car - Optional".tr(),
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: Util.responsiveSize(context, 18)),
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 12),
+                                ),
+                                CarTypePullDown(
+                                  initValue: driver.default_Truck_Type,
+                                  truckTypeSelection: truckTypeSelection,
+                                  key: _carTypeKey,
+                                  onSelected: (String selectedValue, String selectedLabel) {
+                                    _focusNode.requestFocus();
+                                  },
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                ClientTypePullDown(initValue: driver.default_Client_ID, clientTypeSelection: truckClientSelection, key: _truckClientKey,),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                TruckCompanyPullDown(initValue: driver.default_Company_ID, truckCompanySelection: truckCompanySelection, key: _truckCompanyKey,),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                LicenseStandardTextField(
+                                  textController: licenseTextController,
+                                  focusNode: _focusNode,
+                                ),
+                                SizedBox(
+                                  height: Util.responsiveSize(context, 24),
+                                ),
+                                CHHKSwitch(initValue: driver.default_Is_CH_HK_Truck, key: _chhkKey,),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Column(
-                      children: [
-                          StandardElevatedButton(
-                            backgroundColor: UtilExtendsion.mainColor,
-                            text: "Submit".tr(),
-                            onPress: () async {
-                              if (_formKey.currentState.validate()) {
-                                try {
-                                  Util.showLoadingDialog(context);
-                                  await Request().updateSetting(context,
-                                      tel: mobileTextController.text,
-                                      countryCode: driver.countryCode,
-                                      default_Truck_No: licenseTextController.text,
-                                      default_Truck_Type: _carTypeKey.currentState.selectedValue,
-                                      default_Is_CH_HK_Truck: _chhkKey.currentState.value,
-                                      default_Client_ID: _truckClientKey.currentState.selectedValue,
-                                      default_Company_ID: _truckCompanyKey.currentState.selectedValue);
-                                  await UtilExtendsion.initDriver();
-                                  await getInformation();
-                                  Navigator.pop(context);
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  Util.showAlertDialog(context, "",
-                                      title: "Update Successfully".tr());
-                                } catch (error) {
-                                  Navigator.pop(context);
-                                  Util.showAlertDialog(context, error.toString());
+                      Column(
+                        children: [
+                            StandardElevatedButton(
+                              backgroundColor: UtilExtendsion.mainColor,
+                              text: "Submit".tr(),
+                              onPress: () async {
+                                if (_formKey.currentState.validate()) {
+                                  try {
+                                    Util.showLoadingDialog(context);
+                                    await Request().updateSetting(context,
+                                        tel: mobileTextController.text,
+                                        countryCode: driver.countryCode,
+                                        default_Truck_No: licenseTextController.text,
+                                        default_Truck_Type: _carTypeKey.currentState.selectedValue,
+                                        default_Is_CH_HK_Truck: _chhkKey.currentState.value,
+                                        default_Client_ID: _truckClientKey.currentState.selectedValue,
+                                        default_Company_ID: _truckCompanyKey.currentState.selectedValue);
+                                    await UtilExtendsion.initDriver();
+                                    await getInformation();
+                                    Navigator.pop(context);
+                                    FocusManager.instance.primaryFocus?.unfocus();
+                                    Util.showAlertDialog(context, "",
+                                        title: "Update Successfully".tr());
+                                  } catch (error) {
+                                    Navigator.pop(context);
+                                    Util.showAlertDialog(context, error.toString());
+                                  }
                                 }
-                              }
-                            }),
-                        SizedBox(
-                          height: Util.responsiveSize(context, 12),
-                        )
-                      ],
-                    )
-                  ],
+                              }),
+                          SizedBox(
+                            height: Util.responsiveSize(context, 12),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

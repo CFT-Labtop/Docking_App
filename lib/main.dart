@@ -5,6 +5,7 @@ import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/pages/FirstPage.dart';
 import 'package:docking_project/pages/MainPage.dart';
 import 'package:docking_project/pages/SplashPage.dart';
+import 'package:docking_project/pages/UpdatePage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,11 +33,17 @@ Future<void> main() async {
       child: RouterPage()));
 }
 
+
 class RouterPage extends StatelessWidget {
+  bool isUpdate = false;
+  Future init(context) async{
+    this.isUpdate = await UtilExtendsion.checkForUpdate(context, false);
+    await Future.delayed(Duration(seconds: 1));
+  }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.delayed(Duration(seconds: 1)),
+    return FutureBuilder<void>(
+      future: init(context),
       builder: (context, AsyncSnapshot snapshot) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -45,7 +52,7 @@ class RouterPage extends StatelessWidget {
                 primaryColor: UtilExtendsion.mainColor,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
-              home: snapshot.connectionState == ConnectionState.waiting? SplashPage() : (Util.sharedPreferences.getString("Authorization") != "" && Util.sharedPreferences.getString("Authorization") != null)? MainPage(): FirstPage(),
+              home: snapshot.connectionState == ConnectionState.waiting? SplashPage() : this.isUpdate ? UpdatePage(): (Util.sharedPreferences.getString("Authorization") != "" && Util.sharedPreferences.getString("Authorization") != null)? MainPage(): FirstPage(),
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,

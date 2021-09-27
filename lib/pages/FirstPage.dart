@@ -61,7 +61,7 @@ class _FirstPageState extends State<FirstPage> {
       });
     });
     super.initState();
-    UtilExtendsion.checkForUpdate(context);
+    // UtilExtendsion.checkForUpdate(context);
   }
 
   Future<void> getNews() async {

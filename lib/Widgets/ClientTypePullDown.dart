@@ -27,6 +27,9 @@ class ClientTypePullDownState extends State<ClientTypePullDown> {
   bool isAnswerValid(){
     return (_pulldownKey.currentState != null && _pulldownKey.currentState.isAnswerValid());
   }
+  void refreshUI(value){
+    _pulldownKey.currentState.textController.text = value;
+  }
 
   @override
   Widget build(BuildContext context) {
