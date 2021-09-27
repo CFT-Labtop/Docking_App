@@ -11,6 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:new_version/new_version.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FirstPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPageState extends State<FirstPage> {
   Future futureBuilder;
+  VersionStatus status;
   List<News> newsList = [];
   Widget header() {
     return FractionallySizedBox(
@@ -63,6 +65,11 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   Future<void> getNews() async {
+    final newVersion = NewVersion(
+      iOSId: 'com.cft.docking',
+      androidId: 'com.cft.docking_project',
+    );
+    this.status = await newVersion.getVersionStatus();
     newsList = await Request().getLatestNews(context, context.locale);
   }
 
@@ -171,7 +178,7 @@ class _FirstPageState extends State<FirstPage> {
                   ),
                   SizedBox(height: Util.responsiveSize(context, 8.0)),
                   Text(
-                    "Version 1.0.7",
+                    "Version 1.0.8",
                     style: TextStyle(
                         fontSize: Util.responsiveSize(context, 14),
                         color: Colors.white),

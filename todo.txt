@@ -91,6 +91,6 @@ Pull Down d 字再大d (Done)
 華為機 update 問題
 取消 Booking Page 要show scroll Bar (Done)
 取消 Booking Page -> 如果無原因就拎走"()" (Done)
-handle好submit Booking 無網問題
+handle好submit Booking 無網問題(Done)
 Arrived ->轉api (Done)
 Detail Booking -> Pull Down Refresh (Done)

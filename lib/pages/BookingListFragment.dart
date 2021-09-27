@@ -13,10 +13,10 @@ class BookingListFragment extends StatefulWidget {
   const BookingListFragment({Key key}) : super(key: key);
 
   @override
-  _BookingListFragmentState createState() => _BookingListFragmentState();
+  BookingListFragmentState createState() => BookingListFragmentState();
 }
 
-class _BookingListFragmentState extends State<BookingListFragment> {
+class BookingListFragmentState extends State<BookingListFragment> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<Booking> bookingList = [];
   Future futureBuilder;
@@ -40,6 +40,14 @@ class _BookingListFragmentState extends State<BookingListFragment> {
   void initState() {
     futureBuilder = getBookingList();
     super.initState();
+  }
+
+  Future<void> refreshPage() async{
+    await _refreshController.requestRefresh();
+    await getBookingList();
+    setState(() {
+      _refreshController.refreshCompleted();
+    });
   }
 
   Future<void> getBookingList() async {

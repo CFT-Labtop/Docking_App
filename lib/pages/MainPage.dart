@@ -33,6 +33,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   PageController _pageViewcontroller = new PageController();
   bool isLoading = false;
   String whatsappContactPhone = null;
+  GlobalKey<BookingListFragmentState> _bookingListKey = GlobalKey<BookingListFragmentState>();
 
   void showLanguageButton() {
     new Picker(
@@ -48,21 +49,25 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
             color: Colors.black, fontSize: Util.responsiveSize(context, 19)),
         cancelText: "Cancel".tr(),
         confirmText: "Confirm".tr(),
-        onConfirm: (Picker picker, List value) {
+        onConfirm: (Picker picker, List value) async{
+          Util.showLoadingDialog(context);
           switch (picker.getSelectedValues()[0]) {
             case "English":
               context.locale = Locale('en', 'US');
-              Request().changeLanguage(context, Locale('en', 'US'));
+              await Request().changeLanguage(context, Locale('en', 'US'));
               break;
             case "Simplified Chinese":
               context.locale = Locale('zh', 'CN');
-              Request().changeLanguage(context, Locale('zh', 'CN'));
+              await Request().changeLanguage(context, Locale('zh', 'CN'));
               break;
             case "Traditional Chinese":
               context.locale = Locale('zh', 'HK');
-              Request().changeLanguage(context, Locale('zh', 'HK'));
+              await Request().changeLanguage(context, Locale('zh', 'HK'));
               break;
           }
+          Navigator.pop(context);
+          setState(() {});
+          _bookingListKey.currentState.refreshPage();
         }).showDialog(context);
   }
 
@@ -154,8 +159,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 break;
               case 6:
                 Util.showConfirmDialog(context, onPress: () async {
-                  Request().logout(context,
-                      Util.sharedPreferences.getString("Authorization"));
+                  Request().logout(context,Util.sharedPreferences.getString("Authorization"));
                   Util.sharedPreferences.clear();
                   FlutterRouter()
                       .goToPage(context, Pages("FirstPage"), clear: true);
@@ -405,7 +409,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               controller: _pageViewcontroller,
               children: [
                 ShipmentFragment(),
-                BookingListFragment(),
+                BookingListFragment(key: _bookingListKey,),
                 SettingFragment()
               ],
             )),

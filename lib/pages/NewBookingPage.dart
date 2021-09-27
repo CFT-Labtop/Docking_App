@@ -11,7 +11,6 @@ import 'package:docking_project/Util/Request.dart';
 import 'package:docking_project/Util/UtilExtendsion.dart';
 import 'package:docking_project/Widgets/CHHKSwitch.dart';
 import 'package:docking_project/Widgets/CarTypePullDown.dart';
-import 'package:docking_project/Widgets/CarTypeStandardField.dart';
 import 'package:docking_project/Widgets/ClientTypePullDown.dart';
 import 'package:docking_project/Widgets/LicenseStandardTextField.dart';
 import 'package:docking_project/Widgets/LoadTruckSwitch.dart';
@@ -24,8 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_basecomponent/Util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_picker/Picker.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 
 class NewBookingPage extends StatefulWidget {
@@ -104,15 +101,18 @@ class _NewBookingPageState extends State<NewBookingPage> {
   }
 
   Future<void> _getDateSelection(String truckType, int clientID) async {
-    this.dateList = await Request()
-        .getTimeSlot(context, widget.warehouseID, truckType, clientID);
-    this.dateSelection = this
-        .dateList
-        .map((e) => new PickerItem(
-            text: Text(DateFormat("yyyy-MM-dd")
-                .format(DateTime.parse(e["bookingDate"].substring(0, 10)))),
-            value: e["bookingDate"]))
-        .toList();
+    try{
+      this.dateList = await Request().getTimeSlot(context, widget.warehouseID, truckType, clientID);
+      this.dateSelection = this
+          .dateList
+          .map((e) => new PickerItem(
+              text: Text(DateFormat("yyyy-MM-dd")
+                  .format(DateTime.parse(e["bookingDate"].substring(0, 10)))),
+              value: e["bookingDate"]))
+          .toList();
+    }catch(error){
+      throw error;
+    }
   }
 
   void getTimeSlot(List<dynamic> dateList) {
@@ -300,7 +300,6 @@ class _NewBookingPageState extends State<NewBookingPage> {
           return UtilExtendsion.CustomFutureBuild(context, snapshot, () {
             return GestureDetector(
               onTap: () {
-                print("ASDAS");
                 FocusManager.instance.primaryFocus?.unfocus();
               },
               child: Container(
@@ -336,8 +335,9 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                         Navigator.pop(context);
                                       } catch (error) {
                                         Navigator.pop(context);
+                                        Navigator.pop(context);
                                         Util.showAlertDialog(
-                                            context, error.toString());
+                                            context, "Unstable Network".tr());
                                       }
                                     }),
                                 SizedBox(
@@ -426,33 +426,39 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                   Util.showAlertDialog(
                                       context, "License Cannot Be Empty".tr());
                                 } else {
-                                  Util.showLoadingDialog(context);
-                                  await this._getDateSelection(
-                                      _carTypeKey.currentState.selectedValue,
-                                      _clientTypeKey
-                                          .currentState.selectedValue);
-                                  Navigator.pop(context);
-                                  Util.showModalSheet(
-                                      context, "Booking Date".tr(),
-                                      (BuildContext context,
-                                          StateSetter setState) {
-                                    return Scrollbar(
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children: [
-                                            _timeSlotSelectPart(setState),
-                                            StandardElevatedButton(
-                                                backgroundColor:
-                                                    UtilExtendsion.mainColor,
-                                                text: "Confirm".tr(),
-                                                onPress: () => submitBooking())
-                                          ],
+                                  try{
+                                    Util.showLoadingDialog(context);
+                                    await this._getDateSelection(
+                                        _carTypeKey.currentState.selectedValue,
+                                        _clientTypeKey
+                                            .currentState.selectedValue);
+                                    Navigator.pop(context);
+                                    Util.showModalSheet(
+                                        context, "Booking Date".tr(),
+                                        (BuildContext context,
+                                            StateSetter setState) {
+                                      return Scrollbar(
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            children: [
+                                              _timeSlotSelectPart(setState),
+                                              StandardElevatedButton(
+                                                  backgroundColor:
+                                                      UtilExtendsion.mainColor,
+                                                  text: "Confirm".tr(),
+                                                  onPress: () => submitBooking())
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                      colorTone: UtilExtendsion.mainColor,
-                                      height: 0.9);
+                                      );
+                                    },
+                                        colorTone: UtilExtendsion.mainColor,
+                                        height: 0.9);
+                                  }catch(error){
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Util.showAlertDialog(context, "Unstable Network".tr());
+                                  }
                                 }
                               }
                             },

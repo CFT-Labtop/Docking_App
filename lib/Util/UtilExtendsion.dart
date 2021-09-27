@@ -17,6 +17,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_basecomponent/BaseRouter.dart';
 import 'package:new_version/new_version.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 extension UtilExtendsion on Util {
   static const Color mainColor = Color.fromRGBO(202,37,46,1);
@@ -59,6 +60,35 @@ extension UtilExtendsion on Util {
     return keyMap;
   }
 
+  // static Future<void> checkForUpdate(BuildContext context) async{
+  //   bool isLessThanMinVersion = false;
+  //   Response response = await Request().getConfigVersion(context);
+  //   String minVersion = "1.0.0";
+  //   List<Map<String, dynamic>> data = (response.data as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
+  //   if(Platform.isIOS){
+  //     Map<String, dynamic> keyMap = data.firstWhere((element) => element["configKey"] == "IOSMinVersion", orElse: () => null);
+  //     minVersion = keyMap["configValue"];
+  //   }else if(Platform.isAndroid){
+  //     Map<String, dynamic> keyMap = data.firstWhere((element) => element["configKey"] == "AndroidMinVersion", orElse: () => null);
+  //     minVersion = keyMap["configValue"];
+  //   }
+  //   final newVersion = NewVersion(iOSId: 'com.cft.docking',androidId: 'com.cft.docking_project',);
+  //   final status = await newVersion.getVersionStatus();
+  //   isLessThanMinVersion = _isCurrentVersionLessThanMinVersion(status.localVersion, minVersion);
+  //   if(status.canUpdate && status.storeVersion != "Varies with device" && isLessThanMinVersion)
+  //     newVersion.showUpdateDialog(
+  //     context: context, 
+  //     versionStatus: status,
+  //     dialogTitle: "Update Available".tr(),
+  //     dialogText: 'You Can Now Update This App'.tr(),
+  //     updateButtonText: 'Update'.tr(),
+  //     dismissButtonText: 'Dismiss'.tr(),
+  //     dismissAction: () => {
+  //       exit(0)
+  //     },
+  //   );
+  // }
+
   static Future<void> checkForUpdate(BuildContext context) async{
     bool isLessThanMinVersion = false;
     Response response = await Request().getConfigVersion(context);
@@ -74,20 +104,33 @@ extension UtilExtendsion on Util {
     final newVersion = NewVersion(iOSId: 'com.cft.docking',androidId: 'com.cft.docking_project',);
     final status = await newVersion.getVersionStatus();
     isLessThanMinVersion = _isCurrentVersionLessThanMinVersion(status.localVersion, minVersion);
-    if(status.canUpdate && status.storeVersion != "Varies with device" && isLessThanMinVersion)
-      newVersion.showUpdateDialog(
-      context: context, 
-      versionStatus: status,
-      dialogTitle: "Update Available".tr(),
-      dialogText: 'You Can Now Update This App'.tr(),
-      updateButtonText: 'Update'.tr(),
-      dismissButtonText: 'Dismiss'.tr(),
-      dismissAction: () => {
-        exit(0)
-      },
-    );
+    if(isLessThanMinVersion)
+    showPlatformDialog(
+        context: context,
+        builder: (_) => PlatformAlertDialog(
+              title: Text("Update Available".tr()).tr(),
+              actions: <Widget>[
+                PlatformDialogAction(
+                  child: PlatformText('Confirm'.tr()),
+                  onPressed: () {
+                    launch("https://dkmsweb-prod.sunhinggroup.com/support");
+                  },
+                ),
+              ],
+            ));
+    // if(status.canUpdate && status.storeVersion != "Varies with device" && isLessThanMinVersion)
+    //   newVersion.showUpdateDialog(
+    //   context: context, 
+    //   versionStatus: status,
+    //   dialogTitle: "Update Available".tr(),
+    //   dialogText: 'You Can Now Update This App'.tr(),
+    //   updateButtonText: 'Update'.tr(),
+    //   dismissButtonText: 'Dismiss'.tr(),
+    //   dismissAction: () => {
+    //     exit(0)
+    //   },
+    // );
   }
-
   static Future<void> initDriver() async {
     try {
       Driver driver = await Request().getDriver();
