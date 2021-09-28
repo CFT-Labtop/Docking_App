@@ -324,21 +324,21 @@ class _NewBookingPageState extends State<NewBookingPage> {
                                     key: _carTypeKey,
                                     onSelected: (String selectedValue,
                                         String displayLabel) async {
-                                      try {
-                                        Util.showLoadingDialog(context);
-                                        await _getDateSelection(
-                                            _carTypeKey
-                                                .currentState.selectedValue,
-                                            _clientTypeKey
-                                                .currentState.selectedValue);
+                                      // try {
+                                        // Util.showLoadingDialog(context);
+                                        // await _getDateSelection(
+                                        //     _carTypeKey
+                                        //         .currentState.selectedValue,
+                                        //     _clientTypeKey
+                                        //         .currentState.selectedValue);
                                         _clearDateSelection();
-                                        Navigator.pop(context);
-                                      } catch (error) {
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                        Util.showAlertDialog(
-                                            context, "Unstable Network".tr());
-                                      }
+                                      //   Navigator.pop(context);
+                                      // } catch (error) {
+                                      //   Navigator.pop(context);
+                                      //   Navigator.pop(context);
+                                      //   Util.showAlertDialog(
+                                      //       context, "Unstable Network".tr());
+                                      // }
                                     }),
                                 SizedBox(
                                   height: Util.responsiveSize(context, 24),

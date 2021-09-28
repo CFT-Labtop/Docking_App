@@ -43,25 +43,31 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    icon,
-                    size: Util.responsiveSize(context, size + 8),
-                    color: Colors.grey,
-                  ),
-                  SizedBox(
-                    width: Util.responsiveSize(context, 12),
-                  ),
-                  Text(
-                    label + ":",
-                    style: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: Util.responsiveSize(context, size)),
-                  ),
-                ],
+              Flexible(
+                flex: 5,
+                child: Row(
+                  children: [
+                    Icon(
+                      icon,
+                      size: Util.responsiveSize(context, size + 8),
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      width: Util.responsiveSize(context, 12),
+                    ),
+                    Flexible(
+                      child: Text(
+                        label + ":",
+                        style: TextStyle(
+                            color: Color(0xff888888),
+                            fontSize: Util.responsiveSize(context, size)),
+                        ),
+                    )
+                  ],
+                ),
               ),
               Flexible(
+                flex: 3,
                 child: Text(value,
                   style: TextStyle(
                       color: Colors.black,
@@ -117,6 +123,11 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
         CustomSnackBar.success(
         message:
           "Please arrive".tr() + " " + widget.booking.warehouse + " " + "15 minutes in advance the reservation time slot".tr(),
+          textStyle: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: Util.responsiveSize(context, 16/MediaQuery.of(context).textScaleFactor),
+            color: Colors.white,
+          ),
         ),
         displayDuration: const Duration(milliseconds: 5000)
       );

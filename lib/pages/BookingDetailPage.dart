@@ -32,6 +32,21 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     this.isNeedGPS = isNeedGPSConfig["configValue"] == "False" ? false: true;
   }
 
+  Color convertStatusToColor(String bookingStatusCode) {
+    switch(bookingStatusCode){
+      case "B000":
+        return Colors.red;
+      case "B100":
+        return Colors.blue;
+      case "B200":
+        return Colors.green;
+      case "B700":
+        return Colors.grey;
+      default:
+        return Colors.orange;
+    }
+  }
+
   @override
   void initState() {
     this.booking = widget.booking;
@@ -291,13 +306,15 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                     height: Util.responsiveSize(context, 4),
                   ),
                   _isArrivedOrWIPOrDeleted()
-                      ? StandardElevatedButton(
-                          backgroundColor: Colors.grey,
-                          text: this.booking.bookingStatus,
-                          onPress: () {},
-                        )
+                      ? AbsorbPointer(
+                        child: StandardElevatedButton(
+                            backgroundColor: convertStatusToColor(this.booking.bookingStatusCode),
+                            text: this.booking.bookingStatus,
+                            onPress: () {},
+                          ),
+                      )
                       : StandardElevatedButton(
-                          backgroundColor: Colors.green,
+                          backgroundColor: convertStatusToColor(this.booking.bookingStatusCode),
                           text: "Arrive".tr(),
                           onPress: () {
                             if(this.isNeedGPS){
