@@ -118,6 +118,7 @@ class _ConfirmBookingPageState extends State<ConfirmBookingPage> {
         message:
           "Please arrive".tr() + " " + widget.booking.warehouse + " " + "15 minutes in advance the reservation time slot".tr(),
         ),
+        displayDuration: const Duration(milliseconds: 5000)
       );
       FlutterRouter().goToPage(context, Pages("MainPage"),routeSettings: RouteSettings(arguments: booking), clear: true);
     }catch(error){
