@@ -257,9 +257,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   }
 
   bool _isArrivedOrWIPOrDeleted() {
-    return this.booking.bookingStatusCode == "B000" ||
-        this.booking.bookingStatusCode == "B200" ||
-        this.booking.bookingStatusCode == "B700";
+    return this.booking.bookingStatusCode != "B100";
   }
 
   void arriveTruck() {

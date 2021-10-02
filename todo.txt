@@ -94,3 +94,5 @@ Pull Down d 字再大d (Done)
 handle好submit Booking 無網問題(Done)
 Arrived ->轉api (Done)
 Detail Booking -> Pull Down Refresh (Done)
+
+工作中都可以press已到達

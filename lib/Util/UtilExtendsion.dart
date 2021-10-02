@@ -44,13 +44,13 @@ extension UtilExtendsion on Util {
   static bool _isCurrentVersionLessThanMinVersion(String localVersion, String minVersion){
     List<String> localVersionList = localVersion.split(".");
     List<String> minVersionList = minVersion.split(".");
-    if(int.parse(localVersionList[0]) < int.parse(minVersionList[0]))
-      return true;
-    else if(int.parse(localVersionList[1]) < int.parse(minVersionList[1]))
-      return true;
-    else if (int.parse(localVersionList[2]) < int.parse(minVersionList[2]))
-      return true;
-    return false;
+    if(int.parse(localVersionList[0]) > int.parse(minVersionList[0]))
+      return false;
+    else if(int.parse(localVersionList[1]) > int.parse(minVersionList[1]))
+      return false;
+    else if (int.parse(localVersionList[2]) >= int.parse(minVersionList[2]))
+      return false;
+    return true;
   }
 
   static Future<Map<String, dynamic>> getConfigItem(BuildContext context, String configKey) async{
